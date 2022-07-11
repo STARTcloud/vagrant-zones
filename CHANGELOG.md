@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
  
+### [0.1.4](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.3...v0.1.4) (2022-07-11)
+
+
+### Bug Fixes
+
+* add better conditional ([2315771](https://www.github.com/STARTcloud/vagrant-zones/commit/23157715f30e1a6a24a4b8df53a38e34ac4817f8))
+* Adding Linting before building ([72d8e76](https://www.github.com/STARTcloud/vagrant-zones/commit/72d8e76af9a96692d501f523f05bd6c08f8b6f71))
+
 ### [0.1.3](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.2...v0.1.3) (2022-07-11)
 
 
