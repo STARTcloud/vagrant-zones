@@ -54,7 +54,7 @@ jobs:
         env:
           GEM_HOST_API_KEY: "Bearer ${{secrets.GITHUB_TOKEN}}"
           OWNER: ${{ github.repository_owner }}
-        if: steps.tests.outputs.exit_code == 0
+        if: steps.tests.outputs.exit_code == 0 && steps.release.outputs.release_created
 
       # Publish to Ruby Gems
       - name: Publish to RubyGems
@@ -67,4 +67,4 @@ jobs:
           gem push *.gem
         env:
           GEM_HOST_API_KEY: "${{secrets.RUBYGEMS_AUTH_TOKEN}}"
-        if: steps.tests.outputs.exit_code == 0
+        if: steps.tests.outputs.exit_code == 0 && steps.release.outputs.release_created
