@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
  
+### [0.1.5](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.4...v0.1.5) (2022-07-11)
+
+
+### Bug Fixes
+
+* Update the Name of the Package ([bd2c17c](https://www.github.com/STARTcloud/vagrant-zones/commit/bd2c17c146e96ce1a732a4a9356be834efc57cd0))
+
 ### [0.1.4](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.3...v0.1.4) (2022-07-11)
 
 
