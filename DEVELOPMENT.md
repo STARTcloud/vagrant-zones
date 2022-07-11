@@ -1,4 +1,4 @@
-### Contributing
+## Contributing
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
@@ -7,12 +7,12 @@
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
-### Versioning
+## Versioning
 
 This plugin follows the principles of
 [Semantic Versioning 2.0.0](http://semver.org/).
 
-### Unit Tests
+## Unit Tests
 
 Please run the unit tests to verify your changes. To do this simply run `rake`.
 If you want a quick merge, write a spec that fails before your changes are
@@ -22,7 +22,7 @@ If you don't have rake installed, first install [bundler](http://bundler.io/)
 and run `bundle install`. Then you can run `bundle exec rake`, even if rake is
 still not installed to your `PATH`.
 
-### RuboCop
+## RuboCop
 
 Please make changes [RuboCop](https://github.com/bbatsov/rubocop)-compliant.
 
@@ -30,7 +30,7 @@ Changes that eliminate rules from
 [`.rubocop_todo.yml`](https://github.com/nsidc/vagrant-zones/blob/master/.rubocop_todo.yml)
 are welcome.
 
-### Travis-CI
+## Travis-CI
 
 [Travis](https://travis-ci.org/nsidc/vagrant-zones) will automatically run
 RuboCop and the unit tests when you create a new pull request. If there are any
@@ -38,7 +38,7 @@ failures, a notification will appear on the pull request. To update your pull
 request, simply create a new commit on the branch that fixes the failures, and
 push to the branch.
 
-### Development Without Building the Plugin
+## Development Without Building the Plugin
 
 To test your changes when developing the plugin, you have two main
 options. First, you can build and install the plugin from source every time you
@@ -72,7 +72,7 @@ We will use the Convential Commit System to help automate
 
 [Conventional Commits](https://github.com/conventional-commits/conventionalcommits.org/blob/master/content/v1.0.0/index.md)
 
-### Releasing
+## Releasing
 
 1) Ensure [travis-ci](https://travis-ci.org/github/nsidc/vagrant-zones/) build is passing
 2) Ensure `CHANGELOG.md` is up-to-date with the changes to release
