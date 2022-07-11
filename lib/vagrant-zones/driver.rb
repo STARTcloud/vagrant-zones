@@ -1052,7 +1052,6 @@ module VagrantPlugins
         zoneniczloginsetup_netplan(uii, opts, mac) unless config.os_type.to_s.match(/windows/)
       end
 
-
       ## This setups the Netplan based OS Networking via Zlogin
       def zoneniczloginsetup_netplan(uii, opts, mac)
         zlogin(uii, 'rm -rf /etc/netplan/*.yaml')
@@ -1326,7 +1325,7 @@ module VagrantPlugins
               zread.expect(/\n/) { |line| rsp.push line }
               puts(rsp[-1].to_s) if config.debug
               zwrite.printf("#{cmd}\r\n") if runonce
-              zwrite.printf("#{error_check}") if runonce
+              zwrite.printf(error_check.to_s) if runonce
               runonce = false
               break if rsp[-1].to_s.match(/Error Code: 0/)
 
