@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'vagrant-zones'
   spec.version       = VagrantPlugins::ProviderZone::VERSION
   spec.authors       = ['Mark Gilbert']
-  spec.email         = ['mark.gilbert@prominic.net']
+  spec.email         = ['support@prominic.net']
   spec.summary       = 'Vagrant provider plugin to support zones'
   spec.description   = spec.summary
   spec.homepage      = 'https://github.com/STARTCloud/vagrant-zones'
