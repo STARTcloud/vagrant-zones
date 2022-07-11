@@ -70,7 +70,7 @@ method for Vagrant plugin development.
 
 We will use the Convential Commit System to help automate 
 
-[Conventional Commits] (https://github.com/conventional-commits/conventionalcommits.org/blob/master/content/v1.0.0/index.md)
+[Conventional Commits](https://github.com/conventional-commits/conventionalcommits.org/blob/master/content/v1.0.0/index.md)
 
 ### Releasing
 
