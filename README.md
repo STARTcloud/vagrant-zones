@@ -6,26 +6,26 @@ This project is still in the early stages, any feedback is much appreciated
 [![Gem Version](https://badge.fury.io/rb/vagrant-zones.svg)](https://badge.fury.io/rb/vagrant-zones)
 
 - [Status](#status)
-  - [Functions](https://github.com/Makr91/vagrant-zones/wiki/Status#functions)
-  - [Boxes](https://github.com/Makr91/vagrant-zones/wiki/Status#Box-Support)
+  - [Functions](../../wiki/Status#functions)
+  - [Boxes](../../wiki/Status#Box-Support)
 - [Examples](https://github.com/Makr91/vagrant-zones-examples)
 - [Installation](#installation)
-- [Known Issues](https://github.com/Makr91/vagrant-zones/wiki/Known-Issues-and-Workarounds)
-- [Development](https://github.com/Makr91/vagrant-zones/wiki/Plugin-Development-Environment)
-  - [Preparing OS environment](https://github.com/Makr91/vagrant-zones/wiki/Plugin-Development-Environment#setup-os-for-development)
-  - [Setup vagrant-zones environment](https://github.com/Makr91/vagrant-zones/wiki/Plugin-Development-Environment#setup-vagrant-zones-environment)
-- [Commands](https://github.com/Makr91/vagrant-zones/wiki/Commands) 
-  - [Create a box](https://github.com/Makr91/vagrant-zones/wiki/Commands#create-a-box)
-  - [Add the box](https://github.com/Makr91/vagrant-zones/wiki/Commands#add-the-box)
+- [Known Issues](../../wiki/Known-Issues-and-Workarounds)
+- [Development](../../wiki/Plugin-Development-Environment)
+  - [Preparing OS environment](../../wiki/Plugin-Development-Environment#setup-os-for-development)
+  - [Setup vagrant-zones environment]../../wiki/Plugin-Development-Environment#setup-vagrant-zones-environment)
+- [Commands](../../wiki/Commands) 
+  - [Create a box](../../wiki/Commands#create-a-box)
+  - [Add the box](../../wiki/Commands#add-the-box)
   - [Run the box](../../wiki/Commands#run-the-box)
-  - [SSH into the box](https://github.com/Makr91/vagrant-zones/wiki/Commands#ssh-into-the-box)
-  - [Shutdown the box and cleanup](https://github.com/Makr91/vagrant-zones/wiki/Commands#shutdown-the-box-and-cleanup)
-  - [Convert the Box](https://github.com/Makr91/vagrant-zones/wiki/Commands#convert)
-  - [Detect existing VMs](https://github.com/Makr91/vagrant-zones/wiki/Commands#detect)
-  - [Create, Manage, Destroy ZFS snapshots](https://github.com/Makr91/vagrant-zones/wiki/Commands#zfs-snapshots)
-  - [Clone and existing zone](https://github.com/Makr91/vagrant-zones/wiki/Commands#clone)
-  - [Safe restart/shutdown](https://github.com/Makr91/vagrant-zones/wiki/Commands#safe-control)
-  - [Start/Stop console](https://github.com/Makr91/vagrant-zones/wiki/Commands#console)
+  - [SSH into the box](../../wiki/Commands#ssh-into-the-box)
+  - [Shutdown the box and cleanup](../../wiki/Commands#shutdown-the-box-and-cleanup)
+  - [Convert the Box](../../wiki/Commands#convert)
+  - [Detect existing VMs](../../wiki/Commands#detect)
+  - [Create, Manage, Destroy ZFS snapshots](../../wiki/Commands#zfs-snapshots)
+  - [Clone and existing zone](../../wiki/Commands#clone)
+  - [Safe restart/shutdown](../../wiki/Commands#safe-control)
+  - [Start/Stop console](../../wiki/Commands#console)
 
 ## Installation
 
@@ -74,7 +74,7 @@ Please read [CONTRIBUTING.md](https://www.prominic.net) for details on our code 
 * **Thomas Merkel** - *Initial work* - [Skylime](https://github.com/skylime)
 * **Mark Gilbert** - *Takeover* - [Makr91](https://github.com/Makr91)
 
-See also the list of [contributors](https://github.com/Makr91/vagrant-zones/graphs/contributors) who participated in this project.
+See also the list of [contributors](../../graphs/contributors) who participated in this project.
 
 ## Acknowledgments
 
