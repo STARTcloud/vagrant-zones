@@ -16,6 +16,10 @@ Metrics/ClassLength:
 Naming/MethodName:
   EnforcedStyle: snake_case
 
+Naming/FileName:
+  Exclude:
+    - 'lib/vagrant-zones.rb'
+    
 Naming/AccessorMethodName:
   Description: Check the naming of accessor methods for get_/set_.
   Enabled: false
