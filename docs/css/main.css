@@ -1,0 +1,55 @@
+body {
+    background-image: url("../assets/bg-pattern.png");
+}
+
+.container {
+    max-width: 1080px;
+}
+
+.header {
+    background-color: #000000;
+}
+
+.logo-big {
+    max-width: 500px;
+    max-height: 140px;
+}
+
+.logo-small {
+    max-width: 250px;
+    max-height: 75px;
+}
+
+.menu-link > a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.menu-link > a:hover {
+    color: #8ac740;
+    text-decoration: none;
+}
+
+.mail-link {
+    color: #588029;
+    text-decoration: none;
+}
+
+.mail-link:hover {
+    color: #8ac740;
+    text-decoration: none;
+}
+
+.card {
+    padding: 0;
+    margin: 16px;
+    height: 100%;
+}
+
+.footer {
+    background-color: #000000;
+}
+
+.copyright {
+    color: #cccccc;
+}
