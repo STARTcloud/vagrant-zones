@@ -1,6 +1,6 @@
 # .github/workflows/release.yml
 
-name: Release and Publish
+name: Test, Lint, Release and Publish
 
 on:
   push:
