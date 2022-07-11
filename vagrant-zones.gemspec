@@ -7,7 +7,7 @@ Encoding.default_internal = Encoding::UTF_8
 require File.expand_path('lib/vagrant-zones/version', __dir__)
 
 Gem::Specification.new do |spec|
-  spec.name          = 'vagrant_zones'
+  spec.name          = 'vagrant-zones'
   spec.version       = VagrantPlugins::ProviderZone::VERSION
   spec.authors       = ['Mark Gilbert']
   spec.email         = ['mark.gilbert@prominic.net']
