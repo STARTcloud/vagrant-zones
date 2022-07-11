@@ -66,6 +66,12 @@ Despite those warning messages, this is the
 [officially recommended](https://docs.vagrantup.com/v2/plugins/development-basics.html)
 method for Vagrant plugin development.
 
+## Committing
+
+We will use the Convential Commit System to help automate 
+
+[Conventional Commits] (https://github.com/conventional-commits/conventionalcommits.org/blob/master/content/v1.0.0/index.md)
+
 ### Releasing
 
 1) Ensure [travis-ci](https://travis-ci.org/github/nsidc/vagrant-zones/) build is passing
