@@ -16,7 +16,7 @@ jobs:
         with:
           release-type: ruby
           package-name: vagrant-zones
-          bump-minor-pre-major: true
+          bump-minor-pre-major: false
           version-file: "lib/vagrant-zones/version.rb"
 
       # Checkout code if release was created
