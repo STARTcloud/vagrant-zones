@@ -9,9 +9,9 @@ name: Ruby-lint
 
 on:
   push:
-    branches: [ master, zbootunlock ]
+    branches: [ main ]
   pull_request:
-    branches: [ master, zbootunlock ]
+    branches: [ main ]
 
 jobs:
   test:
