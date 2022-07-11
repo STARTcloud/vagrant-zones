@@ -3,7 +3,7 @@ name: Ruby Gem publish
 on:
   push:
     paths:
-      - 'vagrant-zones/lib/vagrant-zones/version.rb'
+      - 'lib/vagrant-zones/version.rb'
 
 jobs:
   build:
