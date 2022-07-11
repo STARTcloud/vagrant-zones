@@ -17,8 +17,8 @@ Gem::Specification.new do |spec|
   spec.license       = 'AGPL-3.0'
   spec.metadata = {
     'rubygems_mfa_required' => 'true',
-    'bug_tracker_uri' => 'https://github.com/STARTCloud/issues',
-    'changelog_uri' => 'https://github.com/STARTCloud/blob/main/CHANGELOG.md',
+    'bug_tracker_uri' => 'https://github.com/STARTcloud/vagrant-zones/issues',
+    'changelog_uri' => 'https://github.com/STARTcloud/vagrant-zones/blob/main/CHANGELOG.md',
     'documentation_uri' => 'http://rubydoc.info/gems/vagrant-zones',
     'source_code_uri' => 'https://github.com/STARTCloud/vagrant-zones',
     'github_repo' => 'https://github.com/STARTCloud/vagrant-zones'
