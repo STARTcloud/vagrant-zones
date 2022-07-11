@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
  
+### [0.1.6](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.5...v0.1.6) (2022-07-11)
+
+
+### Bug Fixes
+
+* Gem naming convention ([133e4d5](https://www.github.com/STARTcloud/vagrant-zones/commit/133e4d536c1e23ea0eafcf44adc552473fe34e10))
+
 ### [0.1.5](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.4...v0.1.5) (2022-07-11)
 
 
