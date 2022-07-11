@@ -31,9 +31,9 @@ en:
       virtual_box_running_conflict_detected: |-    
         Virtualbox Box appears to be running virtual machines, to continue, please shut these down!
     meeting: |-
-      Helllooooo World! Nice to Meet you!
+      Beggining the zone creation sequence
     leaving: |-
-      Oh No, I don't want to go . . 
+      Beggining the zone destruction sequence
     halting_zone: |-
       Halting the zone
     destroy_zone: |-
