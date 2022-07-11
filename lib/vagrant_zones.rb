@@ -26,4 +26,4 @@ end
 
 raise 'The Vagrant vagrant-zones plugin is only compatible with Vagrant 2+.' if Vagrant::VERSION < '2'
 
-require 'vagrant-zones/plugin'
+require 'vagrant/zones/plugin'
