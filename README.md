@@ -17,7 +17,7 @@ This project is still in the early stages, any feedback is much appreciated
 - [Commands](https://github.com/Makr91/vagrant-zones/wiki/Commands) 
   - [Create a box](https://github.com/Makr91/vagrant-zones/wiki/Commands#create-a-box)
   - [Add the box](https://github.com/Makr91/vagrant-zones/wiki/Commands#add-the-box)
-  - [Run the box](https://github.com/Makr91/vagrant-zones/wiki/Commands#run-the-box)
+  - [Run the box](wiki/Commands#run-the-box)
   - [SSH into the box](https://github.com/Makr91/vagrant-zones/wiki/Commands#ssh-into-the-box)
   - [Shutdown the box and cleanup](https://github.com/Makr91/vagrant-zones/wiki/Commands#shutdown-the-box-and-cleanup)
   - [Convert the Box](https://github.com/Makr91/vagrant-zones/wiki/Commands#convert)
