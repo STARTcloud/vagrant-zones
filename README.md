@@ -13,7 +13,7 @@ This project is still in the early stages, any feedback is much appreciated
 - [Known Issues](../../wiki/Known-Issues-and-Workarounds)
 - [Development](../../wiki/Plugin-Development-Environment)
   - [Preparing OS environment](../../wiki/Plugin-Development-Environment#setup-os-for-development)
-  - [Setup vagrant-zones environment]../../wiki/Plugin-Development-Environment#setup-vagrant-zones-environment)
+  - [Setup vagrant-zones environment](../../wiki/Plugin-Development-Environment#setup-vagrant-zones-environment)
 - [Commands](../../wiki/Commands) 
   - [Create a box](../../wiki/Commands#create-a-box)
   - [Add the box](../../wiki/Commands#add-the-box)
