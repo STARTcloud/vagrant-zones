@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
  
+### [0.1.7](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.6...v0.1.7) (2022-07-11)
+
+
+### Bug Fixes
+
+* remove snake_case check for the plugin itself ([19e192a](https://www.github.com/STARTcloud/vagrant-zones/commit/19e192a238d093b57018c91f0f5b8233b67151cd))
+* Update Translations ([c060c41](https://www.github.com/STARTcloud/vagrant-zones/commit/c060c413a8c9f0c12aa1a27c4507aea8b593d078))
+
 ### [0.1.6](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.5...v0.1.6) (2022-07-11)
 
 
