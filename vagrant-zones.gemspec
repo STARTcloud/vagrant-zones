@@ -20,7 +20,8 @@ Gem::Specification.new do |spec|
     'bug_tracker_uri' => 'https://github.com/STARTCloud/issues',
     'changelog_uri' => 'https://github.com/STARTCloud/blob/main/CHANGELOG.md',
     'documentation_uri' => 'http://rubydoc.info/gems/vagrant-zones',
-    'source_code_uri' => 'https://github.com/STARTCloud/vagrant-zones'
+    'source_code_uri' => 'https://github.com/STARTCloud/vagrant-zones',
+    'github_repo' => 'https://github.com/STARTCloud/vagrant-zones'
   }
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
