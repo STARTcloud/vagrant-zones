@@ -9,6 +9,14 @@
 * version bump ([4786127](https://www.github.com/STARTcloud/vagrant-zones/commit/4786127a311b0c552b2fafa313c4ba6fda324632))
 * yet another version change test ([4e195b2](https://www.github.com/STARTcloud/vagrant-zones/commit/4e195b24f0ddc3463af7d58fcf4289191a2c1988))
 
+### [0.1.10](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.9...v0.1.10) (2022-07-13)
+
+
+### Bug Fixes
+
+* Maybe? ([3b30e86](https://www.github.com/STARTcloud/vagrant-zones/commit/3b30e86e5214fba364d32b0779129daf126fb839))
+* VERSION ([d57d9a7](https://www.github.com/STARTcloud/vagrant-zones/commit/d57d9a74fb5e67304678f870816b99110d42d68a))
+
 ## [0.0.4] - 2017-03-14
  
 ### Added
