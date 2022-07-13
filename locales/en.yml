@@ -1,0 +1,326 @@
+en:
+  vagrant_zones:
+    states:
+      not_created: |-
+        Your instance of this box haven't been created
+      is_running: |-
+        Your instance has already be booted
+    errors:
+      not_yet_implemented: |-
+        Your configuration is not yet implemented
+      halt_timeout: |-
+        Zone failed to halt in alloted time after waiting for
+      invalidLX_brand: |-
+        Invalid LX brand configuration detected
+      invalidbhyve_brand: |-
+        Invalid bhyve configuration detected
+      console_failed: |-
+        Failed to access console
+      console_failed_exit: |-
+        Exiting
+      execute_error: |-
+        Failed when execute commands
+      timeout_error: |-
+        Timeout exceeded
+      system_version_too_low: |-
+        Please update to OmniOS r38 or higher
+      missing_compatability_check_tool: |-    
+        Please install the Bhyve compatability tool from: https://omnios.org/info/bhyve
+      missing_bhyve: |-    
+        Your system appears to be missing bhyve
+      virtual_box_running_conflict_detected: |-    
+        Virtualbox Box appears to be running virtual machines, to continue, please shut these down!
+    meeting: |-
+      Beggining the zone creation sequence
+    leaving: |-
+      Beggining the zone destruction sequence
+    halting_zone: |-
+      Halting the zone
+    destroy_zone: |-
+      Starting zone destruction
+    graceful_shutdown_failed: |-
+      Zone failed to shutdown in alloted time ==> 
+    graceful_shutdown: |-
+      Asking hypervisor to gracefully stop the zone
+    creating_vnic: |-
+      - Creating VNIC: 
+    configure_interface_using_vnic: |-
+      - Configuring the interface in the zone for VNIC using netplan: 
+    configure_win_interface_using_vnic: |-
+      - Waiting 60 seconds then configuring the Windows network interface in the zone: 
+    configure_interface_using_vnic_dladm: |-
+      - Configuring the interface in the zone for VNIC using dladm: 
+    os_detect: |-
+      - Detecting Operating System to configure networking: 
+    ansible_detect: |-
+      - Detecting if Ansible is installed: 
+    vnic_setup: |-
+      - Setting up VNIC: 
+    networking_int_remove: |-
+      Removing network devices:
+    networking_int_add: |-
+      - Adding network devices:
+    removing_vnic: |-
+      - Deleting zone VNIC: 
+    no_removing_vnic: |-
+      - No zone VNIC to remove
+    removing_host_vnic: |-
+      - Deleting host VNIC: 
+    no_removing_host_vnic: |-
+      - No host VNIC to remove
+    network_setup: |-
+      Preparing zone OS networking interfaces:
+    delete_disks: |-
+      Removing associated disks:
+    zonelogincmd: |-
+      Running command with zLogin
+    user: |-
+      Filtering the user Vagrant will use
+    installing_zone: |-
+      Installing zone as brand: 
+    netplan_remove: |-
+      - Removing stale netplan configurations
+    netplan_set: |-
+      - Generate fresh netplan configurations
+    dladm_applied: |-
+      - dladm and ipadm configurations Applied
+    dladm_route_applied: |-
+      - Route has been applied
+    dladm_dns_applied: |-
+      - DNS has been applied
+    netplan_applied: |-
+      - New Netplan configurations Applied
+    netplan_applied_dhcp: |-
+      - Set DHCP Netplan configurations  
+    stale_netplan_removed: |-
+      - Stale Netplan configurations removed 
+    netplan_applied_static: |-
+      - Set static Netplan configurations:
+        
+    console_failednetplan: |-
+      Netplan configurations failed  
+    lx_zone_dataset: |-
+      - Creating zoned ZFS dataset for LX zone: 
+    bhyve_zone_dataset_root: |-
+      - ZFS root dataset: 
+    begin_create_datasets: |-
+      Creating ZFS datasets and volumes:
+    bhyve_zone_dataset_boot: |-
+      - ZFS boot volume: 
+    setting_cd_rom_configurations: |-
+      - Setting CDROM Configurations: 
+    setting_additional_disks_configurations: |-
+      - Setting additional disk Configurations: 
+    bhyve_zone_dataset_additional_volume: |-
+      - Additional ZFS volume: 
+    bhyve_zone_dataset_additional_volume_destroy: |-
+      - Additional ZFS volume: 
+    addtl_volume_destroy_root: |-
+      - ZFS root dataset for additional ZFS volume: 
+    bhyve_zone_dataset_additional_volume_root: |-
+      - ZFS root dataset for additional ZFS volume: 
+    destroy_root_dataset: |-
+      - ZFS root dataset: 
+    destroy_dataset: |-
+      - ZFS Boot volume dataset: 
+    lx_zone_config_gen: |-
+      Generating configuration for LX zone
+    bhyve_zone_config_gen: |-
+      Generating zone configuration:
+    bhyve_zone_config_remove: |-
+      Removing zonecfg configuration
+    bhyve_zone_config_uninstall: |-
+      Uninstalling the zone
+    preflight_checks: |-
+      Running Preflight checks:
+    vbox_run_check: |-
+      - Checking if VirtualBox is loaded as it may conflict with bhyve
+    lx_check: |-
+      Minimal checks performed for LX Branded zones on the host OS, please use with caution!
+    bhyve_check: |-
+      - Checking OmniOS release against version:
+    bhyve_compat_check: |-
+      - Checking bhyve installation environment
+    wait_for_boot: |-
+      Waiting for the zone to boot
+    sshport: |-
+      Filtering the SSH port that Vagrant will use
+    vagrantuserpass: |-
+      Filtering the Vagrant user Password
+    firmware: |-
+      Filtering the firmware that bhyve will use
+    inserting_ssh_key: |-
+      Inserting SSH key
+    booted_check_terminal_access: |-
+      Zone booted, checking for login access/prompt over Serial: 
+    terminal_access_auto_login: |-
+      Could not login as root, will attempt to auto-login with supplied credentials:
+    detecting_box: |-
+      Detecting image
+    importing_vagrant_key: |-
+      Importing Vagrant key from Cloud:
+    datadir: |-
+      Vagrant datadir: 
+    zfs_snapshot_stream_detected: |-
+      ZFS Snapshot Stream detected ==> 
+    joyent_image_uuid_detected: |-
+      Joyent UUID detected ==> 
+    vagrant_cloud_box_detected: |-
+      - Vagrant Cloud Box detected: 
+    ssh_ready: |-
+      SSH appears to be ready
+    boot_ready: |-
+      The zone has booted
+    dhcp_boot_ready: |-
+      The zone is configured with NAT and booted
+    root_dataset_nil: |-
+      - No root dataset to remove 
+    boot_dataset_nil: |-
+      - No boot volumes to remove 
+    additional_dataset_nil: |-
+      - No additional volumes to remove
+    starting_zone: |-
+      Starting the zone
+    joyent_image_uuid_verified: |-
+      Joyent image UUID has been verified ==> 
+    lx_zone_dataset: |-
+      LX zone dataset ==> 
+    setting_dns_server: |-
+      Setting nameserver ==> 
+    detected_ovf_format: |-
+      Detected OVF
+    importing_box_image: |-
+      - Importing Box image ==> 
+    importing_box_image_to_disk: |-
+      - Importing Box template to disk ==> 
+    template_import_path: |-
+      - Template path:
+    importing_joyent_image: |-
+      - Importing Joyent image ==> 
+    graceful_restart: |-
+      Zone gracefully restarting
+    graceful_shutdown_started: |-
+      Zone gracefully shutting down
+    graceful_shutdown_complete: |-
+      Graceful shutdown complete
+    zone_gracefully_restarted: |-
+      Graceful restart complete
+    zone_gracefully_stopped_waiting_for_boot: |-
+      Zone gracefully shutdown, now waiting for boot
+    console: |-
+      Starting console:
+    setting_console_access: |-
+      - Setting console access port: 
+    zfs_snapshot_cron: |-
+      Listing configured cron jobs
+    zfs_snapshot_create: |-
+      Creating ZFS snapshot(s):
+    setting_cloud_dnsdomain: |-
+      - Setting cloud-init DNS domain: 
+    setting_cloud_password: |-        
+      - Setting cloud-init password: 
+    setting_cloud_resolvers: |-
+      - Setting cloud-init Resolvers: 
+    setting_cloud_ssh_key: |-
+      - Setting cloud-init SSH key: 
+    setting_cloud_init_access: |-
+      - Enabling cloud-init: 
+    control_no_cmd: |-
+      No control command specified
+    ssh_run_command: |-
+      Running Command over SSH: 
+    vtype: |-
+      Filtering zone type
+    nsservers: |-
+      Sanitizing Name Servers: 
+    mac: |-
+      Sanitizing MAC address: 
+    ipaddress: |-
+      Sanitizing IP address: 
+    allowedaddress: |-
+      Sanitizing Allowed IP address: 
+    vnic_name: |-
+      Sanitizing the VNIC name: 
+    get_ip_address: |-
+      Gathering IP address
+    creating_etherstub: |-
+      - Creating etherstub for private network: 
+    creating_etherhostvnic: |-
+      - Creating NAT VNIC for zone over etherstub: 
+    creating_ethervnic: |-
+      - Creating VNIC for host over etherstub: 
+    creating_networking_interfaces: |-
+      Creating networking interfaces for zone: 
+    nat_vnic_setup: |-
+      - Setting up NAT VNIC: 
+    forwarding_nat: |-
+      - Enabling NAT forwarding:
+    configuring_nat: |-
+      - Creating NAT entries: 
+    deconfiguring_nat: |-
+      - Removing NAT configurations: 
+    configuring_dhcp: |-
+      - Configuring DHCP 
+    deconfiguring_dhcp: |-
+      - Removing DHCP configurations: 
+    chk_dhcp_addr: |-
+      - Checking if zone has leased the address: 
+    setting_alt_shared_disk_configurations: |-
+      Setting shared disk configurations
+    zonecfgcpu: |-
+      Setting the CPU for zone
+    pci: |-
+      Setting the PCI devices for zone
+    zfs_snapshot_list: |-
+      ZFS snapshots detected:
+    zfs_snapshot_destroy: |-
+      Destroying ZFS snapshots for zone:
+    cron_entries: |-
+      Listing cron entries for zone
+    cron_set: |-
+      Setting cron entries for zone
+    cron_delete: |-
+      Deleting cron entries for zone
+    control: |-
+      Running control command on zone:
+    delete_ethervnic: |-
+      - Deleting the etherstub: 
+    no_delete_ethervnic: |-
+      - No etherstub to remove
+    automated-zlogin: |-
+      Automatic Login
+    automated-windows-zlogin: |-
+      Windows SAC Autologin
+    automated-zlogin-user: |-
+      - Entering username, Waiting a few seconds
+    automated-zlogin-pass: |-
+      - Entering password, Waiting a few seconds
+    automated-zbootunlock: |-
+      - Unlocking LUKS Keystore for the boot disk
+    automated-zlogin-root: |-
+      - Impersonatig root, Waiting a few seconds
+    windows_skip_first_boot: |-
+      - Skipping First EVENT for CMD due to Sysprep Reboot
+    windows_start_cmd: |-
+      - Starting CMD session
+    windows_access_session: |-
+      - Accessing Command Session
+    windows_access_session_presskey: |-
+      - Pressing Any Key enter Command Session
+    windows_enter_username: |-
+      - Entering Username
+    windows_enter_domain: |-
+      - Entering/Skipping Domain
+    windows_enter_password: |-
+      - Entering password
+    windows_cmd_accessible: |-
+      - CMD Accessible
+    win_applied_rename_adapter: |-
+      - Renamed Default Adapter
+    win_applied_static: |-
+      - Set Static Address
+    win_applied_dns1: |-
+      - Set Primary DNS
+    win_applied_dns2: |-
+      - Set Secondary DNS        
+      
