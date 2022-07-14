@@ -8,7 +8,7 @@ This project is still in the early stages, any feedback is much appreciated
 - [Status](#status)
   - [Functions](../../wiki/Status#functions)
   - [Boxes](../../wiki/Status#Box-Support)
-- [Examples](https://github.com/Makr91/vagrant-zones-examples)
+- [Examples](https://github.com/STARTCloud/vagrant-zones-examples)
 - [Installation](#installation)
 - [Known Issues](../../wiki/Known-Issues-and-Workarounds)
 - [Development](../../wiki/Plugin-Development-Environment)
@@ -31,7 +31,7 @@ This project is still in the early stages, any feedback is much appreciated
 
 Publiched Package locations:
 - [rubygems.org](https://rubygems.org/gems/vagrant-zones).
-- [github.com](https://github.com/Makr91/vagrant-zones/packages/963217)
+- [github.com](../../packages/963217)
 
 ### Setup OS Installation
 
@@ -50,7 +50,7 @@ Publiched Package locations:
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/Makr91/vagrant-zones.
+Bug reports and pull requests are welcome on GitHub at https://github.com/STARTcloud/vagrant-zones/issues
 
 ## License
 
