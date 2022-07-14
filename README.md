@@ -31,7 +31,7 @@ This project is still in the early stages, any feedback is much appreciated
 
 Publiched Package locations:
 - [rubygems.org](https://rubygems.org/gems/vagrant-zones).
-- [github.com](../../packages/963217)
+- [github.com](../../packages)
 
 ### Setup OS Installation
 
