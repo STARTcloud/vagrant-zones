@@ -1292,7 +1292,7 @@ module VagrantPlugins
             end
             if zlogin_read.expect(/Username:/)
               uii.info(I18n.t('vagrant_zones.windows_enter_username'))
-              zlogin_write.printf("Administrator\n")
+              zlogin_write.printf("#{user(@machine)}\n")
             end
             if zlogin_read.expect(/Domain/)
               uii.info(I18n.t('vagrant_zones.windows_enter_domain'))
@@ -1300,7 +1300,7 @@ module VagrantPlugins
             end
             if zlogin_read.expect(/Password/)
               uii.info(I18n.t('vagrant_zones.windows_enter_password'))
-              zlogin_write.printf("P@ssWord22\n")
+              zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
             end
             if zlogin_read.expect(/#{cmd}/)
               uii.info(I18n.t('vagrant_zones.windows_cmd_accessible'))
