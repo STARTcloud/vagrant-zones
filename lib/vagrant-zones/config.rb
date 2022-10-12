@@ -29,7 +29,7 @@ module VagrantPlugins
         @winalcheck = 'EVENT: The CMD command is now available.'
         @winlcheck = 'EVENT: The CMD command is now available.'
         @zunlockbootkey = ''
-        @zunlockboot = false
+        @zunlockboot = "Importing ZFS root pool"
         @safe_restart = nil
         @safe_shutdown = nil
         @debug_boot = nil
