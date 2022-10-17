@@ -714,7 +714,7 @@ module VagrantPlugins
           execute(false, "#{@pfexec} zfs create #{sparse} #{refres} -V #{bootconfigs['size']} #{datasetroot}")
 
           ## Import template to boot volume
-          commandtransfer = "#{@pfexec} pv -n #{@machine.box.directory.join('box.zss')} | #{@pfexec} zfs recv -u -v -F #{datasetroot} "
+          commandtransfer = "#{@pfexec} pv -n #{@machine.box.directory.join('box.zss')} | #{@pfexec} zfs recv -u -v -F #{datasetroot}"
           uii.info(I18n.t('vagrant_zones.template_import_path'))
           uii.info("  #{@machine.box.directory.join('box.zss')}")
           Util::Subprocess.new commandtransfer do |_stdout, stderr, _thread|
@@ -725,6 +725,9 @@ module VagrantPlugins
             end
           end
           uii.clear_line
+          uii.info(I18n.t('vagrant_zones.template_import_path_set_size'))
+          execute(false, "#{@pfexec} set volsize=#{bootconfigs['size']} #{datasetroot}")
+          
         when 'illumos' || 'kvm'
           raise Errors::NotYetImplemented
         else
@@ -1137,7 +1140,7 @@ module VagrantPlugins
         network(uii, 'setup') if config.brand == 'bhyve' && !config.cloud_init_enabled
       end
 
-      ## this allows us a terminal to pass commands and manipulate the VM OS via serial/tty
+      ## this allows us a terminal to pass commands and manipulate the VM OS via serial/tty, I want to redo this at some point
       def zloginboot(uii)
         name = @machine.name
         config = @machine.provider_config
