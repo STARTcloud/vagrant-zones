@@ -300,7 +300,7 @@ en:
     automated-zbootunlock: |-
       - Unlocking LUKS Keystore for the boot disk
     automated-zlogin-root: |-
-      - Impersonatig root, Waiting a few seconds
+      - Impersonating root, Waiting a few seconds
     windows_skip_first_boot: |-
       - Skipping First EVENT for CMD due to Sysprep Reboot
     windows_start_cmd: |-

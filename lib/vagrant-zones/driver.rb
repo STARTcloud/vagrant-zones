@@ -725,8 +725,9 @@ module VagrantPlugins
             end
           end
           uii.clear_line
+
           uii.info(I18n.t('vagrant_zones.template_import_path_set_size'))
-          execute(false, "#{@pfexec} set volsize=#{bootconfigs['size']} #{datasetroot}")
+          execute(false, "#{@pfexec} zfs set volsize=#{bootconfigs['size']} #{datasetroot}")
           
         when 'illumos' || 'kvm'
           raise Errors::NotYetImplemented
