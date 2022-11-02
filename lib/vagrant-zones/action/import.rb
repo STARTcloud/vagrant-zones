@@ -2,7 +2,6 @@
 
 require 'net/http'
 require 'vagrant-zones/util/subprocess'
-require 'pp'
 require 'vagrant/box_metadata'
 require 'vagrant/util/downloader'
 require 'vagrant/util/platform'
