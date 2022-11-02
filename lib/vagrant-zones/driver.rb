@@ -1151,6 +1151,7 @@ module VagrantPlugins
         alcheck = 'login:' if config.alcheck.nil?
         bstring = ' OK ' if config.booted_string.nil?
         bstring = config.booted_string unless config.booted_string.nil?
+        zunlockboot = 'Importing ZFS root pool'
         zunlockboot = config.zunlockboot unless config.zunlockboot.nil?
         zunlockbootkey = config.zunlockbootkey unless config.zunlockbootkey.nil?
         pcheck = 'Password:'
