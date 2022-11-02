@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'log4r', '~> 1.1'
   spec.add_runtime_dependency 'netaddr', '~> 2.0', '>= 2.0.4'
   spec.add_runtime_dependency 'ruby_expect', '~> 1.7', '>= 1.7.5'
-  spec.add_development_dependency 'bundler', '~> 2.2', '>= 2.2.25'
+  spec.add_development_dependency 'bundler', '~> 2.2', '>= 2.2.3'
   spec.add_development_dependency 'code-scanning-rubocop', '~> 0.5', '>= 0.5.0'
   spec.add_development_dependency 'rake', '~> 13.0', '>= 13.0.6'
   spec.add_development_dependency 'rspec', '~> 3.4'
