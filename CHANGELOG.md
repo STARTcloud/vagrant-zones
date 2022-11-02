@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.4](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.3...v0.1.4) (2022-11-02)
+
+
+### Features
+
+* Ruby 3 and remove Nokogiri dep ([500dc87](https://www.github.com/STARTcloud/vagrant-zones/commit/500dc87201c4f20227565134aa6acb196abb12a5))
+
 ### [0.1.3](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.2...v0.1.3) (2022-07-13)
 
 
