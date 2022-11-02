@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.7](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.6...v0.1.7) (2022-11-02)
+
+
+### Bug Fixes
+
+* bundler ([912d3e1](https://www.github.com/STARTcloud/vagrant-zones/commit/912d3e1211ffcd79dd75dabe6e8b6a61a4752ea0))
+
 ### [0.1.6](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.5...v0.1.6) (2022-11-02)
 
 
