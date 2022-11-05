@@ -977,9 +977,13 @@ module VagrantPlugins
         execute(false, %(#{zcfg}"add attr; set name=password; set value=#{ccip}; set type=string; end;")) unless ccip.nil?
 
         cclir = config.cloud_init_resolvers
-        uii.info(I18n.t('vagrant_zones.setting_cloud_resolvers')) unless cclir.nil?
-        uii.info("  #{cclir}") unless cclir.nil?
-        execute(false, %(#{zcfg}"add attr; set name=resolvers; set value=#{cclir}; set type=string; end;")) unless cclir.nil?
+        dservers = []
+        cclir['dns'].each do |ns|
+          dservers.append(ns['nameserver'])
+        end
+        uii.info(I18n.t('vagrant_zones.setting_cloud_resolvers')) unless dservers.nil?
+        uii.info("  #{dservers}") unless dservers.nil?
+        execute(false, %(#{zcfg}"add attr; set name=resolvers; set value=#{dservers}; set type=string; end;")) unless dservers.nil?
 
         ccisk = config.cloud_init_sshkey
         uii.info(I18n.t('vagrant_zones.setting_cloud_ssh_key')) unless ccisk.nil?
