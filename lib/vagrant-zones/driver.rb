@@ -976,7 +976,7 @@ module VagrantPlugins
         uii.info("  #{ccip}") unless ccip.nil?
         execute(false, %(#{zcfg}"add attr; set name=password; set value=#{ccip}; set type=string; end;")) unless ccip.nil?
 
-        cclir = config.cloud_init_resolvers
+        cclir = config.dns
         dservers = []
         cclir['dns'].each do |ns|
           dservers.append(ns['nameserver'])
