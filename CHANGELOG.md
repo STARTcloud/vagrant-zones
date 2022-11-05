@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.9](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.8...v0.1.9) (2022-11-05)
+
+
+### Bug Fixes
+
+* nameserverscloudinit ([506a8c6](https://www.github.com/STARTcloud/vagrant-zones/commit/506a8c69976a03efcc9f62388bbebfdabc870942))
+
 ### [0.1.8](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.7...v0.1.8) (2022-11-02)
 
 
