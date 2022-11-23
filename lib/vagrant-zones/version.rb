@@ -2,6 +2,6 @@
 
 module VagrantPlugins
   module ProviderZone
-    VERSION = '0.1.44'
+    VERSION = '0.1.46'
   end
 end
