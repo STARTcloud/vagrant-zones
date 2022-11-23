@@ -39,10 +39,10 @@ module VagrantPlugins
         @consolehost = '0.0.0.0'
         @console_onboot = 'false'
         @console = 'webvnc'
-        @memory = '4G'
+        @memory = '2G'
         @diskif = 'virtio-blk'
         @netif = 'virtio-net-viona'
-        @cpus = 2
+        @cpus = 1
         @cpu_configuration = 'simple'
         @complex_cpu_conf = UNSET_VALUE
         @boot = UNSET_VALUE
