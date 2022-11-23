@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.1.55](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.54...v0.1.55) (2022-11-23)
+
+
+### Bug Fixes
+
+* remove space teset version change ([fa4c968](https://www.github.com/STARTcloud/vagrant-zones/commit/fa4c96844100cbda066688d5ea40543b7cea28f0))
+* space ([2b22f87](https://www.github.com/STARTcloud/vagrant-zones/commit/2b22f87e8dc087bc022a8fb633402ef986984924))
+
 ### [0.1.54](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.53...v0.1.54) (2022-11-23)
 
 
