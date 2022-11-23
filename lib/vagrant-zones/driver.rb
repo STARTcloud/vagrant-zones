@@ -616,7 +616,7 @@ module VagrantPlugins
         execute(false, "#{@pfexec} svcadm enable network/ipfilter")
       end
 
-      ## Create dhcp entries for the zone 
+      ## Create dhcp entries for the zone
       def zonedhcpentries(uii, opts)
         config = @machine.provider_config
         ip = ipaddress(uii, opts)
