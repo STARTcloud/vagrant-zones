@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.50](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.49...v0.1.50) (2022-11-23)
+
+
+### Bug Fixes
+
+* spacing ([0b187e5](https://www.github.com/STARTcloud/vagrant-zones/commit/0b187e549aea50e8e8b9558f8a39cd228b7580bb))
+
 ### [0.1.49](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.48...v0.1.49) (2022-11-23)
 
 
