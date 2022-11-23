@@ -212,6 +212,7 @@ module VagrantPlugins
 
       # This Sanitizes the DNS Records
       def dnsservers(uii, opts)
+        config = @machine.provider_config
         servers = opts['dns']
         servers = [{ 'nameserver' => '1.1.1.1' }, { 'nameserver' => '8.8.8.8' }] if opts['dns'].nil?
         uii.info(I18n.t('vagrant_zones.nsservers') + servers.to_s) if config.debug
