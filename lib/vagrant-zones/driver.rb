@@ -755,7 +755,6 @@ module VagrantPlugins
       end
 
       # This helps us delete any associated datasets of the zone
-      ## Future To-Do: Should probably split this up and clean it up
       def delete_dataset(uii)
         config = @machine.provider_config
         name = @machine.name
