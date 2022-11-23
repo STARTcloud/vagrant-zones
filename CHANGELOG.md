@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.46](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.45...v0.1.46) (2022-11-23)
+
+
+### Bug Fixes
+
+* remove unneeded line ([05916e9](https://www.github.com/STARTcloud/vagrant-zones/commit/05916e9a89b488e1f5e414e34daebff233765096))
+
 ### [0.1.45](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.44...v0.1.45) (2022-11-23)
 
 
