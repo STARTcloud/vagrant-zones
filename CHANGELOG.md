@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.11](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.10...v0.1.11) (2022-11-23)
+
+
+### Bug Fixes
+
+* login_wait variable ([713097a](https://www.github.com/STARTcloud/vagrant-zones/commit/713097ad0b4677509231bd2ab81a53e0fa8875c5))
+
 ### [0.1.10](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.9...v0.1.10) (2022-11-23)
 
 
