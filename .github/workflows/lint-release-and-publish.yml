@@ -10,15 +10,17 @@ on:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    env:
+      GEM_NAME: "vagrant-zones"
     steps:
       - uses: GoogleCloudPlatform/release-please-action@v2
         id: release
         with:
           release-type: ruby
-          package-name: vagrant-zones
+          package-name: ${{ env.GEM_NAME }}
           bump-minor-pre-major: true
           bump-patch-for-minor-pre-major: true
-          version-file: "lib/vagrant-zones/version.rb"
+          version-file: "lib/${{ env.GEM_NAME }}/version.rb"
 
       # Checkout code if release was created
       - uses: actions/checkout@v2
@@ -41,7 +43,6 @@ jobs:
         run: bundle exec rake
         if: ${{ steps.release.outputs.release_created }}
         
-
       # Publish to GPR
       - name: Publish to GPR
         run: |

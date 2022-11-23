@@ -508,7 +508,6 @@ module VagrantPlugins
         ## Begin of code block to move to Netplan function
         uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic'))
         uii.info("  #{vnic_name}")
-
         netplan1 = %(network:\n  version: 2\n  ethernets:\n    #{vnic_name}:\n      match:\n        macaddress: #{mac}\n)
         netplan2 = %(      dhcp-identifier: mac\n      dhcp4: #{opts[:dhcp4]}\n      dhcp6: #{opts[:dhcp6]}\n)
         netplan3 = %(      set-name: #{vnic_name}\n      addresses: [#{ip}/#{shrtsubnet}]\n      gateway4: #{defrouter}\n)
