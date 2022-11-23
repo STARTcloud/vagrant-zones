@@ -263,7 +263,6 @@ module VagrantPlugins
       def get_ip_address(_function)
         config = @machine.provider_config
         name = @machine.name
-        # uii.info(I18n.t('vagrant_zones.get_ip_address')) if config.debug
         @machine.config.vm.networks.each do |_adaptertype, opts|
           responses = []
           nic_type = nictype(opts)
