@@ -65,7 +65,6 @@ This project is licensed under the AGPL v3 License - see the [LICENSE](LICENSE) 
 * [vagrant-bhyve](https://github.com/jesa7955/vagrant-bhyve) - A Vagrant plugin for FreeBSD to spin up Bhyve Guests.
 * [vagrant-zone](https://github.com/skylime/vagrant-zone) - A Vagrant plugin to spin up LXZones.
 
-
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://www.prominic.net) for details on our code of conduct, and the process for submitting pull requests to us.
