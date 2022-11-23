@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.53](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.52...v0.1.53) (2022-11-23)
+
+
+### Bug Fixes
+
+* lint version Release-As: 0.1.52 ([0cc49af](https://www.github.com/STARTcloud/vagrant-zones/commit/0cc49af0bd705c362f3b17b2d97550664ff28bf6))
+
 ### [0.1.52](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.51...v0.1.52) (2022-11-23)
 
 
