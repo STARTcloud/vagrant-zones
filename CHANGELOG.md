@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.48](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.47...v0.1.48) (2022-11-23)
+
+
+### Bug Fixes
+
+* locale updates ([81b37ad](https://www.github.com/STARTcloud/vagrant-zones/commit/81b37ad54b77a794c62cb4792f1aab6b009fd379))
+
 ### [0.1.47](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.46...v0.1.47) (2022-11-23)
 
 
