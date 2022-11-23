@@ -233,10 +233,10 @@ module VagrantPlugins
       def ipaddress(uii, opts)
         config = @machine.provider_config
         ip = if opts[:ip].empty?
-              nil
-            else
-              opts[:ip].gsub(/\t/, '')
-            end
+               nil
+             else
+               opts[:ip].gsub(/\t/, '')
+             end
         uii.info(I18n.t('vagrant_zones.ipaddress') + ip) if config.debug
         ip
       end
