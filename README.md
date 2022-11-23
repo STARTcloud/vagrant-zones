@@ -45,7 +45,7 @@ Publiched Package locations:
 ### Setup vagrant-zones
 
  To install it in a standard vagrant environment:
- 
+
  `vagrant plugin install vagrant-zones`
 
 ## Contributing
