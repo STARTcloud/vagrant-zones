@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.49](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.48...v0.1.49) (2022-11-23)
+
+
+### Bug Fixes
+
+* remove old config ([f2193fd](https://www.github.com/STARTcloud/vagrant-zones/commit/f2193fd50e9099f7577f5aac6cda6a7ab367bfa3))
+
 ### [0.1.48](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.47...v0.1.48) (2022-11-23)
 
 
