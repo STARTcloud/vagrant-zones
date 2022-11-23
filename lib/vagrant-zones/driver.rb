@@ -211,13 +211,9 @@ module VagrantPlugins
       end
 
       # This Sanitizes the DNS Records
-      def dnsservers(uii)
-        config = @machine.provider_config
-        servers = []
-        config.dns.each do |server|
-          servers.append(server)
-        end
-        servers = [{ 'nameserver' => '1.1.1.1' }, { 'nameserver' => '8.8.8.8' }] if config.dns.nil?
+      def dnsservers(uii, opts)
+        servers = opts['dns']
+        servers = [{ 'nameserver' => '1.1.1.1' }, { 'nameserver' => '8.8.8.8' }] if opts['dns'].nil?
         uii.info(I18n.t('vagrant_zones.nsservers') + servers.to_s) if config.debug
         servers
       end
@@ -270,7 +266,7 @@ module VagrantPlugins
         @machine.config.vm.networks.each do |_adaptertype, opts|
           responses = []
           nic_type = nictype(opts)
-          if opts[:dhcp] && opts[:managed]
+          if opts[:dhcp4] && opts[:managed]
             vnic_name = "vnic#{nic_type}#{vtype(uii)}_#{config.partition_id}_#{opts[:nic_number]}"
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
               command = "ip -4 addr show dev #{vnic_name} | head -n -1 | tail -1 | awk '{ print $2 }' | cut -f1 -d\"/\" \n"
@@ -291,7 +287,7 @@ module VagrantPlugins
               end
               Process.kill('HUP', pid)
             end
-          elsif (opts[:dhcp] == false || opts[:dhcp].nil?) && opts[:managed]
+          elsif (opts[:dhcp4] == false || opts[:dhcp4].nil?) && opts[:managed]
             ip = opts[:ip].to_s
             return nil if ip.empty?
 
@@ -508,13 +504,13 @@ module VagrantPlugins
         defrouter = opts[:gateway].to_s
         vnic_name = vname(uii, opts)
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
-        servers = dnsservers(uii)
+        servers = dnsservers(uii, opts)
         ## Begin of code block to move to Netplan function
         uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic'))
         uii.info("  #{vnic_name}")
 
         netplan1 = %(network:\n  version: 2\n  ethernets:\n    #{vnic_name}:\n      match:\n        macaddress: #{mac}\n)
-        netplan2 = %(      dhcp-identifier: mac\n      dhcp4: #{opts[:dhcp]}\n      dhcp6: #{opts[:dhcp6]}\n)
+        netplan2 = %(      dhcp-identifier: mac\n      dhcp4: #{opts[:dhcp4]}\n      dhcp6: #{opts[:dhcp6]}\n)
         netplan3 = %(      set-name: #{vnic_name}\n      addresses: [#{ip}/#{shrtsubnet}]\n      gateway4: #{defrouter}\n)
         netplan4 = %(      nameservers:\n        addresses: [#{servers[0]['nameserver']} , #{servers[1]['nameserver']}] )
         netplan = netplan1 + netplan2 + netplan3 + netplan4
@@ -533,7 +529,7 @@ module VagrantPlugins
         defrouter = opts[:gateway].to_s
         vnic_name = vname(uii, opts)
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
-        servers = dnsservers(uii)
+        servers = dnsservers(uii, opts)
         uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic_dladm'))
         uii.info("  #{vnic_name}")
 
@@ -1065,13 +1061,13 @@ module VagrantPlugins
         zlogin(uii, 'rm -rf /etc/netplan/*.yaml')
         ip = ipaddress(uii, opts)
         vnic_name = vname(uii, opts)
-        servers = dnsservers(uii)
+        servers = dnsservers(uii, opts)
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
         defrouter = opts[:gateway].to_s
         uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic'))
         uii.info("  #{vnic_name}")
         netplan1 = %(network:\n  version: 2\n  ethernets:\n    #{vnic_name}:\n      match:\n        macaddress: #{mac}\n)
-        netplan2 = %(      dhcp-identifier: mac\n      dhcp4: #{opts[:dhcp]}\n      dhcp6: #{opts[:dhcp6]}\n)
+        netplan2 = %(      dhcp-identifier: mac\n      dhcp4: #{opts[:dhcp4]}\n      dhcp6: #{opts[:dhcp6]}\n)
         netplan3 = %(      set-name: #{vnic_name}\n      addresses: [#{ip}/#{shrtsubnet}]\n      gateway4: #{defrouter}\n)
         netplan4 = %(      nameservers:\n        addresses: [#{servers[0]['nameserver']} , #{servers[1]['nameserver']}] )
         netplan = netplan1 + netplan2 + netplan3 + netplan4
@@ -1179,20 +1175,20 @@ module VagrantPlugins
             if zlogin_read.expect(/#{alcheck}/)
               uii.info(I18n.t('vagrant_zones.automated-zlogin-user'))
               zlogin_write.printf("#{user(@machine)}\n")
-              sleep(5)
+              sleep(config.login_wait)
             end
 
             if zlogin_read.expect(/#{pcheck}/)
               uii.info(I18n.t('vagrant_zones.automated-zlogin-pass'))
               zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
-              sleep(10)
+              sleep(config.login_wait)
             end
 
             zlogin_write.printf("\n")
             if zlogin_read.expect(/#{lcheck}/)
               uii.info(I18n.t('vagrant_zones.automated-zlogin-root'))
               zlogin_write.printf("sudo su\n")
-              sleep(10)
+              sleep(config.login_wait)
               Process.kill('HUP', pid)
             end
           end
@@ -1256,7 +1252,7 @@ module VagrantPlugins
       def zoneniczloginsetup_windows(uii, opts, _mac)
         ip = ipaddress(uii, opts)
         vnic_name = vname(uii, opts)
-        servers = dnsservers(uii)
+        servers = dnsservers(uii, opts)
         defrouter = opts[:gateway].to_s
         uii.info(I18n.t('vagrant_zones.configure_win_interface_using_vnic'))
         sleep(60)
