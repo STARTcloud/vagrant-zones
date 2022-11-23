@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.1.49](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.48...v0.1.49) (2022-11-23)
+
+
+### Bug Fixes
+
+* change default number of cores ([7cc9f65](https://www.github.com/STARTcloud/vagrant-zones/commit/7cc9f652bbcf0e6048cad7f770024c956306bbfc))
+* remove old config ([f2193fd](https://www.github.com/STARTcloud/vagrant-zones/commit/f2193fd50e9099f7577f5aac6cda6a7ab367bfa3))
+
 ### [0.1.48](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.47...v0.1.48) (2022-11-23)
 
 
