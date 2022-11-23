@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.10](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.9...v0.1.10) (2022-11-23)
+
+
+### Bug Fixes
+
+* dns entries ([7cf0246](https://www.github.com/STARTcloud/vagrant-zones/commit/7cf024664f1bcb222c07b30832ae7da91451a482))
+
 ### [0.1.9](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.8...v0.1.9) (2022-11-05)
 
 
