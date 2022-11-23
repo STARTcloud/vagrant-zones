@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.42](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.41...v0.1.42) (2022-11-23)
+
+
+### Bug Fixes
+
+* missing config var ([19ad3b1](https://www.github.com/STARTcloud/vagrant-zones/commit/19ad3b1b1699f638443ed2bec27f925bcb957fdc))
+
 ### [0.1.12](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.11...v0.1.12) (2022-11-23)
 
 
