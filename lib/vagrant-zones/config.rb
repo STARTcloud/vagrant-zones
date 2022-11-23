@@ -51,7 +51,6 @@ module VagrantPlugins
         @setup_wait = 90
         @box = UNSET_VALUE
         @clean_shutdown_time = 300
-        @dns = [{ 'nameserver' => '1.1.1.1' }, { 'nameserver' => '1.0.0.1' }]
         @vmtype = 'production'
         @partition_id = '0000'
         @sshport = '22'
