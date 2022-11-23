@@ -61,7 +61,7 @@ module VagrantPlugins
         @vagrant_user_private_key_path = './id_rsa'
         @xhci_enabled = 'off'
         @override = false
-        @login_wait = 4
+        @login_wait = 5
         @cloud_init_enabled = false
         @cloud_init_conf = 'on'
         @cloud_init_dnsdomain = nil
