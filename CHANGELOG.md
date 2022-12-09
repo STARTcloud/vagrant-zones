@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.56](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.55...v0.1.56) (2022-12-09)
+
+
+### Bug Fixes
+
+* allow empty gateways ([302e495](https://www.github.com/STARTcloud/vagrant-zones/commit/302e495edc7a786182122e74ea43b2eeb94a7c9e))
+
 ### [0.1.55](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.54...v0.1.55) (2022-11-23)
 
 
