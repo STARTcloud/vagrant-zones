@@ -16,6 +16,8 @@ en:
         Invalid bhyve configuration detected
       console_failed: |-
         Failed to access console
+      console_failed: |-
+        Failed to apply the netplan configuration inside the VM
       console_failed_exit: |-
         Exiting
       execute_error: |-
