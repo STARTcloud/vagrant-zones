@@ -98,7 +98,6 @@ en:
       - Stale Netplan configurations removed 
     netplan_applied_static: |-
       - Set static Netplan configurations:
-        
     console_failednetplan: |-
       Netplan configurations failed  
     lx_zone_dataset: |-
