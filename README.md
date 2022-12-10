@@ -29,7 +29,7 @@ This project is still in the early stages, any feedback is much appreciated
 
 ## Installation
 
-Publiched Package locations:
+Published Package locations:
 - [rubygems.org](https://rubygems.org/gems/vagrant-zones).
 - [github.com](../../packages)
 
