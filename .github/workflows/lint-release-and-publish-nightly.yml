@@ -11,16 +11,17 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     env:
-      GEM_NAME: "vagrant-zones-nightly"
+      GEM_NAME: "vagrant-zones"
     steps:
       - uses: google-github-actions/release-please-action@v3
         id: release
         with:
           release-type: ruby
-          package-name: ${{ env.GEM_NAME }}
+          package-name: "${{ env.GEM_NAME }}-nightly"
           bump-minor-pre-major: true
           bump-patch-for-minor-pre-major: true
           version-file: "lib/${{ env.GEM_NAME }}/version.rb"
+          default-branch: nightly
 
       # Checkout code if release was created
       - uses: actions/checkout@v2
