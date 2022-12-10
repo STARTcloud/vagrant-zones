@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.58](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.57...v0.1.58) (2022-12-10)
+
+
+### Bug Fixes
+
+* nightly name change ([61651be](https://github.com/STARTcloud/vagrant-zones/commit/61651beda39abd35a23815795f7d5d316b281b9a))
+
 ## [0.1.57](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.56...v0.1.57) (2022-12-10)
 
 
