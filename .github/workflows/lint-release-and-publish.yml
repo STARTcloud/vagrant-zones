@@ -20,7 +20,7 @@ jobs:
           package-name: ${{ env.GEM_NAME }}
           bump-minor-pre-major: true
           bump-patch-for-minor-pre-major: true
-          version-file: "lib/${{ env.GEM_NAME }}/version.rb"
+          version-file: lib/${{ env.GEM_NAME }}/version.rb
 
       # Checkout code if release was created
       - uses: actions/checkout@v2
