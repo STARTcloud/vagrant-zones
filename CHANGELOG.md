@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.57](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.56...v0.1.57) (2022-12-10)
+
+
+### Bug Fixes
+
+* auto-release bump version ([ab58359](https://github.com/STARTcloud/vagrant-zones/commit/ab583598441d8ea67c02c8451374a5e17bf1935e))
+* Auto-release versioning ([4e6be46](https://github.com/STARTcloud/vagrant-zones/commit/4e6be46b391a23a723cbc89bf4b168806c324cde))
+* change release please ([c4917ee](https://github.com/STARTcloud/vagrant-zones/commit/c4917eea2de15ada963df92057696b1d82f63727))
+* freeze lint warning ([bed2db3](https://github.com/STARTcloud/vagrant-zones/commit/bed2db3cee437cc14d33a382adb6b09c23a799d4))
+* really really fix the lint warning ([c7c73cb](https://github.com/STARTcloud/vagrant-zones/commit/c7c73cb350db3ff35d0641dd800daf2fa3620433))
+* Release Version Update ([f6ad1d5](https://github.com/STARTcloud/vagrant-zones/commit/f6ad1d5705eb3ea0d91677e24996e8719d19837b))
+* version autoupdate ([15b3a3c](https://github.com/STARTcloud/vagrant-zones/commit/15b3a3c5a3ffdcf91ecd6cf8a38f2baa07283077))
+* versioning ([5763ff2](https://github.com/STARTcloud/vagrant-zones/commit/5763ff2f6ef9ec3993b680ec3bec10128feaf2e1))
+
 ### [0.1.56](https://www.github.com/STARTcloud/vagrant-zones/compare/v0.1.55...v0.1.56) (2022-12-09)
 
 
