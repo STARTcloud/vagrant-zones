@@ -74,8 +74,7 @@ This project is licensed under the AGPL v3 License - see the [LICENSE](LICENSE) 
 Please read [CONTRIBUTING.md](https://www.prominic.net) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Authors
-* **Thomas Merkel** - *Initial work* - [Skylime](https://github.com/skylime)
-* **Mark Gilbert** - *Takeover* - [Makr91](https://github.com/Makr91)
+* **Mark Gilbert** - [Makr91](https://github.com/Makr91)
 
 See also the list of [contributors](../../graphs/contributors) who participated in this project.
 
