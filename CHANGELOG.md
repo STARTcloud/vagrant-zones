@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.58](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.57...v0.1.58) (2022-12-10)
+
+
+### Bug Fixes
+
+* default branch ([b8593dd](https://github.com/STARTcloud/vagrant-zones/commit/b8593dd0b4b758ac6884b54eb58c190c41b17359))
+* include nightly releases ([d098644](https://github.com/STARTcloud/vagrant-zones/commit/d0986443f42ce21a8384dd7672c4c14a897954e2))
+* nightly releases ([95ab672](https://github.com/STARTcloud/vagrant-zones/commit/95ab672ce0a3434c624072dc5e2c37935fb0f89d))
+
 ## [0.1.57](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.56...v0.1.57) (2022-12-10)
 
 
