@@ -23,7 +23,6 @@ jobs:
           version-file: "lib/${{ env.GEM_NAME }}/version.rb"
           default-branch: nightly
           pre-release: nightly
-          
 
       # Checkout code if release was created
       - uses: actions/checkout@v2
