@@ -1,5 +1,5 @@
 module VagrantPlugins
   module ProviderZone
-    VERSION = "0.1.56"
+    VERSION = '0.1.56'.freeze
   end
 end
