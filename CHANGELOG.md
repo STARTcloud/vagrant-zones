@@ -5,6 +5,15 @@
 
 ### Bug Fixes
 
+* fix nightly releases ([412e83c](https://github.com/STARTcloud/vagrant-zones/commit/412e83c3ace423a3d489f2b55c9e839692eba18a))
+* nightly name change ([61651be](https://github.com/STARTcloud/vagrant-zones/commit/61651beda39abd35a23815795f7d5d316b281b9a))
+* version bump ([49861ab](https://github.com/STARTcloud/vagrant-zones/commit/49861ab088bd3c375c7e56c09807b37c97ebef51))
+
+## [0.1.58](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.57...v0.1.58) (2022-12-10)
+
+
+### Bug Fixes
+
 * nightly name change ([61651be](https://github.com/STARTcloud/vagrant-zones/commit/61651beda39abd35a23815795f7d5d316b281b9a))
 
 ## [0.1.57](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.56...v0.1.57) (2022-12-10)
