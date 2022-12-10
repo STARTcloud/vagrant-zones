@@ -76,6 +76,5 @@ Feature: vagrant-zones
     When I run `bundle exec vagrant status`
     Then the output should contain "not created"
     
-  
   Scenario: provides access to console
     When I run `bundle exec vagrant zone console zlogin`
