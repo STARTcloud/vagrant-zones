@@ -1,5 +1,80 @@
 # Changelog
 
+## [0.1.60](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.60...v0.1.60) (2022-12-10)
+
+
+### Features
+
+* Ruby 3 and remove Nokogiri dep ([500dc87](https://github.com/STARTcloud/vagrant-zones/commit/500dc87201c4f20227565134aa6acb196abb12a5))
+
+
+### Bug Fixes
+
+* allow empty gateways ([302e495](https://github.com/STARTcloud/vagrant-zones/commit/302e495edc7a786182122e74ea43b2eeb94a7c9e))
+* another version test ([d055193](https://github.com/STARTcloud/vagrant-zones/commit/d05519301b8db5e9091a167d2427670318147ad1))
+* auto-release bump version ([ab58359](https://github.com/STARTcloud/vagrant-zones/commit/ab583598441d8ea67c02c8451374a5e17bf1935e))
+* Auto-release versioning ([4e6be46](https://github.com/STARTcloud/vagrant-zones/commit/4e6be46b391a23a723cbc89bf4b168806c324cde))
+* bump version ([57a3030](https://github.com/STARTcloud/vagrant-zones/commit/57a3030115889a40aaf351a2eb5edecce64d5117))
+* bundler ([912d3e1](https://github.com/STARTcloud/vagrant-zones/commit/912d3e1211ffcd79dd75dabe6e8b6a61a4752ea0))
+* change default number of cores ([7cc9f65](https://github.com/STARTcloud/vagrant-zones/commit/7cc9f652bbcf0e6048cad7f770024c956306bbfc))
+* change release please ([c4917ee](https://github.com/STARTcloud/vagrant-zones/commit/c4917eea2de15ada963df92057696b1d82f63727))
+* changelog ([ecb9fb5](https://github.com/STARTcloud/vagrant-zones/commit/ecb9fb543ef0a967dee901ad1ca473c5b5db0660))
+* comments ([20e0f5d](https://github.com/STARTcloud/vagrant-zones/commit/20e0f5df2b7dc10ca3ffa00260b84293a5efa6eb))
+* dns entries ([7cf0246](https://github.com/STARTcloud/vagrant-zones/commit/7cf024664f1bcb222c07b30832ae7da91451a482))
+* fix nightly releases ([412e83c](https://github.com/STARTcloud/vagrant-zones/commit/412e83c3ace423a3d489f2b55c9e839692eba18a))
+* freeze lint warning ([bed2db3](https://github.com/STARTcloud/vagrant-zones/commit/bed2db3cee437cc14d33a382adb6b09c23a799d4))
+* lint version Release-As: 0.1.52 ([0cc49af](https://github.com/STARTcloud/vagrant-zones/commit/0cc49af0bd705c362f3b17b2d97550664ff28bf6))
+* locale updates ([81b37ad](https://github.com/STARTcloud/vagrant-zones/commit/81b37ad54b77a794c62cb4792f1aab6b009fd379))
+* login_wait variable ([713097a](https://github.com/STARTcloud/vagrant-zones/commit/713097ad0b4677509231bd2ab81a53e0fa8875c5))
+* missing config var ([19ad3b1](https://github.com/STARTcloud/vagrant-zones/commit/19ad3b1b1699f638443ed2bec27f925bcb957fdc))
+* nameserverscloudinit ([506a8c6](https://github.com/STARTcloud/vagrant-zones/commit/506a8c69976a03efcc9f62388bbebfdabc870942))
+* nightly name change ([61651be](https://github.com/STARTcloud/vagrant-zones/commit/61651beda39abd35a23815795f7d5d316b281b9a))
+* nightly releases ([8dc910c](https://github.com/STARTcloud/vagrant-zones/commit/8dc910c885f17bc07e6380b4952187e46e5e9795))
+* nightly releases ([59020b6](https://github.com/STARTcloud/vagrant-zones/commit/59020b6a06c083bc12919541d54321ee8a72822a))
+* nightly version ([5230663](https://github.com/STARTcloud/vagrant-zones/commit/523066328fdaf44426b1f14c8e771e6e7bfe8d13))
+* nightly versioning ([e0009bb](https://github.com/STARTcloud/vagrant-zones/commit/e0009bb3b7ec324308aa53e59719197a76f97ff7))
+* readme ([ed68af8](https://github.com/STARTcloud/vagrant-zones/commit/ed68af8d49b5782a3a69ab8ab99fbbe0ed821f41))
+* really really fix the lint warning ([c7c73cb](https://github.com/STARTcloud/vagrant-zones/commit/c7c73cb350db3ff35d0641dd800daf2fa3620433))
+* release 0.1.42 ([3406cc3](https://github.com/STARTcloud/vagrant-zones/commit/3406cc31ffe06ae118a3392cc1999a9f486ce4bb))
+* release 0.1.52 ([9481021](https://github.com/STARTcloud/vagrant-zones/commit/948102146752274be1c3b37d66b465517197ea77))
+* Release Version Update ([f6ad1d5](https://github.com/STARTcloud/vagrant-zones/commit/f6ad1d5705eb3ea0d91677e24996e8719d19837b))
+* remove old config ([f2193fd](https://github.com/STARTcloud/vagrant-zones/commit/f2193fd50e9099f7577f5aac6cda6a7ab367bfa3))
+* remove space teset version change ([fa4c968](https://github.com/STARTcloud/vagrant-zones/commit/fa4c96844100cbda066688d5ea40543b7cea28f0))
+* remove unneeded line ([05916e9](https://github.com/STARTcloud/vagrant-zones/commit/05916e9a89b488e1f5e414e34daebff233765096))
+* space ([2b22f87](https://github.com/STARTcloud/vagrant-zones/commit/2b22f87e8dc087bc022a8fb633402ef986984924))
+* spacing ([0b187e5](https://github.com/STARTcloud/vagrant-zones/commit/0b187e549aea50e8e8b9558f8a39cd228b7580bb))
+* spacing ([eee020e](https://github.com/STARTcloud/vagrant-zones/commit/eee020edbca4d911c9d6c8e600ebd116c1034b68))
+* spacing ([98a3e28](https://github.com/STARTcloud/vagrant-zones/commit/98a3e28f9497765841ed649fc9711e1aa44bd752))
+* Update to Beta Release ([197357d](https://github.com/STARTcloud/vagrant-zones/commit/197357d4941e75ff4fb9b939b4f417fb1efd9c99))
+* Update version ([411cce3](https://github.com/STARTcloud/vagrant-zones/commit/411cce31d2221a2759cca75d579a81929dedc80c))
+* version ([4193d0f](https://github.com/STARTcloud/vagrant-zones/commit/4193d0fa60d2a15658bae775326391b96d8e2ee0))
+* version ([fcfeaeb](https://github.com/STARTcloud/vagrant-zones/commit/fcfeaebc7a777ae89944d0ee42ef6a92a14a0f9d))
+* version ([7594be6](https://github.com/STARTcloud/vagrant-zones/commit/7594be69cf137e3504c5de0d7f12589441bf8444))
+* version ([18ecccf](https://github.com/STARTcloud/vagrant-zones/commit/18ecccf75703819390479e169a86b2908b65a34a))
+* version ([78395ae](https://github.com/STARTcloud/vagrant-zones/commit/78395ae01b2c97b9c1fd8e2c031e702191740a8f))
+* version ([d37daf3](https://github.com/STARTcloud/vagrant-zones/commit/d37daf33a7bceb724d9bb9e1669072005b131974))
+* version 0 ([a56eb21](https://github.com/STARTcloud/vagrant-zones/commit/a56eb211484f04b6810459d044bddf4ba80f4f07))
+* version 0.1.51 ([6744ad5](https://github.com/STARTcloud/vagrant-zones/commit/6744ad56c6649e168a8d78a4d2f8e4e646096020))
+* version 0.1.52 Release-As: 0.1.52 ([8ce8000](https://github.com/STARTcloud/vagrant-zones/commit/8ce8000af3eb19e71d9723aab740ff683b76f778))
+* version autoupdate ([15b3a3c](https://github.com/STARTcloud/vagrant-zones/commit/15b3a3c5a3ffdcf91ecd6cf8a38f2baa07283077))
+* version bump ([49861ab](https://github.com/STARTcloud/vagrant-zones/commit/49861ab088bd3c375c7e56c09807b37c97ebef51))
+* version fix ([5fa814e](https://github.com/STARTcloud/vagrant-zones/commit/5fa814eac5006344845616e065d49b68ba67326c))
+* version Release-As: 0.1.53 ([53a9aa7](https://github.com/STARTcloud/vagrant-zones/commit/53a9aa7a87e5c52ec266249196d462f997fb9969))
+* version update failed ([0ff3ba8](https://github.com/STARTcloud/vagrant-zones/commit/0ff3ba81a8dce0ec5784c937f784e25164589c93))
+* versioning ([b47833b](https://github.com/STARTcloud/vagrant-zones/commit/b47833b6cddd3448708d16dc1398e155eb1c8957))
+* versioning ([b8354b2](https://github.com/STARTcloud/vagrant-zones/commit/b8354b255cfd747e6f1f80b6b29ec580eee13bd7))
+* versioning ([5763ff2](https://github.com/STARTcloud/vagrant-zones/commit/5763ff2f6ef9ec3993b680ec3bec10128feaf2e1))
+
+
+### Miscellaneous Chores
+
+* release 0.1.42 ([c00b59e](https://github.com/STARTcloud/vagrant-zones/commit/c00b59eb1ea8dab45dba563f080d9142835da5ee))
+* release 0.1.42 ([db51149](https://github.com/STARTcloud/vagrant-zones/commit/db51149ead492a9efda32e1cbdd507b7a16937e4))
+* release 0.1.49 ([#71](https://github.com/STARTcloud/vagrant-zones/issues/71)) ([fbcaa0e](https://github.com/STARTcloud/vagrant-zones/commit/fbcaa0ee896860f7269f91a7fb79e27dfaece611))
+* release 0.1.50 ([#72](https://github.com/STARTcloud/vagrant-zones/issues/72)) ([9b07788](https://github.com/STARTcloud/vagrant-zones/commit/9b077885c2781d1d5cf590ee2e0926ee2d1edec5))
+* release 0.1.51 ([#73](https://github.com/STARTcloud/vagrant-zones/issues/73)) ([6271a76](https://github.com/STARTcloud/vagrant-zones/commit/6271a76396e2ead1496034f07f8e51f1389c1f9f))
+* release 0.1.60 ([59a4f7d](https://github.com/STARTcloud/vagrant-zones/commit/59a4f7da187cab768a60d808d96aed03e5d670d9))
+
 ## [0.1.60](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.51...v0.1.60) (2022-12-10)
 
 
