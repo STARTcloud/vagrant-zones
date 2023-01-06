@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.63](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.62...v0.1.63) (2023-01-06)
+
+
+### Bug Fixes
+
+* fubylint ([bcb4e5b](https://github.com/STARTcloud/vagrant-zones/commit/bcb4e5bf6a1a74e773c0757f19531bd739b83676))
+* get_ipaddress ([4d59a77](https://github.com/STARTcloud/vagrant-zones/commit/4d59a77c7b837259d2c843ddfff81a0442a62f6e))
+* get_ipaddress ([267aea5](https://github.com/STARTcloud/vagrant-zones/commit/267aea5f96be8ed443e5dbe8751fe0e3f7a54261))
+* ruby lint ([4b82529](https://github.com/STARTcloud/vagrant-zones/commit/4b82529df3e2d76f60e7f480c3226a3667081117))
+
 ## [0.1.62](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.61...v0.1.62) (2023-01-06)
 
 
