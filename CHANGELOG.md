@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.62](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.61...v0.1.62) (2023-01-06)
+
+
+### Bug Fixes
+
+* dhcp natnic ([e0f584d](https://github.com/STARTcloud/vagrant-zones/commit/e0f584d4cd85dd84aeb4a192d9d99d12cb993051))
+* ruby lint ([718c209](https://github.com/STARTcloud/vagrant-zones/commit/718c2096d2ac37a44a92234901ca7a73664cd088))
+* trailing whitespace ([e1226d1](https://github.com/STARTcloud/vagrant-zones/commit/e1226d172fd637c26cb47d1c606deae4fd7eef89))
+
 ## [0.1.61](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.60...v0.1.61) (2022-12-10)
 
 
