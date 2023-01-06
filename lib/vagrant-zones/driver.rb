@@ -177,8 +177,7 @@ module VagrantPlugins
       end
 
       # This filters the VM usage for VNIC Naming Purposes
-      def vtype(_uii)
-        config = @machine.provider_config
+      def vtype(config)
         case config.vm_type
         when /template/
           '1'
@@ -253,7 +252,7 @@ module VagrantPlugins
       # This Sanitizes the VNIC Name
       def vname(uii, opts)
         config = @machine.provider_config
-        vnic_name = "vnic#{nictype(opts)}#{vtype(uii)}_#{config.partition_id}_#{opts[:nic_number]}"
+        vnic_name = "vnic#{nictype(opts)}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
         uii.info(I18n.t('vagrant_zones.vnic_name') + vnic_name) if config.debug
         vnic_name
       end
@@ -266,7 +265,7 @@ module VagrantPlugins
           responses = []
           nic_type = nictype(opts)
           if opts[:dhcp4] && opts[:managed]
-            vnic_name = "vnic#{nic_type}#{vtype}_#{config.partition_id}_#{opts[:nic_number]}"
+            vnic_name = "vnic#{nic_type}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
               command = "ip -4 addr show dev #{vnic_name} | head -n -1 | tail -1 | awk '{ print $2 }' | cut -f1 -d\"/\" \n"
               zlogin_read.expect(/\n/) { zlogin_write.printf(command) }
