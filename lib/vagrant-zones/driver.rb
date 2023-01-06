@@ -98,7 +98,7 @@ module VagrantPlugins
       ## Run commands over SSH instead of ZLogin
       def ssh_run_command(uii, command)
         config = @machine.provider_config
-        ip = get_ip_address('runsshcommmand')
+        ip = get_ip_address(uii, 'runsshcommmand')
         user = user(@machine)
         key = userprivatekeypath(@machine).to_s
         port = sshport(@machine).to_s
@@ -260,7 +260,7 @@ module VagrantPlugins
       end
 
       ## If DHCP and Zlogin, get the IP address
-      def get_ip_address(_function)
+      def get_ip_address(uii, _function)
         config = @machine.provider_config
         name = @machine.name
         @machine.config.vm.networks.each do |_adaptertype, opts|
