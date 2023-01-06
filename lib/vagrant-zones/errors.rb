@@ -15,7 +15,7 @@ module VagrantPlugins
         error_key(:system_version_too_low)
       end
 
-      # Compatability Check Tool 
+      # Compatability Check Tool
       class MissingCompatCheckTool < VagrantZonesError
         error_key(:missing_compatability_check_tool)
       end
