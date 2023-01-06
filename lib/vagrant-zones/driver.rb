@@ -98,7 +98,7 @@ module VagrantPlugins
       ## Run commands over SSH instead of ZLogin
       def ssh_run_command(uii, command)
         config = @machine.provider_config
-        ip = get_ip_address(uii, 'runsshcommmand')
+        ip = get_ip_address('runsshcommmand')
         user = user(@machine)
         key = userprivatekeypath(@machine).to_s
         port = sshport(@machine).to_s
@@ -177,9 +177,8 @@ module VagrantPlugins
       end
 
       # This filters the VM usage for VNIC Naming Purposes
-      def vtype(uii)
+      def vtype(_uii)
         config = @machine.provider_config
-        uii.info(I18n.t('vagrant_zones.vtype')) if config.debug
         case config.vm_type
         when /template/
           '1'
@@ -260,7 +259,7 @@ module VagrantPlugins
       end
 
       ## If DHCP and Zlogin, get the IP address
-      def get_ip_address(uii, _function)
+      def get_ip_address(_function)
         config = @machine.provider_config
         name = @machine.name
         @machine.config.vm.networks.each do |_adaptertype, opts|
