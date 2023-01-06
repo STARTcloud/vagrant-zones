@@ -279,7 +279,7 @@ module VagrantPlugins
 
                     break
                   end
-                  errormessage = "==> #{name} ==> Command ==> #{cmd} \nFailed with ==> #{responses[-1]}"
+                  errormessage = "==> #{name} ==> Command ==> #{command} \nFailed with ==> #{responses[-1]}"
                   raise errormessage if responses[-1].to_s.match(/Error Code: \b(?!0\b)\d{1,4}\b/)
                 end
               end
