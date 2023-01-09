@@ -1054,7 +1054,7 @@ module VagrantPlugins
 
       ## This setups the Netplan based OS Networking via Zlogin
       def zoneniczloginsetup_netplan(uii, opts, mac)
-        zlogin(uii, 'rm -rf /etc/netplan/*.yaml') if opts[:nic_number] == 0
+        zlogin(uii, 'rm -rf /etc/netplan/*.yaml') if opts[:nic_number].zero?
         ip = ipaddress(uii, opts)
         vnic_name = vname(uii, opts)
         servers = dnsservers(uii, opts)
