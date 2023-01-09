@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.66](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.65...v0.1.66) (2023-01-09)
+
+
+### Bug Fixes
+
+* a second time ([e806bd6](https://github.com/STARTcloud/vagrant-zones/commit/e806bd6dfa46d65e349e3fa524d7be579637f874))
+* don't delete other configs after startup ([ff77fff](https://github.com/STARTcloud/vagrant-zones/commit/ff77fffec85507e2278733d3384966597308f934))
+* rubylint ([0da25a2](https://github.com/STARTcloud/vagrant-zones/commit/0da25a23888976e32da494e08debb6057c3ff7e8))
+
 ## [0.1.65](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.64...v0.1.65) (2023-01-06)
 
 
