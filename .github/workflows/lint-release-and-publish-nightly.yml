@@ -9,7 +9,8 @@ on:
 
 jobs:
   release-please:
-    runs-on: ubuntu-latest
+    runs-on: 
+      - self-hosted
     env:
       GEM_NAME: "vagrant-zones"
     steps:
