@@ -4,6 +4,7 @@ Vagrant Plugin which can be used to managed Bhyve, LX and native zones on illumo
 This project is still in the early stages, any feedback is much appreciated
 
 [![Gem Version](https://badge.fury.io/rb/vagrant-zones.svg)](https://badge.fury.io/rb/vagrant-zones)
+[![Test, Lint, Release and Publish](https://github.com/STARTcloud/vagrant-zones/actions/workflows/lint-release-and-publish.yml/badge.svg)](https://github.com/STARTcloud/vagrant-zones/actions/workflows/lint-release-and-publish.yml)
 
 - [Status](#status)
   - [Functions](../../wiki/Status#functions)
