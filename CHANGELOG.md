@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.67](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.66...v0.1.67) (2023-01-15)
+
+
+### Bug Fixes
+
+* run selfhosted! ([7c89787](https://github.com/STARTcloud/vagrant-zones/commit/7c897873ba1d3803f1b1ce453cc4bbd9d8bbe683))
+
 ## [0.1.66](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.65...v0.1.66) (2023-01-09)
 
 
