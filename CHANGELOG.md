@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.69](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.68...v0.1.69) (2023-01-17)
+
+
+### Bug Fixes
+
+* line count ([65edf07](https://github.com/STARTcloud/vagrant-zones/commit/65edf07b210b944d4e41f84686067086dc10b7fb))
+
 ## [0.1.68](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.67...v0.1.68) (2023-01-17)
 
 
