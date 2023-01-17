@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.68](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.67...v0.1.68) (2023-01-17)
+
+
+### Bug Fixes
+
+* packaging ([657b243](https://github.com/STARTcloud/vagrant-zones/commit/657b24334a29265ee1de55b30a051eff178bb568))
+
 ## [0.1.67](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.66...v0.1.67) (2023-01-15)
 
 
