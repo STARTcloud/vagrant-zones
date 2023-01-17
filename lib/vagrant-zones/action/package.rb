@@ -40,9 +40,8 @@ module VagrantPlugins
           Dir.mkdir(tmp_dir)
           datasetpath = "#{@machine.provider_config.boot['array']}/#{@machine.provider_config.boot['dataset']}/#{name}"
           t = Time.new
-          d = '-'
           c = ':'
-          datetime = %(#{t.year}#{d}#{t.month}#{d}#{t.day}#{d}#{t.hour}#{c}#{t.min}#{c}#{t.sec})
+          datetime = %(#{t.year}-#{t.month}-#{t.day}-#{t.hour}#{c}#{t.min}#{c}#{t.sec})
           snapshot_create(datasetpath, datetime, env[:ui], @machine.provider_config)
           snapshot_send(datasetpath, "#{tmp_dir}/box.zss", datetime, env[:ui], @machine.provider_config)
           ## snapshot_delete(datasetpath, env[:ui], datetime)
