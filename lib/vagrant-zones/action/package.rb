@@ -40,8 +40,7 @@ module VagrantPlugins
           Dir.mkdir(tmp_dir)
           datasetpath = "#{@machine.provider_config.boot['array']}/#{@machine.provider_config.boot['dataset']}/#{name}"
           t = Time.new
-          c = ':'
-          datetime = %(#{t.year}-#{t.month}-#{t.day}-#{t.hour}#{c}#{t.min}#{c}#{t.sec})
+          datetime = %(#{t.year}-#{t.month}-#{t.day}-#{t.hour}:#{t.min}:#{t.sec})
           snapshot_create(datasetpath, datetime, env[:ui], @machine.provider_config)
           snapshot_send(datasetpath, "#{tmp_dir}/box.zss", datetime, env[:ui], @machine.provider_config)
           ## snapshot_delete(datasetpath, env[:ui], datetime)
@@ -125,8 +124,9 @@ module VagrantPlugins
         end
 
         def assemble_box(boxname, extra)
-          `tar -cvzf #{boxname} ./metadata.json ./Vagrantfile ./box.zss #{extra}` if `bash -c '[[ "$(uname -a)" =~ "Linux" ]]'`
-          `tar -cvzEf #{boxname} ./metadata.json ./Vagrantfile ./box.zss #{extra}` unless `bash -c '[[ "$(uname -a)" =~ "Linux" ]]'`
+          is_linux = `bash -c '[[ "$(uname -a)" =~ "Linux" ]]'`
+          `tar -cvzf #{boxname} ./metadata.json ./Vagrantfile ./box.zss #{extra}` if is_linux
+          `tar -cvzEf #{boxname} ./metadata.json ./Vagrantfile ./box.zss #{extra}` unless is_linux
         end
       end
     end
