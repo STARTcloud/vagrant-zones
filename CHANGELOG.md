@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.70](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.69...v0.1.70) (2023-01-17)
+
+
+### Bug Fixes
+
+* detect if linux during packaging ([ab9538c](https://github.com/STARTcloud/vagrant-zones/commit/ab9538c70b4bf0d9911e7207bec410da7daf6b0c))
+* random quote ([ef2939a](https://github.com/STARTcloud/vagrant-zones/commit/ef2939a459fc6f170e0f3f0d94cf27cfaf74056e))
+* rubocop literal as condition ([6e25509](https://github.com/STARTcloud/vagrant-zones/commit/6e2550943cc9766683b240c05f8d62fe66035449))
+* rubylint line length ([e8edabb](https://github.com/STARTcloud/vagrant-zones/commit/e8edabbc120f4ba915497d789de768018a0883b7))
+
 ## [0.1.69](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.68...v0.1.69) (2023-01-17)
 
 
