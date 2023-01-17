@@ -126,7 +126,8 @@ module VagrantPlugins
         end
 
         def assemble_box(boxname, extra)
-          `tar -cvzEf "#{boxname}" ./metadata.json ./Vagrantfile ./box.zss #{extra}`
+            `"tar -cvzf #{boxname} ./metadata.json ./Vagrantfile ./box.zss #{extra}` if system('uname -a | grep Linux')
+            `"tar -cvzEf #{boxname} ./metadata.json ./Vagrantfile ./box.zss #{extra}` unless system('uname -a | grep Linux')
         end
       end
     end
