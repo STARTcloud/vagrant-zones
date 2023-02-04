@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.71](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.70...v0.1.71) (2023-02-04)
+
+
+### Bug Fixes
+
+* dhcp netplan ([aaebea7](https://github.com/STARTcloud/vagrant-zones/commit/aaebea7d0794eec2d9ad3f6b8b1e85f7d79f8b5f))
+* lint ([9d9c5e6](https://github.com/STARTcloud/vagrant-zones/commit/9d9c5e625608a697f142458a4ca8d2425c916dfa))
+
 ## [0.1.70](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.69...v0.1.70) (2023-01-17)
 
 
