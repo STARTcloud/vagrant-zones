@@ -275,15 +275,15 @@ module VagrantPlugins
                   responses = []
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
                   p (responses[-1]) if config.debug_boot
-
+                  ip = nil
                   if responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
                     ip = responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures
-                    p ip
-                    return ip.to_s
+                    
+                    return ip.to_s unless ip.empty?
   
                     break
                   end
- 
+                  p ip
                 end
               end
               Process.kill('HUP', pid)
