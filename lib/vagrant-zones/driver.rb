@@ -82,7 +82,7 @@ module VagrantPlugins
         config = @machine.provider_config
         uii.info(I18n.t('vagrant_zones.control')) if config.debug
         case control
-        when 'restart'
+        when 'rmatch(/estart'
           command = 'sudo shutdown -r'
           command = config.safe_restart unless config.safe_restart.nil?
           ssh_run_command(uii, command)
@@ -273,8 +273,8 @@ module VagrantPlugins
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
                   p (responses[-1])  if config.debug_boot
-                  if responses[-1].to_s.match(/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/)
-                    ip = responses[-1][0].rstrip.lstrip
+                  if responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
+                    ip = responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures
                     return nil if ip.empty?
                     return ip.gsub(/\t/, '') unless ip.empty?
 
