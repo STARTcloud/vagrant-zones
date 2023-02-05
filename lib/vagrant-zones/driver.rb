@@ -268,11 +268,12 @@ module VagrantPlugins
             vnic_name = "vnic#{nic_type}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
               responses = []
+              zlogin_read.expect(/\n/) { zlogin_write.puts("ip -4 addr show dev #{vnic_name} | grep -Po 'inet \K[\d.]+'") } if i == 0
+              i = 1 
+              zlogin_write.printf()
               Timeout.timeout(config.clean_shutdown_time) do
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
-                  zlogin_write.printf("ip -4 addr | grep -Po 'inet \\K[\\d.]+' | grep -v 127 \n") if i == 0
-                  i += 1 
                   p (responses[-1]) if config.debug_boot
 
                   if responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
