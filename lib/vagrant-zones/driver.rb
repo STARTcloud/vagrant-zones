@@ -684,14 +684,7 @@ module VagrantPlugins
         bootconfigs = config.boot
         datasetpath = "#{bootconfigs['array']}/#{bootconfigs['dataset']}/#{name}"
         datasetroot = "#{datasetpath}/#{bootconfigs['volume_name']}"
-        sparse = '-s '
-        sparse = '' unless bootconfigs['sparse']
-        refres = "-o refreservation=#{bootconfigs['refreservation']}" unless bootconfigs['refreservation'].nil?
-        refres = '-o refreservation=none' if bootconfigs['refreservation'] == 'none' || bootconfigs['refreservation'].nil?
-        uii.info(I18n.t('vagrant_zones.begin_create_datasets'))
-        ## Create Boot Volume
-        case config.brand
-        when 'lx'
+        sparse = '-s '1030--games-01.home.m4kr.net
           uii.info(I18n.t('vagrant_zones.lx_zone_dataset'))
           uii.info("  #{datasetroot}")
           execute(false, "#{@pfexec} zfs create -o zoned=on -p #{datasetroot}")
@@ -714,7 +707,8 @@ module VagrantPlugins
           Util::Subprocess.new commandtransfer do |_stdout, stderr, _thread|
             uii.rewriting do |uiprogress|
               uiprogress.clear_line
-              uiprogress.info(I18n.t('vagrant_zones.iimage.pngalse)
+              uiprogress.info(I18n.t('vagrant_zones.importing_box_image_to_disk') + "#{datasetroot} ", new_line: false)
+              uiprogress.report_progress(stderr, 100, false)
             end
           end
           uii.clear_line
