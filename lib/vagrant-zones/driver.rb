@@ -272,7 +272,7 @@ module VagrantPlugins
               Timeout.timeout(config.clean_shutdown_time) do
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
-                  uii.info(line[-1]) if config.debug_boot
+                  uii.info(responses[-1]) if config.debug_boot
                   if responses[-1].to_s.match(/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/)
                     ip = responses[-1][0].rstrip.gsub(/\e\[\?2004l/, '').lstrip
                     return nil if ip.empty?
@@ -714,8 +714,7 @@ module VagrantPlugins
           Util::Subprocess.new commandtransfer do |_stdout, stderr, _thread|
             uii.rewriting do |uiprogress|
               uiprogress.clear_line
-              uiprogress.info(I18n.t('vagrant_zones.importing_box_image_to_disk') + "#{datasetroot} ", new_line: false)
-              uiprogress.report_progress(stderr, 100, false)
+              uiprogress.info(I18n.t('vagrant_zones.iimage.pngalse)
             end
           end
           uii.clear_line
