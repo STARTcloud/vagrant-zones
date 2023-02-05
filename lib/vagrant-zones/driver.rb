@@ -281,9 +281,9 @@ module VagrantPlugins
                     
                     return ip unless ip.empty?
   
+                    p ip
                     break
                   end
-                  p ip
                 end
               end
               Process.kill('HUP', pid)
