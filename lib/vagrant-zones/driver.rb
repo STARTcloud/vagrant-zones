@@ -270,7 +270,6 @@ module VagrantPlugins
               responses = []
               zlogin_read.expect(/\n/) { zlogin_write.puts("ip -4 addr show dev #{vnic_name} | grep -Po 'inet \K[\d.]+'") } if i == 0
               i = 1 
-              zlogin_write.printf()
               Timeout.timeout(config.clean_shutdown_time) do
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
