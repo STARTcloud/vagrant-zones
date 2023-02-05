@@ -711,7 +711,7 @@ module VagrantPlugins
           commandtransfer = "#{@pfexec} pv -n #{@machine.box.directory.join('box.zss')} | #{@pfexec} zfs recv -u -v -F #{datasetroot}"
           uii.info(I18n.t('vagrant_zones.template_import_path'))
           uii.info("  #{@machine.box.directory.join('box.zss')}")
-          Util::Subprocess.new commandtransfer do |_stdout, stderrimage.png, _thread|
+          Util::Subprocess.new commandtransfer do |_stdout, stderr, _thread|
             uii.rewriting do |uiprogress|
               uiprogress.clear_line
               uiprogress.info(I18n.t('vagrant_zones.importing_box_image_to_disk') + "#{datasetroot} ", new_line: false)
