@@ -264,6 +264,7 @@ module VagrantPlugins
         i = 0
         @machine.config.vm.networks.each do |_adaptertype, opts|
           nic_type = nictype(opts)
+          responses = []
           if opts[:dhcp4] && opts[:managed]
             vnic_name = "vnic#{nic_type}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
@@ -271,8 +272,7 @@ module VagrantPlugins
               zlogin_read.expect(/\n/) { zlogin_write.puts("ip -4 addr show dev #{vnic_name} | grep -Po 'inet \\K[\\d.]+'") } if i == 0
               i = 1 
               Timeout.timeout(config.clean_shutdown_time) do
-                loop do
-                  responses = []
+                loop do                  
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
                   p (responses[-1]) if config.debug_boot and !responses[-1].empty?
                   if responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
