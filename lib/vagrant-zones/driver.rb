@@ -279,7 +279,7 @@ module VagrantPlugins
                   if responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
                     ip = responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures
                     
-                    return ip.to_s if ip.empty?
+                    return ip unless ip.empty?
   
                     break
                   end
