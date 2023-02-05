@@ -261,6 +261,7 @@ module VagrantPlugins
       def get_ip_address(uii)
         config = @machine.provider_config
         name = @machine.name
+        i = 0
         @machine.config.vm.networks.each do |_adaptertype, opts|
           nic_type = nictype(opts)
           if opts[:dhcp4] && opts[:managed]
@@ -268,13 +269,16 @@ module VagrantPlugins
             command = %(ip -4 addr show dev #{vnic_name} | head -n -1 | tail -1 | awk '{ print $2 }' | cut -f1 -d"/")
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
               responses = []
-              zlogin_read.expect(/\n/) { zlogin_write.puts(command) }
+              zlogin_read.expect(/\n/) { zlogin_write.puts(command) } if i == 0
+              i += 1 
               Timeout.timeout(config.clean_shutdown_time) do
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
                   p (responses[-1])  if config.debug_boot
                   if responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
                     ip = responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures
+                    puts ip
+                    puts ip
                     return nil if ip.empty?
                     return ip unless ip.empty?
 
