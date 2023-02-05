@@ -98,7 +98,7 @@ module VagrantPlugins
       ## Run commands over SSH instead of ZLogin
       def ssh_run_command(uii, command)
         config = @machine.provider_config
-        ip = get_ip_address('runsshcommmand')
+        ip = get_ip_address(uii)
         user = user(@machine)
         key = userprivatekeypath(@machine).to_s
         port = sshport(@machine).to_s
@@ -258,7 +258,7 @@ module VagrantPlugins
       end
 
       ## If DHCP and Zlogin, get the IP address
-      def get_ip_address(_function)
+      def get_ip_address(uii)
         config = @machine.provider_config
         name = @machine.name
         @machine.config.vm.networks.each do |_adaptertype, opts|
@@ -272,6 +272,7 @@ module VagrantPlugins
               Timeout.timeout(config.clean_shutdown_time) do
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
+                  uii.info(line[-1]) if config.debug_boot
                   if responses[-1].to_s.match(/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/)
                     ip = responses[-1][0].rstrip.gsub(/\e\[\?2004l/, '').lstrip
                     return nil if ip.empty?
@@ -710,7 +711,7 @@ module VagrantPlugins
           commandtransfer = "#{@pfexec} pv -n #{@machine.box.directory.join('box.zss')} | #{@pfexec} zfs recv -u -v -F #{datasetroot}"
           uii.info(I18n.t('vagrant_zones.template_import_path'))
           uii.info("  #{@machine.box.directory.join('box.zss')}")
-          Util::Subprocess.new commandtransfer do |_stdout, stderr, _thread|
+          Util::Subprocess.new commandtransfer do |_stdout, stderrimage.png, _thread|
             uii.rewriting do |uiprogress|
               uiprogress.clear_line
               uiprogress.info(I18n.t('vagrant_zones.importing_box_image_to_disk') + "#{datasetroot} ", new_line: false)
