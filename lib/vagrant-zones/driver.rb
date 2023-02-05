@@ -272,7 +272,7 @@ module VagrantPlugins
               Timeout.timeout(config.clean_shutdown_time) do
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
-                  uii.info(responses[-1]) if config.debug_boot
+                  puts (responses[-1])  if config.debug_boot
                   if responses[-1].to_s.match(/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/)
                     ip = responses[-1][0].rstrip.gsub(/\e\[\?2004l/, '').lstrip
                     return nil if ip.empty?
