@@ -265,10 +265,10 @@ module VagrantPlugins
           nic_type = nictype(opts)
           if opts[:dhcp4] && opts[:managed]
             vnic_name = "vnic#{nic_type}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
-            command = %(ip -4 addr show dev #{vnic_name} | head -n -1 | tail -1 | awk '{ print $2 }' | cut -f1 -d"/") + "\n"
+            command = %(ip -4 addr show dev #{vnic_name} | head -n -1 | tail -1 | awk '{ print $2 }' | cut -f1 -d"/")
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
               responses = []
-              zlogin_read.expect(/\n/) { zlogin_write.printf(command) }
+              zlogin_read.expect(/\n/) { zlogin_write.puts(command) }
               Timeout.timeout(config.clean_shutdown_time) do
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
