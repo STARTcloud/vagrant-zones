@@ -271,7 +271,7 @@ module VagrantPlugins
               Timeout.timeout(config.clean_shutdown_time) do
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
-                  zlogin_write.printf("ip -4 addr show dev #{vnic_name} | grep -Po 'inet \\K[\\d.]+' \n") if i == 0
+                  zlogin_write.printf("ip -4 addr | grep -Po 'inet \\K[\\d.]+' | grep -v 127 \n") if i == 0
                   i += 1 
                   p (responses[-1]) if config.debug_boot
 
