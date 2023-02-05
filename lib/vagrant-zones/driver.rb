@@ -262,17 +262,17 @@ module VagrantPlugins
         config = @machine.provider_config
         name = @machine.name
         @machine.config.vm.networks.each do |_adaptertype, opts|
-          responses = []
           nic_type = nictype(opts)
           if opts[:dhcp4] && opts[:managed]
             vnic_name = "vnic#{nic_type}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
+            command = %(ip -4 addr show dev #{vnic_name} | head -n -1 | tail -1 | awk '{ print $2 }' | cut -f1 -d"/") + "\n"
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
-              command = %(ip -4 addr show dev #{vnic_name} | head -n -1 | tail -1 | awk '{ print $2 }' | cut -f1 -d"/") + "\n"
+              responses = []
               zlogin_read.expect(/\n/) { zlogin_write.printf(command) }
               Timeout.timeout(config.clean_shutdown_time) do
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
-                  puts (responses[-1])  if config.debug_boot
+                  printf (responses[-1])  if config.debug_boot
                   if responses[-1].to_s.match(/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/)
                     ip = responses[-1][0].rstrip.lstrip
                     return nil if ip.empty?
