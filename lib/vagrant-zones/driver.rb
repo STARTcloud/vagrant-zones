@@ -276,7 +276,8 @@ module VagrantPlugins
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
                   p (responses[-1]) if config.debug_boot
                   if responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
-                    ip = responses[-1][0].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures
+                    p (responses[-1]) if config.debug_boot
+                    ip = responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures
                     p ip.to_s.lstrip.rstrip
                     return ip unless ip.empty?
   
