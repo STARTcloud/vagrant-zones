@@ -278,7 +278,7 @@ module VagrantPlugins
                   if responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
                     p (responses[-1]) if config.debug_boot
                     ip = responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures
-                    p ip.to_s.lstrip.rstrip
+                    p ip.to_s.lstrip.rstrip unless ip.empty?
                     return ip unless ip.empty?
   
                     
