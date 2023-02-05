@@ -274,18 +274,14 @@ module VagrantPlugins
               Timeout.timeout(config.clean_shutdown_time) do
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| responses.push line }
-                  p (responses[-1])  if config.debug_boot
-                  if responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
-                    ip = responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures
-                    puts ip
-                    puts ip
-                    return nil if ip.empty?
-                    return ip unless ip.empty?
+                  p (responses[-1]) if config.debug_boot
 
-                    break
-                  end
-                  errormessage = "==> #{name} ==> Command ==> #{command} \nFailed with ==> #{responses[-1]}"
-                  raise errormessage if responses[-1].to_s.match(/Error Code: \b(?!0\b)\d{1,4}\b/)
+
+                  ip = responses[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures
+                  return nil if ip.empty?
+                  return ip unless ip.empty?
+
+                  break unless ip.empty?
                 end
               end
               Process.kill('HUP', pid)
