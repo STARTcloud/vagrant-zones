@@ -278,7 +278,7 @@ module VagrantPlugins
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
                   puts (rsp[-1]) if config.debug_boot
-                  zlogin_write.printf("\n") if rsp[-1].to_s.match(/Connected/)
+                  zlogin_write.printf("\n")
                   break if rsp[-1].to_s.match(/#{lcheck}/) || rsp[-1].to_s.match(/#{alcheck}/)
                 end
 
