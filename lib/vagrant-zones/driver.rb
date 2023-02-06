@@ -279,10 +279,9 @@ module VagrantPlugins
                 i = 0
                 logged_in = false
                 loop do
-                  ## Loop for the first few lines to detect if we need to login or not
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
                   puts (rsp[-1]) if config.debug_boot
-                  logged_in = true if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/)
+                  logged_in = true if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/) || rsp[-1].to_s.match(/(# )/)
                   zlogin_write.printf("\r\n") if i < 1
                   i += 1
 
@@ -291,25 +290,31 @@ module VagrantPlugins
 
                 unless logged_in
                   if zlogin_read.expect(/#{Regexp.quote(alcheck)}/)
-                    puts ('Logging in to Console')
+                    puts ('Logging in to Console') if config.debug_boot
                     zlogin_write.printf("#{user(@machine)}\n")
                     sleep(config.login_wait)
                   end
                 
                   if zlogin_read.expect(/#{Regexp.quote(pcheck)}/)                  
-                    puts ('Logging in to Console')
+                    puts ('Logging in to Console') if config.debug_boot
                     zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
                     sleep(config.login_wait)
                   end
 
                   if zlogin_read.expect(/#{Regexp.quote(lcheck)}/)
-                    puts ('Logged In')
+                    puts ('Logged In') if config.debug_boot
                     logged_in = true
                   end
                 end
               
-                puts ('Gathering IP')
+                puts ('Gathering IP') if config.debug_boot
+                loop do
+                  zlogin_read.expect(/\r\n/) { |line| rsp.push line }
+                  puts (rsp[-1]) if config.debug_boot
+                  ip = (rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/))
 
+                  break if rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
+                end
                 Process.kill('HUP', pid)
               end
             end
