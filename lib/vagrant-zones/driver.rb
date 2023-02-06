@@ -266,6 +266,7 @@ module VagrantPlugins
         alcheck = config.alcheck
         alcheck = 'login:' if config.alcheck.nil?
         pcheck = 'Password:'
+  
         @machine.config.vm.networks.each do |_adaptertype, opts|
           ip = nil
           if opts[:dhcp4] && opts[:managed]
@@ -276,25 +277,31 @@ module VagrantPlugins
                 command = "ip -4 addr show dev #{ vnic_name } | grep -Po 'inet \\K[\\d.]+' \r\n"
 
                 i = 0
+                logged_in = false
                 loop do
+                  ## Loop for the first few lines to detect if we need to login or not
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
                   puts (rsp[-1]) if config.debug_boot
-                  zlogin_write.printf("\r\n") if i <= 2
-                  i += 1
+                  zlogin_write.printf("\r\n") if i <= 1
+                  i += 1                  
+                  logged_in = true if rsp[-1].to_s.match(/#{lcheck}/)
+
+                  
                   break if rsp[-1].to_s.match(/#{lcheck}/) || rsp[-1].to_s.match(/#{alcheck}/)
                 end
 
-                p "test"
-                if zlogin_read.expect(/#{alcheck}/)
-                  puts ('Logging in to Console')
-                  zlogin_write.printf("#{user(@machine)}\n")
-                  sleep(config.login_wait)
-                end
-              
-                if zlogin_read.expect(/#{pcheck}/)                  
-                  puts ('Logging in to Console')
-                  zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
-                  sleep(config.login_wait)
+                unless logged_in
+                  if zlogin_read.expect(/#{alcheck}/)
+                    puts ('Logging in to Console')
+                    zlogin_write.printf("#{user(@machine)}\n")
+                    sleep(config.login_wait)
+                  end
+                
+                  if zlogin_read.expect(/#{pcheck}/)                  
+                    puts ('Logging in to Console')
+                    zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
+                    sleep(config.login_wait)
+                  end
                 end
               
                 zlogin_write.printf("\n")
