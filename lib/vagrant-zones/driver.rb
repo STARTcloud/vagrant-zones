@@ -281,7 +281,7 @@ module VagrantPlugins
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
                   puts (rsp[-1]) if config.debug_boot
-                  logged_in = true if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/) || rsp[-1].to_s.match(/(# )/)
+                  logged_in = true if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/) || rsp[-1].to_s.match(/(:~)/)
                   zlogin_write.printf("\r\n") if i < 1
                   i += 1
 
