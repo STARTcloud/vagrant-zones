@@ -301,15 +301,22 @@ module VagrantPlugins
                     zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
                     sleep(config.login_wait)
                   end
+
+                  if zlogin_read.expect(/#{Regexp.quote(lcheck)}/)
+                    puts ('Logged In')
+                    logged_in = true
+                  end
                 end
               
-                zlogin_write.printf("\n")
-                if zlogin_read.expect(/#{Regexp.quote(lcheck)}/)
-                  puts ('Gathering IP')
-                  zlogin_write.printf(command)
-                  ip = (zlogin_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/))
-                  Process.kill('HUP', pid)
+                puts ('Gathering IP')
+                loop do
+                  zlogin_read.expect(/\r\n/) { |line| rsp.push line }
+                  puts (rsp[-1]) if config.debug_boot
+                  ip = (rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/))
+
+                  break if rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
                 end
+                Process.kill('HUP', pid)
               end
             end
             return ip[0] unless ip[0].empty? || ip[0].nil?
