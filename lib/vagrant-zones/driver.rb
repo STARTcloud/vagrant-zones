@@ -271,6 +271,8 @@ module VagrantPlugins
               p (zlogin_read.expect(/\n/))
               ip = (zlogin_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures)
               p ip
+              next if ip.nil?
+              
               return ip unless ip.empty?
               p "test"
               Process.kill('HUP', pid)
