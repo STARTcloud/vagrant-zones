@@ -272,7 +272,7 @@ module VagrantPlugins
               p ip[0] unless ip[0].empty? || ip[0].nil?
 
               return ip[0] unless ip[0].empty? || ip[0].nil?
-
+              p "test"
               Process.kill('HUP', pid)
             end
           elsif (opts[:dhcp4] == false || opts[:dhcp4].nil?) && opts[:managed]
