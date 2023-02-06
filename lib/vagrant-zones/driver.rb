@@ -275,6 +275,12 @@ module VagrantPlugins
                 rsp = []
                 command = "ip -4 addr show dev #{ vnic_name } | grep -Po 'inet \\K[\\d.]+' \r\n"
 
+                loop do
+                  zlogin_read.expect(/\r\n/) { |line| rsp.push line }
+                  puts (rsp[-1]) if config.debug_boot
+                  break if rsp[-1].to_s.match(/#{lcheck}/) || rsp[-1].to_s.match(/#{alcheck}/)
+                end
+
                 if zlogin_read.expect(/#{alcheck}/)
                   puts ('Logging in to Console')
                   zlogin_write.printf("#{user(@machine)}\n")
