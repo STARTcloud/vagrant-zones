@@ -287,8 +287,8 @@ module VagrantPlugins
                   logged_in = true if rsp[-1].to_s.match(/#{lcheck}/)
                   puts lcheck
                   puts alcheck
-                  
-                  break if rsp[-1].to_s.match(/#{lcheck}/) || rsp[-1].to_s.match(/#{alcheck}/)
+                  puts "true" if logged_in
+                  break if rsp[-1].to_s.match(/#{lcheck}/)
                 end
 
                 puts "not logged in" unless logged_in
