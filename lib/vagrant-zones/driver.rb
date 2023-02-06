@@ -266,11 +266,11 @@ module VagrantPlugins
           if opts[:dhcp4] && opts[:managed]
             vnic_name = "vnic#{nictype(opts)}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
-              zlogin_read.expect(/Connected/)
+            p (zlogin_read.expect(/Connected/))
               command = "ip -4 addr show dev vnice3_1030_0 | grep -Po 'inet \\K[\\d.]+' \r\n"
-              zlogin_read.expect(/\n/) { zlogin_write.printf(command) }
-              zlogin_read.expect(/\n/)
-              ip = (zlogin_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures)
+              p (zlogin_read.expect(/\n/) { zlogin_write.printf(command) })
+              p (zlogin_read.expect(/\n/))
+              ip = (zlogin_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/))
               Process.kill('HUP', pid)
             end
             return ip[0] unless ip[0].empty? || ip[0].nil?
