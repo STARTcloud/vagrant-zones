@@ -261,6 +261,11 @@ module VagrantPlugins
       def get_ip_address(uii)
         config = @machine.provider_config
         name = @machine.name
+        lcheck = config.lcheck
+        lcheck = ':~' if config.lcheck.nil?
+        alcheck = config.alcheck
+        alcheck = 'login:' if config.alcheck.nil?
+        pcheck = 'Password:'
         @machine.config.vm.networks.each do |_adaptertype, opts|
           ip = nil
           if opts[:dhcp4] && opts[:managed]
