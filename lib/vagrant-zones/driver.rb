@@ -258,7 +258,7 @@ module VagrantPlugins
       end
 
       ## If DHCP and Zlogin, get the IP address
-      def get_ip_address(uii)
+      def get_ip_address(_uii)
         config = @machine.provider_config
         name = @machine.name
         lcheck = config.lcheck
@@ -274,7 +274,7 @@ module VagrantPlugins
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
               Timeout.timeout(config.setup_wait) do
                 rsp = []
-                command = "ip -4 addr show dev #{ vnic_name } | grep -Po 'inet \\K[\\d.]+' \r\n"
+                command = "ip -4 addr show dev #{vnic_name} | grep -Po 'inet \\K[\\d.]+' \r\n"
                 i = 0
                 logged_in = false
                 loop do
@@ -291,12 +291,12 @@ module VagrantPlugins
                   zlogin_write.printf("#{vagrantuserpass(@machine)}\n") if zlogin_read.expect(/#{Regexp.quote(pcheck)}/)
                   logged_in = true if zlogin_read.expect(/#{Regexp.quote(lcheck)}/)
                 end
-              
-                puts ('Gathering IP') if config.debug_boot
+
+                puts "Gathering IP" if config.debug_boot
                 zlogin_write.printf(command) if logged_in
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
-                  ip = (rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/))
+                  ip = rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
 
                   break if rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
                 end
