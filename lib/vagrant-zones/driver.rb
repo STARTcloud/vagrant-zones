@@ -284,7 +284,7 @@ module VagrantPlugins
                   puts (rsp[-1]) if config.debug_boot
                   logged_in = true if rsp[-1].to_s.match(/#{lcheck}/)
                   puts "true" if logged_in
-                  zlogin_write.printf("\r\n") if i <= 1
+                  zlogin_write.printf("\r\n") if i < 1
                   i += 1
                   p i
 
