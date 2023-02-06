@@ -309,13 +309,7 @@ module VagrantPlugins
                 end
               
                 puts ('Gathering IP')
-                loop do
-                  zlogin_read.expect(/\r\n/) { |line| rsp.push line }
-                  puts (rsp[-1]) if config.debug_boot
-                  ip = (rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/))
 
-                  break if rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
-                end
                 Process.kill('HUP', pid)
               end
             end
