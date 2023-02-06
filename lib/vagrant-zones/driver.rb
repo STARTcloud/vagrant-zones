@@ -282,6 +282,7 @@ module VagrantPlugins
                   break if rsp[-1].to_s.match(/#{lcheck}/) || rsp[-1].to_s.match(/#{alcheck}/)
                 end
 
+                p "test"
                 if zlogin_read.expect(/#{alcheck}/)
                   puts ('Logging in to Console')
                   zlogin_write.printf("#{user(@machine)}\n")
