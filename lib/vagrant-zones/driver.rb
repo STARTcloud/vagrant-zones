@@ -266,7 +266,7 @@ module VagrantPlugins
         alcheck = config.alcheck
         alcheck = 'login:' if config.alcheck.nil?
         pcheck = 'Password:'
-  
+
         @machine.config.vm.networks.each do |_adaptertype, opts|
           ip = nil
           if opts[:dhcp4] && opts[:managed]
