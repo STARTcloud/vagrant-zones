@@ -99,7 +99,6 @@ module VagrantPlugins
       def ssh_run_command(uii, command)
         config = @machine.provider_config
         ip = get_ip_address(_uii)
-        p ip
         user = user(@machine)
         key = userprivatekeypath(@machine).to_s
         port = sshport(@machine).to_s
@@ -262,15 +261,15 @@ module VagrantPlugins
       def get_ip_address(uii)
         config = @machine.provider_config
         name = @machine.name
-        @machine.config.vm.networks.each do |_adaptertype, opts|
+        @machine.config.vm.networks.each do | opts|
           nic_type = nictype(opts)
           if opts[:dhcp4] && opts[:managed]
             vnic_name = "vnic#{nic_type}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
-            PTY.spawn("pfexec zlogin -C #{name}") do |ip_read, ip_write, pid|
-            ip_read.expect(/Connected/)
-            ip_read.expect(/\n/) { ip_write.printf("ip -4 addr show dev vnice3_1030_0 | grep -Po 'inet \\K[\\d.]+' \n") }
-              p (ip_read.expect(/\n/))
-              ip = (ip_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures)
+            PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
+              zlogin_read.expect(/Connected/)
+              zlogin_read.expect(/\n/) { zlogin_write.printf("ip -4 addr show dev vnice3_1030_0 | grep -Po 'inet \\K[\\d.]+' \n") }
+              p (zlogin_read.expect(/\n/))
+              ip = (zlogin_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures)
               p ip[0] unless ip[0].empty? || ip[0].nil?
 
               return ip[0] unless ip[0].empty? || ip[0].nil?
