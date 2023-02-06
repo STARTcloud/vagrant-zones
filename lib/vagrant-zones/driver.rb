@@ -275,45 +275,25 @@ module VagrantPlugins
               Timeout.timeout(config.setup_wait) do
                 rsp = []
                 command = "ip -4 addr show dev #{ vnic_name } | grep -Po 'inet \\K[\\d.]+' \r\n"
-
-                i = 0
                 logged_in = false
+                zlogin_write.printf("\r\n")
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
-                  puts (rsp[-1]) if config.debug_boot
                   logged_in = true if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/) || rsp[-1].to_s.match(/(:~)/)
-                  zlogin_write.printf("\r\n") if i < 1
-                  i += 1
 
                   break if logged_in || rsp[-1].to_s.match(/(#{Regexp.quote(alcheck)})/)
                 end
 
                 unless logged_in
-                  if zlogin_read.expect(/#{Regexp.quote(alcheck)}/)
-                    puts ('Logging in to Console') if config.debug_boot
-                    zlogin_write.printf("#{user(@machine)}\n")
-                    sleep(config.login_wait)
-                  end
-                
-                  if zlogin_read.expect(/#{Regexp.quote(pcheck)}/)                  
-                    puts ('Logging in to Console') if config.debug_boot
-                    zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
-                    sleep(config.login_wait)
-                  end
-
-                  if zlogin_read.expect(/#{Regexp.quote(lcheck)}/)
-                    puts ('Logged In') if config.debug_boot
-                    logged_in = true
-                  end
+                  zlogin_write.printf("#{user(@machine)}\n") if zlogin_read.expect(/#{Regexp.quote(alcheck)}/)
+                  zlogin_write.printf("#{vagrantuserpass(@machine)}\n") if zlogin_read.expect(/#{Regexp.quote(pcheck)}/)
+                  logged_in = true if zlogin_read.expect(/#{Regexp.quote(lcheck)}/)
                 end
               
                 puts ('Gathering IP') if config.debug_boot
-
-                
                 zlogin_write.printf(command) if logged_in
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
-                  puts (rsp[-1]) if config.debug_boot
                   ip = (rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/))
 
                   break if rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
