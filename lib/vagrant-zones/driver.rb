@@ -283,23 +283,20 @@ module VagrantPlugins
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
                   puts (rsp[-1]) if config.debug_boot
                   logged_in = true if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/)
-                  puts "true" if logged_in
                   zlogin_write.printf("\r\n") if i < 1
                   i += 1
-                  p i
 
-                  break if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/)
+                  break if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/) || rsp[-1].to_s.match(/(#{Regexp.quote(alcheck)})/)
                 end
 
-                puts "not logged in" unless logged_in
                 unless logged_in
-                  if zlogin_read.expect(/#{alcheck}/)
+                  if zlogin_read.expect(/#{Regexp.quote(alcheck)}/)
                     puts ('Logging in to Console')
                     zlogin_write.printf("#{user(@machine)}\n")
                     sleep(config.login_wait)
                   end
                 
-                  if zlogin_read.expect(/#{pcheck}/)                  
+                  if zlogin_read.expect(/#{Regexp.quote(pcheck)}/)                  
                     puts ('Logging in to Console')
                     zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
                     sleep(config.login_wait)
@@ -307,8 +304,8 @@ module VagrantPlugins
                 end
               
                 zlogin_write.printf("\n")
-                if zlogin_read.expect(/#{lcheck}/)
-                  puts ('Logging in to Console')
+                if zlogin_read.expect(/#{Regexp.quote(lcheck)}/)
+                  puts ('Gathering IP')
                   zlogin_write.printf(command)
                   ip = (zlogin_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/))
                   Process.kill('HUP', pid)
