@@ -1222,6 +1222,7 @@ module VagrantPlugins
             if zlogin_read.expect(/#{lcheck}/)
               uii.info(I18n.t('vagrant_zones.automated-zlogin-root'))
               zlogin_write.printf("sudo su\n")
+              zlogin_write.printf("cd ~\n")
               sleep(config.login_wait)
               Process.kill('HUP', pid)
             end
