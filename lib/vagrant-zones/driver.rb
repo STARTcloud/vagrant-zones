@@ -270,10 +270,9 @@ module VagrantPlugins
               p (zlogin_read.expect(/\n/) { zlogin_write.printf("ip -4 addr show dev vnice3_1030_0 | grep -Po 'inet \\K[\\d.]+' \n") })
               p (zlogin_read.expect(/\n/))
               ip = (zlogin_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures)
-              p ip
-              next if ip.nil?
-              
-              return ip unless ip.empty?
+              p ip unless ip.nil?
+
+              return ip unless ip.empty? | ip.nil?
               p "test"
               Process.kill('HUP', pid)
             end
