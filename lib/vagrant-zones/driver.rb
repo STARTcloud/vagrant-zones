@@ -275,7 +275,6 @@ module VagrantPlugins
               Timeout.timeout(config.setup_wait) do
                 rsp = []
                 command = "ip -4 addr show dev #{ vnic_name } | grep -Po 'inet \\K[\\d.]+' \r\n"
-
                 i = 0
                 logged_in = false
                 loop do
