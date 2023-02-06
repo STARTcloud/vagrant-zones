@@ -308,6 +308,8 @@ module VagrantPlugins
                 end
               
                 puts ('Gathering IP') if config.debug_boot
+
+                zlogin_write.printf("\n")
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
                   puts (rsp[-1]) if config.debug_boot
