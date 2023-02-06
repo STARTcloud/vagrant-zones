@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.72](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.71...v0.1.72) (2023-02-06)
+
+
+### Bug Fixes
+
+* confirmation push ([8518bd1](https://github.com/STARTcloud/vagrant-zones/commit/8518bd11139ce3ff7433135a59cfedad07702b0a))
+* dhcp, gatherip, root home ([a6458be](https://github.com/STARTcloud/vagrant-zones/commit/a6458befefb2d4092cf1080904da48bb863d3d92))
+* lint a little ([a46728b](https://github.com/STARTcloud/vagrant-zones/commit/a46728b549b2a078c1d61a65ce3fcfe47c1f609f))
+* lint a little more ([1106aa4](https://github.com/STARTcloud/vagrant-zones/commit/1106aa44cbf43aafc483427c4850b216438cf327))
+* lint a little more ([0a66c99](https://github.com/STARTcloud/vagrant-zones/commit/0a66c99f6846a4527467f9e2d7273e8554acc259))
+* unassisted dhcp ([917e713](https://github.com/STARTcloud/vagrant-zones/commit/917e713cd82db591c28f46453912dd6aef45edae))
+* unassisted dhcp ([9e55438](https://github.com/STARTcloud/vagrant-zones/commit/9e55438020f6c0d203298a2066cedae6013a15a2))
+* unassisted dhcp ([1501a9a](https://github.com/STARTcloud/vagrant-zones/commit/1501a9a04136c204e47ef283d016fec3179e067b))
+* unassisted dhcp ([b24b784](https://github.com/STARTcloud/vagrant-zones/commit/b24b784e2fad31566467358b30c98338257ceab5))
+* unassisted dhcp ([866660c](https://github.com/STARTcloud/vagrant-zones/commit/866660ce249d2fee6a87c61318012dc8befe48a2))
+* unassisted dhcp ([130e4d3](https://github.com/STARTcloud/vagrant-zones/commit/130e4d369503f0130e56d3947bae5d2ef2754b19))
+* unassisted dhcp ([f3faed4](https://github.com/STARTcloud/vagrant-zones/commit/f3faed405f6a75432bab84d2fb3eec1d4f62c23f))
+
 ## [0.1.71](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.70...v0.1.71) (2023-02-04)
 
 
