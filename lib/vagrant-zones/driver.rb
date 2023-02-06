@@ -266,12 +266,38 @@ module VagrantPlugins
           if opts[:dhcp4] && opts[:managed]
             vnic_name = "vnic#{nictype(opts)}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
-              zlogin_read.expect(/Connected/)
-              command = "ip -4 addr show dev #{ vnic_name } | grep -Po 'inet \\K[\\d.]+' \r\n"
-              zlogin_read.expect(/\n/) { zlogin_write.printf(command) }
-              zlogin_read.expect(/\n/)
-              ip = (zlogin_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/))
-              Process.kill('HUP', pid)
+              Timeout.timeout(config.setup_wait) do
+                rsp = []
+                command = "ip -4 addr show dev #{ vnic_name } | grep -Po 'inet \\K[\\d.]+' \r\n"
+                
+                loop do
+                  zlogin_read.expect(/\r\n/) { |line| rsp.push line }
+                  uii.info(rsp[-1]) if config.debug_boot
+                  sleep(5) if rsp[-1].to_s.match(/login: /)
+                  zlogin_write.printf("\n") if rsp[-1].to_s.match(/#{bstring}/)
+                  break if rsp[-1].to_s.match(/#{bstring}/)
+                end
+              
+                if zlogin_read.expect(/#{alcheck}/)
+                  uii.info(I18n.t('vagrant_zones.automated-zlogin-user'))
+                  zlogin_write.printf("#{user(@machine)}\n")
+                  sleep(config.login_wait)
+                end
+              
+                if zlogin_read.expect(/#{pcheck}/)
+                  uii.info(I18n.t('vagrant_zones.automated-zlogin-pass'))
+                  zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
+                  sleep(config.login_wait)
+                end
+              
+                zlogin_write.printf("\n")
+                if zlogin_read.expect(/#{lcheck}/)
+                  uii.info(I18n.t('vagrant_zones.automated-zlogin-root'))
+                  zlogin_write.printf(command)
+                  ip = (zlogin_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/))
+                  Process.kill('HUP', pid)
+                end
+              end
             end
             return ip[0] unless ip[0].empty? || ip[0].nil?
           elsif (opts[:dhcp4] == false || opts[:dhcp4].nil?) && opts[:managed]
