@@ -261,7 +261,7 @@ module VagrantPlugins
       def get_ip_address(uii)
         config = @machine.provider_config
         name = @machine.name
-        config.vm.networks.each do |_adaptertype, opts|
+        @machine.config.vm.networks.each do |_adaptertype, opts|
           nic_type = nictype(opts)
           if opts[:dhcp4] && opts[:managed]
             vnic_name = "vnic#{nic_type}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
