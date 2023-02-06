@@ -273,7 +273,6 @@ module VagrantPlugins
               ip = (zlogin_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures)
               Process.kill('HUP', pid)
             end
-            p ip[0] unless ip[0].empty? || ip[0].nil?
             return ip[0] unless ip[0].empty? || ip[0].nil?
           elsif (opts[:dhcp4] == false || opts[:dhcp4].nil?) && opts[:managed]
             ip = opts[:ip].to_s
