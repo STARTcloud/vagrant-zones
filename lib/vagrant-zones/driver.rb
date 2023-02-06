@@ -261,15 +261,17 @@ module VagrantPlugins
       def get_ip_address(uii)
         config = @machine.provider_config
         name = @machine.name
-        i = 0
         @machine.config.vm.networks.each do |_adaptertype, opts|
           nic_type = nictype(opts)
           if opts[:dhcp4] && opts[:managed]
             vnic_name = "vnic#{nic_type}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
               zlogin_read.expect(/Connected/)
+              p "test"
               zlogin_read.expect(/\n/) { zlogin_write.printf("ip -4 addr show dev vnice3_1030_0 | grep -Po 'inet \K[\d.]+' \n") }
+              p "test"
               zlogin_read.expect(/\n/)
+              p "test"
               ip = (zlogin_read.expect(/\n/).to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/).captures)
               return ip unless ip.empty?
               Process.kill('HUP', pid)
