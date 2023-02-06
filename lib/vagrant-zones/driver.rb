@@ -98,7 +98,7 @@ module VagrantPlugins
       ## Run commands over SSH instead of ZLogin
       def ssh_run_command(uii, command)
         config = @machine.provider_config
-        ip = get_ip_address(_uii)
+        ip = get_ip_address(uii)
         user = user(@machine)
         key = userprivatekeypath(@machine).to_s
         port = sshport(@machine).to_s
@@ -269,7 +269,7 @@ module VagrantPlugins
               Timeout.timeout(config.setup_wait) do
                 rsp = []
                 command = "ip -4 addr show dev #{ vnic_name } | grep -Po 'inet \\K[\\d.]+' \r\n"
-                
+
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
                   uii.info(rsp[-1]) if config.debug_boot
