@@ -285,11 +285,13 @@ module VagrantPlugins
                   zlogin_write.printf("\r\n") if i <= 1
                   i += 1                  
                   logged_in = true if rsp[-1].to_s.match(/#{lcheck}/)
-
+                  puts lcheck
+                  puts alcheck
                   
                   break if rsp[-1].to_s.match(/#{lcheck}/) || rsp[-1].to_s.match(/#{alcheck}/)
                 end
 
+                puts "not logged in" unless logged_in
                 unless logged_in
                   if zlogin_read.expect(/#{alcheck}/)
                     puts ('Logging in to Console')
