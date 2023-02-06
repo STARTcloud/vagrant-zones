@@ -262,9 +262,8 @@ module VagrantPlugins
         config = @machine.provider_config
         name = @machine.name
         @machine.config.vm.networks.each do |_adaptertype, opts|
-          nic_type = nictype(opts)
           if opts[:dhcp4] && opts[:managed]
-            vnic_name = "vnic#{nic_type}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
+            vnic_name = "vnic#{nictype(opts)}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
               zlogin_read.expect(/Connected/)
               zlogin_read.expect(/\n/) { zlogin_write.printf("ip -4 addr show dev vnice3_1030_0 | grep -Po 'inet \\K[\\d.]+' \n") }
