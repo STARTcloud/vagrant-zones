@@ -285,7 +285,7 @@ module VagrantPlugins
                   zlogin_write.printf("\r\n") if i < 1
                   i += 1
 
-                  break if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/) || rsp[-1].to_s.match(/(#{Regexp.quote(alcheck)})/)
+                  break if logged_in || rsp[-1].to_s.match(/(#{Regexp.quote(alcheck)})/)
                 end
 
                 unless logged_in
