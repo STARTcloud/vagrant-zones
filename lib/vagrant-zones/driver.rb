@@ -275,11 +275,14 @@ module VagrantPlugins
               Timeout.timeout(config.setup_wait) do
                 rsp = []
                 command = "ip -4 addr show dev #{ vnic_name } | grep -Po 'inet \\K[\\d.]+' \r\n"
+
+                i = 0
                 logged_in = false
-                zlogin_write.printf("\r\n")
                 loop do
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
                   logged_in = true if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/) || rsp[-1].to_s.match(/(:~)/)
+                  zlogin_write.printf("\r\n") if i < 1
+                  i += 1
 
                   break if logged_in || rsp[-1].to_s.match(/(#{Regexp.quote(alcheck)})/)
                 end
