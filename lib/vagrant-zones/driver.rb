@@ -282,12 +282,11 @@ module VagrantPlugins
                   ## Loop for the first few lines to detect if we need to login or not
                   zlogin_read.expect(/\r\n/) { |line| rsp.push line }
                   puts (rsp[-1]) if config.debug_boot
-                  zlogin_write.printf("\r\n") if i <= 1
-                  i += 1                  
                   logged_in = true if rsp[-1].to_s.match(/#{lcheck}/)
-                  puts lcheck
-                  puts alcheck
                   puts "true" if logged_in
+                  zlogin_write.printf("\r\n") if i <= 1
+                  i += 1
+
                   break if rsp[-1].to_s.match(/#{lcheck}/)
                 end
 
