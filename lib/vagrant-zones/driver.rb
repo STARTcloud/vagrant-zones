@@ -98,7 +98,8 @@ module VagrantPlugins
       ## Run commands over SSH instead of ZLogin
       def ssh_run_command(uii, command)
         config = @machine.provider_config
-        ip = get_ip_address(uii)
+        ip = get_ip_address(_uii)
+        p ip
         user = user(@machine)
         key = userprivatekeypath(@machine).to_s
         port = sshport(@machine).to_s
