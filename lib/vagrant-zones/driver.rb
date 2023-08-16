@@ -553,28 +553,80 @@ module VagrantPlugins
         phys_if = 'pfexec dladm show-phys -m -o LINK,ADDRESS,CLIENT | tail -n +2'
         phys_if_results = ssh_run_command(uii, phys_if).split("\n")
         device = ''
+        interface = ''
         phys_if_results.each do |entry|
           e_mac = ''
-          entries = entry.strip.split
+          entries = entry.strip.split("\r")[1].split
           entries[1].split(':').each { |x| e_mac += "#{format('%02x', x.to_i(16))}:" }
           e_mac = e_mac[0..-2]
           device = entries[0] if e_mac.match(/#{mac}/)
+          interface =  entries[2] if e_mac.match(/#{mac}/)
         end
 
-        delete_if = "pfexec ipadm delete-if #{device}"
-        rename_link = "pfexec dladm rename-link #{device} #{vnic_name}"
+        delete_if = ""
+        rename_link = ""
+        delete_if = "pfexec ipadm delete-if #{device} && " unless interface.match(/--/)
+        rename_link = "pfexec dladm rename-link #{device} #{vnic_name} && "
         if_create = "pfexec ipadm create-if #{vnic_name}"
         static_addr = "pfexec ipadm create-addr -T static -a #{ip}/#{shrtsubnet} #{vnic_name}/v4vagrant"
-        net_cmd = "#{delete_if} && #{rename_link} && #{if_create} && #{static_addr}"
+        net_cmd = "#{delete_if} #{rename_link} #{if_create} && #{static_addr}"
         uii.info(I18n.t('vagrant_zones.dladm_applied')) if ssh_run_command(uii, net_cmd)
-
-        route_add = "pfexec route -p add default #{defrouter}"
+        route_add = ""
+        route_add = "pfexec route -p add default #{defrouter}" unless defrouter.nil?
         uii.info(I18n.t('vagrant_zones.dladm_route_applied')) if ssh_run_command(uii, route_add)
 
         ns_string = "nameserver #{servers[0]['nameserver']}\nnameserver #{servers[1]['nameserver']}"
         dns_set = "pfexec echo '#{ns_string}' | pfexec tee /etc/resolv.conf"
         uii.info(I18n.t('vagrant_zones.dladm_dns_applied')) if ssh_run_command(uii, dns_set.to_s)
       end
+
+      ## Setup vnics for Zones using zlogin for solaris like OSes -- ie dladm
+      def zoneniczloginsetup_dladm(uii, opts, mac)
+        ip = ipaddress(uii, opts)
+        defrouter = opts[:gateway].to_s
+        puts opts
+        vnic_name = vname(uii, opts)
+        shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
+        servers = dnsservers(uii, opts)
+        uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic_dladm'))
+        uii.info("  #{vnic_name}")
+
+        # loop through each phys if and run code if physif matches #{mac}
+        sanitized_mac = ''
+        segments = mac.split(":")
+        new_segments = segments.map { |segment| segment.to_i(16).to_s(16) }
+        sanitized_mac = new_segments.join(":")
+        phys_if = "pfexec dladm show-phys -m -o LINK,ADDRESS,CLIENT | tail -n +2 | grep #{sanitized_mac}"
+        phys_if_results = zlogin(uii, phys_if)
+        device = ''
+        interface = ''
+	phys_if_results.each do |entry|
+          e_mac = ''
+          entries = entry.strip.split("\r")[1].split
+          entries[1].split(':').each { |x| e_mac += "#{format('%02x', x.to_i(16))}:" }
+          e_mac = e_mac[0..-2]
+          device = entries[0] if e_mac.match(/#{mac}/)
+          interface =  entries[2] if e_mac.match(/#{mac}/)
+        end
+
+        delete_if = ""
+        rename_link = ""
+        delete_if = "pfexec ipadm delete-if #{device} && " unless interface.match(/--/)
+        rename_link = "pfexec dladm rename-link #{device} #{vnic_name} && "
+        if_create = "pfexec ipadm create-if #{vnic_name}"
+        static_addr = "pfexec ipadm create-addr -T static -a #{ip}/#{shrtsubnet} #{vnic_name}/v4vagrant"
+        net_cmd = "#{delete_if} #{rename_link} #{if_create} && #{static_addr}"
+        uii.info(I18n.t('vagrant_zones.dladm_applied')) if zlogin(uii, net_cmd)
+        puts defrouter
+        route_add = "pfexec route -p add default #{defrouter}" 
+        route_add = "echo True" if opts[:gateway].nil?
+        uii.info(I18n.t('vagrant_zones.dladm_route_applied')) if zlogin(uii, route_add)
+
+        ns_string = "nameserver #{servers[0]['nameserver']}\nnameserver #{servers[1]['nameserver']}"
+        dns_set = "pfexec echo '#{ns_string}' | pfexec tee /etc/resolv.conf"
+        uii.info(I18n.t('vagrant_zones.dladm_dns_applied')) if zlogin(uii, dns_set.to_s)
+      end
+
 
       ## zonecfg function for for nat Networking
       def natnicconfig(uii, opts)
@@ -1067,8 +1119,16 @@ module VagrantPlugins
           mac = mac[0..-2]
         end
 
+        ## Code Block to Detect OS
+        cmd = 'uname -a'
+        infomessage = I18n.t('vagrant_zones.os_detect')
+        os_detected = zlogin(uii, cmd)
+        puts os_detected
+        uii.info("Zone OS detected as: OmniOS") if os_detected.to_s.match(/SunOS/)
+
         zoneniczloginsetup_windows(uii, opts, mac) if config.os_type.to_s.match(/windows/)
-        zoneniczloginsetup_netplan(uii, opts, mac) unless config.os_type.to_s.match(/windows/)
+        zoneniczloginsetup_dladm(uii, opts, mac) if os_detected.to_s.match(/SunOS/)
+        zoneniczloginsetup_netplan(uii, opts, mac) if !config.os_type.to_s.match(/windows/) and !os_detected.to_s.match(/SunOS/) 
       end
 
       ## This setups the Netplan based OS Networking via Zlogin
@@ -1340,6 +1400,7 @@ module VagrantPlugins
         name = @machine.name
         config = @machine.provider_config
         rsp = []
+        execute_return = ''
         PTY.spawn("pfexec zlogin -C #{name}") do |zread, zwrite, pid|
           Timeout.timeout(config.setup_wait) do
             error_check = "echo \"Error Code: $?\"\n"
@@ -1351,6 +1412,7 @@ module VagrantPlugins
               zwrite.printf("#{cmd}\r\n") if runonce
               zwrite.printf(error_check.to_s) if runonce
               runonce = false
+              execute_return = rsp[-4] if rsp[-1].to_s.match(/Error Code: 0/)
               break if rsp[-1].to_s.match(/Error Code: 0/)
 
               em = "#{cmd} \nFailed with ==> #{rsp[-1]}"
@@ -1360,7 +1422,9 @@ module VagrantPlugins
           end
           Process.kill('HUP', pid)
         end
+        execute_return
       end
+
 
       # This checks if the user exists on the VM, usually for LX zones
       def user_exists?(uii, user = 'vagrant')
