@@ -21,7 +21,7 @@ module VagrantPlugins
 
         def validate_uuid_format(uuid)
           uuid_regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
-          return true if uuid_regex.match?(uuid.to_s.downcase)
+          true if uuid_regex.match?(uuid.to_s.downcase)
         end
 
         def call(env)
@@ -97,8 +97,8 @@ module VagrantPlugins
           @app.call(env)
         end
 
-        def execute(*cmd, **opts, &block)
-          @executor.execute(*cmd, **opts, &block)
+        def execute(...)
+          @executor.execute(...)
         end
 
         def check(uuid, env_ui)

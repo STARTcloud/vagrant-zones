@@ -20,8 +20,8 @@ module VagrantPlugins
           env['package.output'] ||= 'package.box'
         end
 
-        def execute(*cmd, **opts, &block)
-          @executor.execute(*cmd, **opts, &block)
+        def execute(...)
+          @executor.execute(...)
         end
 
         def call(env)

@@ -36,7 +36,7 @@ module VagrantPlugins
           private_key_path: driver.userprivatekeypath(@machine).to_s,
           PasswordAuthentication: passwordauth
         }
-        return ssh_info unless ssh_info.nil?
+        ssh_info unless ssh_info.nil?
       end
 
       # This should return an action callable for the given name.

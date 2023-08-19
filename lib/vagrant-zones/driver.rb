@@ -54,8 +54,8 @@ module VagrantPlugins
       end
 
       # Execute System commands
-      def execute(*cmd, **opts, &block)
-        @executor.execute(*cmd, **opts, &block)
+      def execute(...)
+        @executor.execute(...)
       end
 
       ## Begin installation for zone
@@ -233,7 +233,7 @@ module VagrantPlugins
         ip = if opts[:ip].empty?
                nil
              else
-               opts[:ip].gsub(/\t/, '')
+               opts[:ip].gsub("\t", '')
              end
         uii.info(I18n.t('vagrant_zones.ipaddress') + ip) if config.debug
         ip
@@ -308,7 +308,7 @@ module VagrantPlugins
             ip = opts[:ip].to_s
             return nil if ip.empty?
 
-            return ip.gsub(/\t/, '')
+            return ip.gsub("\t", '')
           end
         end
       end
@@ -560,18 +560,18 @@ module VagrantPlugins
           entries[1].split(':').each { |x| e_mac += "#{format('%02x', x.to_i(16))}:" }
           e_mac = e_mac[0..-2]
           device = entries[0] if e_mac.match(/#{mac}/)
-          interface =  entries[2] if e_mac.match(/#{mac}/)
+          interface = entries[2] if e_mac.match(/#{mac}/)
         end
 
-        delete_if = ""
-        rename_link = ""
+        delete_if = ''
+        rename_link = ''
         delete_if = "pfexec ipadm delete-if #{device} && " unless interface.match(/--/)
         rename_link = "pfexec dladm rename-link #{device} #{vnic_name} && "
         if_create = "pfexec ipadm create-if #{vnic_name}"
         static_addr = "pfexec ipadm create-addr -T static -a #{ip}/#{shrtsubnet} #{vnic_name}/v4vagrant"
         net_cmd = "#{delete_if} #{rename_link} #{if_create} && #{static_addr}"
         uii.info(I18n.t('vagrant_zones.dladm_applied')) if ssh_run_command(uii, net_cmd)
-        route_add = ""
+        route_add = ''
         route_add = "pfexec route -p add default #{defrouter}" unless defrouter.nil?
         uii.info(I18n.t('vagrant_zones.dladm_route_applied')) if ssh_run_command(uii, route_add)
 
@@ -584,7 +584,6 @@ module VagrantPlugins
       def zoneniczloginsetup_dladm(uii, opts, mac)
         ip = ipaddress(uii, opts)
         defrouter = opts[:gateway].to_s
-        puts opts
         vnic_name = vname(uii, opts)
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
         servers = dnsservers(uii, opts)
@@ -593,24 +592,24 @@ module VagrantPlugins
 
         # loop through each phys if and run code if physif matches #{mac}
         sanitized_mac = ''
-        segments = mac.split(":")
+        segments = mac.split(':')
         new_segments = segments.map { |segment| segment.to_i(16).to_s(16) }
-        sanitized_mac = new_segments.join(":")
+        sanitized_mac = new_segments.join(':')
         phys_if = "pfexec dladm show-phys -m -o LINK,ADDRESS,CLIENT | tail -n +2 | grep #{sanitized_mac}"
         phys_if_results = zlogin(uii, phys_if)
         device = ''
         interface = ''
-	phys_if_results.each do |entry|
+        phys_if_results.each do |entry|
           e_mac = ''
           entries = entry.strip.split("\r")[1].split
           entries[1].split(':').each { |x| e_mac += "#{format('%02x', x.to_i(16))}:" }
           e_mac = e_mac[0..-2]
           device = entries[0] if e_mac.match(/#{mac}/)
-          interface =  entries[2] if e_mac.match(/#{mac}/)
+          interface = entries[2] if e_mac.match(/#{mac}/)
         end
 
-        delete_if = ""
-        rename_link = ""
+        delete_if = ''
+        rename_link = ''
         delete_if = "pfexec ipadm delete-if #{device} && " unless interface.match(/--/)
         rename_link = "pfexec dladm rename-link #{device} #{vnic_name} && "
         if_create = "pfexec ipadm create-if #{vnic_name}"
@@ -618,15 +617,14 @@ module VagrantPlugins
         net_cmd = "#{delete_if} #{rename_link} #{if_create} && #{static_addr}"
         uii.info(I18n.t('vagrant_zones.dladm_applied')) if zlogin(uii, net_cmd)
         puts defrouter
-        route_add = "pfexec route -p add default #{defrouter}" 
-        route_add = "echo True" if opts[:gateway].nil?
+        route_add = "pfexec route -p add default #{defrouter}"
+        route_add = 'echo True' if opts[:gateway].nil?
         uii.info(I18n.t('vagrant_zones.dladm_route_applied')) if zlogin(uii, route_add)
 
         ns_string = "nameserver #{servers[0]['nameserver']}\nnameserver #{servers[1]['nameserver']}"
         dns_set = "pfexec echo '#{ns_string}' | pfexec tee /etc/resolv.conf"
         uii.info(I18n.t('vagrant_zones.dladm_dns_applied')) if zlogin(uii, dns_set.to_s)
       end
-
 
       ## zonecfg function for for nat Networking
       def natnicconfig(uii, opts)
@@ -1123,12 +1121,11 @@ module VagrantPlugins
         cmd = 'uname -a'
         infomessage = I18n.t('vagrant_zones.os_detect')
         os_detected = zlogin(uii, cmd)
-        puts os_detected
-        uii.info("Zone OS detected as: OmniOS") if os_detected.to_s.match(/SunOS/)
+        uii.info('Zone OS detected as: OmniOS') if os_detected.to_s.match(/SunOS/)
 
         zoneniczloginsetup_windows(uii, opts, mac) if config.os_type.to_s.match(/windows/)
         zoneniczloginsetup_dladm(uii, opts, mac) if os_detected.to_s.match(/SunOS/)
-        zoneniczloginsetup_netplan(uii, opts, mac) if !config.os_type.to_s.match(/windows/) and !os_detected.to_s.match(/SunOS/) 
+        zoneniczloginsetup_netplan(uii, opts, mac) if !config.os_type.to_s.match(/windows/) && !os_detected.to_s.match(/SunOS/)
       end
 
       ## This setups the Netplan based OS Networking via Zlogin
@@ -1408,7 +1405,7 @@ module VagrantPlugins
             runonce = true
             loop do
               zread.expect(/\n/) { |line| rsp.push line }
-              puts(rsp[-1].to_s) if config.debug
+              puts(rsp[-1]) if config.debug
               zwrite.printf("#{cmd}\r\n") if runonce
               zwrite.printf(error_check.to_s) if runonce
               runonce = false
@@ -1424,7 +1421,6 @@ module VagrantPlugins
         end
         execute_return
       end
-
 
       # This checks if the user exists on the VM, usually for LX zones
       def user_exists?(uii, user = 'vagrant')
@@ -1519,7 +1515,7 @@ module VagrantPlugins
       ## List ZFS Snapshots, helper function to sort and display
       def zfssnaplistdisp(zfs_snapshots, uii, index, disk)
         uii.info("\n Disk Number: #{index}\n Disk Path: #{disk}")
-        zfssnapshots = zfs_snapshots.split(/\n/).reverse
+        zfssnapshots = zfs_snapshots.split("\n").reverse
         zfssnapshots << "Snapshot\t\t\t\tUsed\tAvailable\tRefer\tPath"
         pml, rml, aml, uml, sml = 0
         zfssnapshots.reverse.each do |snapshot|
@@ -1592,7 +1588,7 @@ module VagrantPlugins
           datasets.each do |disk|
             output = execute(false, "#{@pfexec} zfs list -t snapshot -o name | grep #{disk}")
             ## Never delete the source when doing all
-            output = output.split(/\n/).drop(1)
+            output = output.split("\n").drop(1)
             ## Delete in Reverse order
             output.reverse.each do |snaps|
               cmd = "#{@pfexec} zfs destroy #{snaps}"
@@ -1606,7 +1602,7 @@ module VagrantPlugins
             next unless dindex.to_i == opts[:dataset].to_i
 
             output = execute(false, "#{@pfexec} zfs list -t snapshot -o name | grep #{disk}")
-            output = output.split(/\n/).drop(1)
+            output = output.split("\n").drop(1)
             output.each_with_index do |snaps, spindex|
               if opts[:snapshot_name].to_i == spindex && opts[:snapshot_name].to_s != 'all'
                 uii.info("  - #{snaps}")
@@ -1650,7 +1646,7 @@ module VagrantPlugins
         h.each do |_k, d|
           next unless opts[:delete] == d || opts[:delete] == 'all'
 
-          cj = cronjobs[d.to_sym].to_s.gsub(/\*/, '\*')
+          cj = cronjobs[d.to_sym].to_s.gsub('*', '\*')
           rc = "#{rmcr}'#{cj}' | #{sc}"
           uii.info("  - Removing Cron: #{cj}") unless cronjobs[d.to_sym].nil?
           execute(false, rc) unless cronjobs[d.to_sym].nil?
