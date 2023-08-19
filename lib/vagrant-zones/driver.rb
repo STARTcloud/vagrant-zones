@@ -531,8 +531,7 @@ module VagrantPlugins
         netplan4 = %(      nameservers:\n        addresses: [#{servers[0]['nameserver']} , #{servers[1]['nameserver']}] )
         netplan = netplan1 + netplan2 + netplan3 + netplan4
         cmd = "echo -e '#{netplan}' | sudo tee /etc/netplan/#{vnic_name}.yaml"
-        infomessage = I18n.t('vagrant_zones.netplan_applied_static') + "/etc/netplan/#{vnic_name}.yaml"
-        uii.info(infomessage) if ssh_run_command(uii, cmd)
+        uii.info(I18n.t('vagrant_zones.netplan_applied_static') + "/etc/netplan/#{vnic_name}.yaml") if ssh_run_command(uii, cmd)
 
         ## Apply the Configuration
         uii.info(I18n.t('vagrant_zones.netplan_applied')) if ssh_run_command(uii, 'sudo netplan apply')
@@ -563,7 +562,7 @@ module VagrantPlugins
           interface = entries[2] if e_mac.match(/#{mac}/)
         end
 
-        delete_if = interface.match(/--/) ? "" : "pfexec ipadm delete-if #{device} && "
+        delete_if = interface.match(/--/) ? '' : "pfexec ipadm delete-if #{device} && "
         rename_link = "pfexec dladm rename-link #{device} #{vnic_name} && "
         if_create = "pfexec ipadm create-if #{vnic_name}"
         static_addr = "pfexec ipadm create-addr -T static -a #{ip}/#{shrtsubnet} #{vnic_name}/v4vagrant"
@@ -589,7 +588,6 @@ module VagrantPlugins
         uii.info("  #{vnic_name}")
 
         # loop through each phys if and run code if physif matches #{mac}
-        sanitized_mac = ''
         segments = mac.split(':')
         new_segments = segments.map { |segment| segment.to_i(16).to_s(16) }
         sanitized_mac = new_segments.join(':')
@@ -1115,7 +1113,7 @@ module VagrantPlugins
 
         ## Code Block to Detect OS
         cmd = 'uname -a'
-        infomessage = I18n.t('vagrant_zones.os_detect')
+        uii.info(I18n.t('vagrant_zones.os_detect'))
         os_detected = zlogin(uii, cmd)
         uii.info('Zone OS detected as: OmniOS') if os_detected.to_s.match(/SunOS/)
 
