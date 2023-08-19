@@ -11,4 +11,15 @@ end
 
 group :plugins do
   gemspec
+  gem 'bundler', '~> 2.2', '>= 2.2.3'
+  gem 'code-scanning-rubocop', '~> 0.5', '>= 0.5.0'
+  gem 'rake', '~> 13.0', '>= 13.0.6'
+  gem 'rspec', '~> 3.4'
+  gem 'rspec-core', '~> 3.4'
+  gem 'rspec-expectations', '~> 3.10', '>= 3.10.0'
+  gem 'rspec-mocks', '~> 3.10', '>= 3.10.0'
+  gem 'rubocop', '~> 1.0'
+  gem 'rubocop-rake', '~> 0.6', '>= 0.6.0'
+  gem 'rubocop-rspec', '~> 2.4', '>= 2.4.0'
+  gem 'ruby-progressbar', '~> 1.11', '>= 1.11.0'
 end
