@@ -606,7 +606,7 @@ module VagrantPlugins
           interface = entries[2] if e_mac.match(/#{mac}/)
         end
 
-        delete_if = interface.match(/--/) ? "" : "pfexec ipadm delete-if #{device} && "
+        delete_if = interface.match(/--/) ? '' : "pfexec ipadm delete-if #{device} && "
         rename_link = "pfexec dladm rename-link #{device} #{vnic_name} && "
         if_create = "pfexec ipadm create-if #{vnic_name}"
         static_addr = "pfexec ipadm create-addr -T static -a #{ip}/#{shrtsubnet} #{vnic_name}/v4vagrant"
