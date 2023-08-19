@@ -610,7 +610,6 @@ module VagrantPlugins
         static_addr = "pfexec ipadm create-addr -T static -a #{ip}/#{shrtsubnet} #{vnic_name}/v4vagrant"
         net_cmd = "#{delete_if} #{rename_link} #{if_create} && #{static_addr}"
         uii.info(I18n.t('vagrant_zones.dladm_applied')) if zlogin(uii, net_cmd)
-        puts defrouter
         route_add = "pfexec route -p add default #{defrouter}"
         route_add = 'echo True' if opts[:gateway].nil?
         uii.info(I18n.t('vagrant_zones.dladm_route_applied')) if zlogin(uii, route_add)
