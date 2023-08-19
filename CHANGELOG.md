@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.73](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.72...v0.1.73) (2023-08-19)
+
+
+### Bug Fixes
+
+* Stable OmniOS Networking via DLADM and zlogin ([93e338b](https://github.com/STARTcloud/vagrant-zones/commit/93e338b84c83d4572d6cd1aa4689e130e23d39c8))
+
 ## [0.1.72](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.71...v0.1.72) (2023-02-06)
 
 
