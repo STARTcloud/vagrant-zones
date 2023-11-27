@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.74](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.73...v0.1.74) (2023-11-27)
+
+
+### Bug Fixes
+
+* on-deman vnics ([80c8a42](https://github.com/STARTcloud/vagrant-zones/commit/80c8a429ed9a8e3ad624b3f52fc8b4873803a417))
+* rubocop lint adjustments ([fb22b4f](https://github.com/STARTcloud/vagrant-zones/commit/fb22b4f7fb80b3eb76aa351e67b18f3b4271cf43))
+* ruby lint syntax, doesn't like not ([eebf699](https://github.com/STARTcloud/vagrant-zones/commit/eebf6992cbae1e372cf3d859c0ee039691a0be92))
+
 ## [0.1.73](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.72...v0.1.73) (2023-08-19)
 
 
