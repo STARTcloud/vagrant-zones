@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.78](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.77...v0.1.78) (2023-11-27)
+
+
+### Bug Fixes
+
+* on demand vnics ([a1fa91f](https://github.com/STARTcloud/vagrant-zones/commit/a1fa91f196a082e8582ab0c67ff89694a62a94de))
+
 ## [0.1.77](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.76...v0.1.77) (2023-11-27)
 
 
