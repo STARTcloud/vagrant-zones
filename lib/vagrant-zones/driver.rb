@@ -322,7 +322,7 @@ module VagrantPlugins
           when 'public_network'
             zonenicdel(uii, opts) if state == 'delete'
             zonecfgnicconfig(uii, opts) if state == 'config'
-            zoneniccreate(uii, opts) if state == 'create' && not config.on_demand_vnics
+            zoneniccreate(uii, opts) if state == 'create' && !config.on_demand_vnics
             zonenicstpzloginsetup(uii, opts, config) if state == 'setup' && config.setup_method == 'zlogin'
           when 'private_network'
             zonenicdel(uii, opts) if state == 'delete'
@@ -332,7 +332,7 @@ module VagrantPlugins
             etherstubdelete(uii, opts) if state == 'delete'
             natnicconfig(uii, opts) if state == 'config'
             etherstub = etherstubcreate(uii, opts) if state == 'create'
-            zonenatniccreate(uii, opts, etherstub) if state == 'create' && not config.on_demand_vnics
+            zonenatniccreate(uii, opts, etherstub) if state == 'create' && !config.on_demand_vnics
             etherstubcreatehvnic(uii, opts, etherstub) if state == 'create'
             zonenatforward(uii, opts) if state == 'create'
             zonenatentries(uii, opts) if state == 'create'
@@ -1070,11 +1070,11 @@ module VagrantPlugins
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; end;")) unless cie
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; set allowed-address=#{allowed_address}; end;")) if cie && aa
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; end;")) if cie && !aa
-          elsif config.on_demand_vnics && not opts[:vlan].nil?
+          elsif config.on_demand_vnics && !opts[:vlan].nil?
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set vlan-id=#{opts[:vlan]}; set global-nic=#{opts[:bridge]}; end;")) unless cie
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set vlan-id=#{opts[:vlan]}; set global-nic=#{opts[:bridge]}; set allowed-address=#{allowed_address}; end;")) if cie && aa
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set vlan-id=#{opts[:vlan]}; set global-nic=#{opts[:bridge]}; end;")) if cie && !aa
-          elsif not config.on_demand_vnics
+          elsif !config.on_demand_vnics
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; end;")) unless cie
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set allowed-address=#{allowed_address}; end;")) if cie && aa
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; end;")) if cie && !aa
