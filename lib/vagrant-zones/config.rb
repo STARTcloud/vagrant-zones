@@ -7,7 +7,7 @@ module VagrantPlugins
     # This is used define the variables for the project
     class Config < Vagrant.plugin('2', :config)
       # rubocop:disable Layout/LineLength
-      attr_accessor :brand, :autoboot, :setup_method, :safe_restart, :allowed_address, :safe_shutdown, :boxshortname, :kernel, :debug, :debug_boot, :private_network, :winalcheck, :winlcheck, :lcheck, :alcheck, :snapshot_script, :diskif, :netif, :cdroms, :disk1path, :disk1size, :cpus, :cpu_configuration, :boot, :complex_cpu_conf, :memory, :vagrant_user, :vagrant_user_private_key_path, :setup_wait, :clean_shutdown_time, :dhcp4, :vagrant_user_pass, :firmware_type, :vm_type, :partition_id, :shared_disk_enabled, :shared_dir, :acpi, :os_type, :console, :consolehost, :consoleport, :console_onboot, :hostbridge, :sshport, :rdpport, :override, :additional_disks, :cloud_init_resolvers, :cloud_init_enabled, :cloud_init_dnsdomain, :cloud_init_password, :cloud_init_sshkey, :cloud_init_conf, :dns, :box, :vagrant_cloud_creator, :winbooted_string, :booted_string, :zunlockbootkey, :zunlockboot, :xhci_enabled, :login_wait
+      attr_accessor :brand, :autoboot, :setup_method, :safe_restart, :allowed_address, :safe_shutdown, :boxshortname, :kernel, :debug, :debug_boot, :private_network, :winalcheck, :winlcheck, :lcheck, :alcheck, :snapshot_script, :diskif, :netif, :cdroms, :disk1path, :disk1size, :cpus, :cpu_configuration, :boot, :complex_cpu_conf, :memory, :vagrant_user, :vagrant_user_private_key_path, :setup_wait, :on_demand_vnics, :clean_shutdown_time, :dhcp4, :vagrant_user_pass, :firmware_type, :vm_type, :partition_id, :shared_disk_enabled, :shared_dir, :acpi, :os_type, :console, :consolehost, :consoleport, :console_onboot, :hostbridge, :sshport, :rdpport, :override, :additional_disks, :cloud_init_resolvers, :cloud_init_enabled, :cloud_init_dnsdomain, :cloud_init_password, :cloud_init_sshkey, :cloud_init_conf, :dns, :box, :vagrant_cloud_creator, :winbooted_string, :booted_string, :zunlockbootkey, :zunlockboot, :xhci_enabled, :login_wait
 
       # rubocop:enable Layout/LineLength
 
@@ -49,6 +49,7 @@ module VagrantPlugins
         @hostbridge = 'i440fx'
         @acpi = 'on'
         @setup_wait = 90
+        @on_demand_vnics = 'true'
         @box = UNSET_VALUE
         @clean_shutdown_time = 300
         @vmtype = 'production'
