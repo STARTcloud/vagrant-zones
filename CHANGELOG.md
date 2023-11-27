@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.79](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.78...v0.1.79) (2023-11-27)
+
+
+### Bug Fixes
+
+* on demand vnics vlans ([ae4f7ec](https://github.com/STARTcloud/vagrant-zones/commit/ae4f7ec596f190afeff185bf474a7ba4f66a160e))
+
 ## [0.1.78](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.77...v0.1.78) (2023-11-27)
 
 
