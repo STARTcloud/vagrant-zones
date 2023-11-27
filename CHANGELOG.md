@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.76](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.75...v0.1.76) (2023-11-27)
+
+
+### Bug Fixes
+
+* forgot to add to config.rb ([5a98934](https://github.com/STARTcloud/vagrant-zones/commit/5a98934851f78e3ec9f1a1c0580aeb3d50cab66b))
+
 ## [0.1.75](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.74...v0.1.75) (2023-11-27)
 
 
