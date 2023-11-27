@@ -1063,13 +1063,13 @@ module VagrantPlugins
           execute(false, %(#{strt}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
         when 'bhyve'
           if config.on_demand_vnics && !opts[:vlan].nil?
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; end;")) unless cie
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; set allowed-address=#{allowed_address}; end;")) if cie && aa
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; end;")) if cie && !aa
-          elsif config.on_demand_vnics && opts[:vlan].nil?
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set vlan-id=#{opts[:vlan]}; set global-nic=#{opts[:bridge]}; end;")) unless cie
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set vlan-id=#{opts[:vlan]}; set global-nic=#{opts[:bridge]}; set allowed-address=#{allowed_address}; end;")) if cie && aa
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set vlan-id=#{opts[:vlan]}; set global-nic=#{opts[:bridge]}; end;")) if cie && !aa
+          elsif config.on_demand_vnics && opts[:vlan].nil?
+            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; end;")) unless cie
+            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; set allowed-address=#{allowed_address}; end;")) if cie && aa
+            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; end;")) if cie && !aa
           elsif !config.on_demand_vnics
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; end;")) unless cie
             execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set allowed-address=#{allowed_address}; end;")) if cie && aa
