@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.75](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.74...v0.1.75) (2023-11-27)
+
+
+### Bug Fixes
+
+* increase rubocop linelength limit ([653a94f](https://github.com/STARTcloud/vagrant-zones/commit/653a94fd85efe5e2f850fdf7a76e0867be87f96b))
+
 ## [0.1.74](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.73...v0.1.74) (2023-11-27)
 
 
