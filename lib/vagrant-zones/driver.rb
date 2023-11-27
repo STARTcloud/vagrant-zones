@@ -1056,10 +1056,6 @@ module VagrantPlugins
         strt = "#{@pfexec} zonecfg -z #{@machine.name} "
         cie = config.cloud_init_enabled
         aa = config.allowed_address
-        if opts[:vlan].nil?
-        else
-
-        end
         case config.brand
         when 'lx'
           shrtstr1 = %(set allowed-address=#{allowed_address}; add property (name=gateway,value="#{defrouter}"); )
