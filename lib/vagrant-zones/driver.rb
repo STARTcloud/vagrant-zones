@@ -320,12 +320,12 @@ module VagrantPlugins
         @machine.config.vm.networks.each do |adaptertype, opts|
           case adaptertype.to_s
           when 'public_network'
-            zonenicdel(uii, opts) if state == 'delete'
+            zonenicdel(uii, opts) if state == 'delete' && !config.on_demand_vnics
             zonecfgnicconfig(uii, opts) if state == 'config'
             zoneniccreate(uii, opts) if state == 'create' && !config.on_demand_vnics
             zonenicstpzloginsetup(uii, opts, config) if state == 'setup' && config.setup_method == 'zlogin'
           when 'private_network'
-            zonenicdel(uii, opts) if state == 'delete'
+            zonenicdel(uii, opts) if state == 'delete' && !config.on_demand_vnics
             zonedhcpentriesrem(uii, opts) if state == 'delete'
             zonenatclean(uii, opts) if state == 'delete'
             etherstubdelhvnic(uii, opts) if state == 'delete'
