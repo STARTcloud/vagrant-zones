@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.77](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.76...v0.1.77) (2023-11-27)
+
+
+### Bug Fixes
+
+* don't delete vnics if on_demand is enabled ([e7d0b8d](https://github.com/STARTcloud/vagrant-zones/commit/e7d0b8d7b6694ee93759e0f45185a54aefc2e91e))
+
 ## [0.1.76](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.75...v0.1.76) (2023-11-27)
 
 
