@@ -22,7 +22,7 @@ module VagrantPlugins
       end
       ## Experimental Parallel Execucution
       ## provider(:zone, parallel: true) do
-      provider(:zone) do
+      provider(:zone, parallel: true) do
         require_relative 'provider'
         Provider
       end
