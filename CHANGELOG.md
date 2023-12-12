@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.81](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.80...v0.1.81) (2023-12-12)
+
+
+### Bug Fixes
+
+* double spacing ([570ae2e](https://github.com/STARTcloud/vagrant-zones/commit/570ae2e2d5f80df885eeb5cb1565f3909269be80))
+* rubocop caught some junk ([ee8cbb1](https://github.com/STARTcloud/vagrant-zones/commit/ee8cbb15f7f7e3ea918cdc2a4246342aa16a0539))
+* rubocop caught some junk ([25e9543](https://github.com/STARTcloud/vagrant-zones/commit/25e95432a904aee2c73e6d0b67b00f61c40ce576))
+* rubocop falsepositive ([1f31eb0](https://github.com/STARTcloud/vagrant-zones/commit/1f31eb013cceb3bf7b3f3ef5fc8dfaad74b21559))
+
 ## [0.1.80](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.79...v0.1.80) (2023-12-12)
 
 
