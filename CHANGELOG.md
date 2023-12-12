@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.82](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.81...v0.1.82) (2023-12-12)
+
+
+### Bug Fixes
+
+* spacing that was driving me mad ([0995585](https://github.com/STARTcloud/vagrant-zones/commit/09955852bb2f45b11b0c67730efb547ec794ec70))
+
 ## [0.1.81](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.80...v0.1.81) (2023-12-12)
 
 
