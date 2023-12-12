@@ -527,7 +527,7 @@ module VagrantPlugins
         netplan1 = %(network:\n  version: 2\n  ethernets:\n    #{vnic_name}:\n      match:\n        macaddress: #{mac}\n)
         netplan2 = %(      dhcp-identifier: mac\n      dhcp4: #{opts[:dhcp4]}\n      dhcp6: #{opts[:dhcp6]}\n)
         netplan3 = %(      set-name: #{vnic_name}\n      addresses: [#{ip}/#{shrtsubnet}]\n      routes:\n        - to: default\n          via: #{defrouter}\n)
-        netplan4 = %(      nameservers:\n        addresses: [#{servers}] )  unless opts[:dns].nil?
+        netplan4 = %(      nameservers:\n        addresses: [#{servers}] ) unless opts[:dns].nil?
         netplan = netplan1 + netplan2 + netplan3 + netplan4
         cmd = "echo -e '#{netplan}' | sudo tee /etc/netplan/#{vnic_name}.yaml && chmod 400 /etc/netplan/#{vnic_name}.yaml"
         uii.info(I18n.t('vagrant_zones.netplan_applied_static') + "/etc/netplan/#{vnic_name}.yaml") if ssh_run_command(uii, cmd)
