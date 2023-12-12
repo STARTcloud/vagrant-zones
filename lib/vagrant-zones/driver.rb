@@ -266,7 +266,7 @@ module VagrantPlugins
         alcheck = 'login:' if config.alcheck.nil?
         pcheck = 'Password:'
 
-        @machine.config.vm.networks.each do |_adaptertype, opts|
+        @machine.config.vm.networks.each_value do |opts|
           ip = nil
           if opts[:dhcp4] && opts[:managed]
             vnic_name = "vnic#{nictype(opts)}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
@@ -526,7 +526,6 @@ module VagrantPlugins
         uii.info("  #{vnic_name}")
         netplan1 = %(network:\n  version: 2\n  ethernets:\n    #{vnic_name}:\n      match:\n        macaddress: #{mac}\n)
         netplan2 = %(      dhcp-identifier: mac\n      dhcp4: #{opts[:dhcp4]}\n      dhcp6: #{opts[:dhcp6]}\n)
-        #netplan3 = %(      set-name: #{vnic_name}\n      addresses: [#{ip}/#{shrtsubnet}]\n      gateway4: #{defrouter}\n)
         netplan3 = %(      set-name: #{vnic_name}\n      addresses: [#{ip}/#{shrtsubnet}]\n      routes:\n        - to: default\n          via: #{defrouter}\n)
         netplan4 = %(      nameservers:\n        addresses: [#{servers}] )  unless opts[:dns].nil?
         netplan = netplan1 + netplan2 + netplan3 + netplan4
@@ -1629,7 +1628,7 @@ module VagrantPlugins
         # name = @machine.name
         uii.info(I18n.t('vagrant_zones.cron_entries'))
         h = { h: 'hourly', d: 'daily', w: 'weekly', m: 'monthly' }
-        h.each do |_k, d|
+        h.each_value do |d|
           next unless opts[:list] == d || opts[:list] == 'all'
 
           uii.info(cronjobs[d.to_sym]) unless cronjobs[d.to_sym].nil?
@@ -1644,7 +1643,7 @@ module VagrantPlugins
         rmcr = "#{sc} -l | grep -v "
         h = { h: 'hourly', d: 'daily', w: 'weekly', m: 'monthly' }
         uii.info(I18n.t('vagrant_zones.cron_delete'))
-        h.each do |_k, d|
+        h.each_value do |d|
           next unless opts[:delete] == d || opts[:delete] == 'all'
 
           cj = cronjobs[d.to_sym].to_s.gsub('*', '\*')
