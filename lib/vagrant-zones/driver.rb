@@ -533,13 +533,6 @@ module VagrantPlugins
         netplan = netplan1 + netplan2 + netplan3 + netplan4
         cmd = "echo -e '#{netplan}' | sudo tee /etc/netplan/#{vnic_name}.yaml"
         uii.info(I18n.t('vagrant_zones.netplan_applied_static') + "/etc/netplan/#{vnic_name}.yaml") if ssh_run_command(uii, cmd)
-
-
-        routes:
-        - to: default
-          via: {{ networks[0].gateway }}
-
-
         ## Apply the Configuration
         uii.info(I18n.t('vagrant_zones.netplan_applied')) if ssh_run_command(uii, 'sudo netplan apply')
         ## End of code block to move to Netplan function
