@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.83](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.82...v0.1.83) (2023-12-12)
+
+
+### Bug Fixes
+
+* add specific routing to netplan configs ([c4619d8](https://github.com/STARTcloud/vagrant-zones/commit/c4619d8efab3e85c10bba2caaa26e20620bde788))
+
 ## [0.1.82](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.81...v0.1.82) (2023-12-12)
 
 
