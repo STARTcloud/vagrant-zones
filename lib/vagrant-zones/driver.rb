@@ -211,8 +211,7 @@ module VagrantPlugins
       # This Sanitizes the DNS Records
       def dnsservers(uii, opts)
         config = @machine.provider_config
-        servers = opts['dns']
-        servers = [{ 'nameserver' => '1.1.1.1' }, { 'nameserver' => '8.8.8.8' }] if opts['dns'].nil?
+        servers = opts[:dns]
         uii.info(I18n.t('vagrant_zones.nsservers') + servers.to_s) if config.debug
         servers
       end
@@ -521,7 +520,7 @@ module VagrantPlugins
         defrouter = opts[:gateway].to_s
         vnic_name = vname(uii, opts)
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
-        servers = dnsservers(uii, opts)
+        servers = dnsservers(uii, opts).map { |server| server['nameserver'] }.join(', ') unless opts[:dns].nil?
         ## Begin of code block to move to Netplan function
         uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic'))
         uii.info("  #{vnic_name}")
@@ -529,10 +528,11 @@ module VagrantPlugins
         netplan2 = %(      dhcp-identifier: mac\n      dhcp4: #{opts[:dhcp4]}\n      dhcp6: #{opts[:dhcp6]}\n)
         #netplan3 = %(      set-name: #{vnic_name}\n      addresses: [#{ip}/#{shrtsubnet}]\n      gateway4: #{defrouter}\n)
         netplan3 = %(      set-name: #{vnic_name}\n      addresses: [#{ip}/#{shrtsubnet}]\n      routes:\n        - to: default\n          via: #{defrouter}\n)
-        netplan4 = %(      nameservers:\n        addresses: [#{servers[0]['nameserver']} , #{servers[1]['nameserver']}] )
+        netplan4 = %(      nameservers:\n        addresses: [#{servers}] )  unless opts[:dns].nil?
         netplan = netplan1 + netplan2 + netplan3 + netplan4
-        cmd = "echo -e '#{netplan}' | sudo tee /etc/netplan/#{vnic_name}.yaml"
+        cmd = "echo -e '#{netplan}' | sudo tee /etc/netplan/#{vnic_name}.yaml && chmod 400 /etc/netplan/#{vnic_name}.yaml"
         uii.info(I18n.t('vagrant_zones.netplan_applied_static') + "/etc/netplan/#{vnic_name}.yaml") if ssh_run_command(uii, cmd)
+
         ## Apply the Configuration
         uii.info(I18n.t('vagrant_zones.netplan_applied')) if ssh_run_command(uii, 'sudo netplan apply')
         ## End of code block to move to Netplan function
@@ -544,7 +544,7 @@ module VagrantPlugins
         defrouter = opts[:gateway].to_s
         vnic_name = vname(uii, opts)
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
-        servers = dnsservers(uii, opts)
+        servers = dnsservers(uii, opts).map { |server| "nameserver #{server['nameserver']}" }.join("\n") unless opts[:dns].nil?
         uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic_dladm'))
         uii.info("  #{vnic_name}")
 
@@ -572,8 +572,7 @@ module VagrantPlugins
         route_add = "pfexec route -p add default #{defrouter}" unless defrouter.nil?
         uii.info(I18n.t('vagrant_zones.dladm_route_applied')) if ssh_run_command(uii, route_add)
 
-        ns_string = "nameserver #{servers[0]['nameserver']}\nnameserver #{servers[1]['nameserver']}"
-        dns_set = "pfexec echo '#{ns_string}' | pfexec tee /etc/resolv.conf"
+        dns_set = "pfexec echo '#{servers}' | pfexec tee /etc/resolv.conf" unless opts[:dns].nil?
         uii.info(I18n.t('vagrant_zones.dladm_dns_applied')) if ssh_run_command(uii, dns_set.to_s)
       end
 
@@ -583,7 +582,7 @@ module VagrantPlugins
         defrouter = opts[:gateway].to_s
         vnic_name = vname(uii, opts)
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
-        servers = dnsservers(uii, opts)
+        servers = dnsservers(uii, opts).map { |server| "nameserver #{server['nameserver']}" }.join("\n") unless opts[:dns].nil?
         uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic_dladm'))
         uii.info("  #{vnic_name}")
 
@@ -614,8 +613,7 @@ module VagrantPlugins
         route_add = 'echo True' if opts[:gateway].nil?
         uii.info(I18n.t('vagrant_zones.dladm_route_applied')) if zlogin(uii, route_add)
 
-        ns_string = "nameserver #{servers[0]['nameserver']}\nnameserver #{servers[1]['nameserver']}"
-        dns_set = "pfexec echo '#{ns_string}' | pfexec tee /etc/resolv.conf"
+        dns_set = "pfexec echo '#{servers}' | pfexec tee /etc/resolv.conf" unless opts[:dns].nil?
         uii.info(I18n.t('vagrant_zones.dladm_dns_applied')) if zlogin(uii, dns_set.to_s)
       end
 
@@ -1136,7 +1134,7 @@ module VagrantPlugins
         zlogin(uii, 'rm -rf /etc/netplan/*.yaml') if (opts[:nic_number]).zero?
         ip = ipaddress(uii, opts)
         vnic_name = vname(uii, opts)
-        servers = dnsservers(uii, opts)
+        servers = dnsservers(uii, opts).map { |server| server['nameserver'] }.join(', ') unless opts[:dns].nil?
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
         defrouter = opts[:gateway].to_s
         uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic'))
@@ -1148,10 +1146,10 @@ module VagrantPlugins
         netplan3 = %(      set-name: #{vnic_name}\n) if opts[:dhcp4]
         #netplan4 = %(      gateway4: #{defrouter}\n)
         netplan4 = %(      routes:\n        - to: default\n          via: #{defrouter}\n)
-        netplan5 = %(      nameservers:\n        addresses: [#{servers[0]['nameserver']} , #{servers[1]['nameserver']}] )
+        netplan5 = %(      nameservers:\n        addresses: [#{servers}] ) unless opts[:dns].nil?
         netplan = netplan1 + netplan2 + netplan3 + netplan5 if opts[:gateway].nil?
         netplan = netplan1 + netplan2 + netplan3 + netplan4 + netplan5 unless opts[:gateway].nil?
-        cmd = "echo '#{netplan}' > /etc/netplan/#{vnic_name}.yaml"
+        cmd = "echo '#{netplan}' > /etc/netplan/#{vnic_name}.yaml && chmod 400 /etc/netplan/#{vnic_name}.yaml"
         infomessage = I18n.t('vagrant_zones.netplan_applied_static') + "/etc/netplan/#{vnic_name}.yaml"
         uii.info(infomessage) if zlogin(uii, cmd)
         uii.info(I18n.t('vagrant_zones.netplan_applied')) if zlogin(uii, 'netplan apply')
@@ -1331,7 +1329,7 @@ module VagrantPlugins
       def zoneniczloginsetup_windows(uii, opts, _mac)
         ip = ipaddress(uii, opts)
         vnic_name = vname(uii, opts)
-        servers = dnsservers(uii, opts)
+        servers = dnsservers(uii, opts) unless opts[:dns].nil?
         defrouter = opts[:gateway].to_s
         uii.info(I18n.t('vagrant_zones.configure_win_interface_using_vnic'))
         sleep(60)
@@ -1340,8 +1338,8 @@ module VagrantPlugins
         ## to set the proper VNIC name if using multiple adapters
         rename_adapter = %(netsh interface set interface name = "Ethernet" newname = "#{vnic_name}")
         cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter})
-        dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{servers[0]['nameserver']} primary validate=no)
-        dns2 = %(netsh int ipv4 add dns name="#{vnic_name}" #{servers[1]['nameserver']} index=2 validate=no)
+        dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{servers[0]['nameserver']} primary validate=no) unless opts[:dns].nil?
+        dns2 = %(netsh int ipv4 add dns name="#{vnic_name}" #{servers[1]['nameserver']} index=2 validate=no) unless opts[:dns].nil?
 
         uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
         uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
