@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.80](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.79...v0.1.80) (2023-12-12)
+
+
+### Bug Fixes
+
+* nameservers, windows tbu ([ac71703](https://github.com/STARTcloud/vagrant-zones/commit/ac7170336596ee4ec3179a12eb6139db6f6bae33))
+* remove junk ([42b68d6](https://github.com/STARTcloud/vagrant-zones/commit/42b68d6e9e3e9a45eed0ffe65f6a0e5e04309a9d))
+* rubocop linting ([123799f](https://github.com/STARTcloud/vagrant-zones/commit/123799fbe03bbedf36191ec22bc2ce878e01c8de))
+* update each loops per rubocop ([646c8d3](https://github.com/STARTcloud/vagrant-zones/commit/646c8d394bdf2faf6a725e0293c7ae732dba2ef5))
+* update netplan ([14fcb6e](https://github.com/STARTcloud/vagrant-zones/commit/14fcb6e6a21aeaf0a43944dc13f1b66996cc00b6))
+
 ## [0.1.79](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.78...v0.1.79) (2023-11-27)
 
 
