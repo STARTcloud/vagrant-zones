@@ -1327,7 +1327,7 @@ module VagrantPlugins
       def zoneniczloginsetup_windows(uii, opts, _mac)
         ip = ipaddress(uii, opts)
         vnic_name = vname(uii, opts)
-        servers = dnsservers(uii, opts) unless opts[:dns].nil?
+        
         defrouter = opts[:gateway].to_s
         uii.info(I18n.t('vagrant_zones.configure_win_interface_using_vnic'))
         sleep(60)
@@ -1336,13 +1336,17 @@ module VagrantPlugins
         ## to set the proper VNIC name if using multiple adapters
         rename_adapter = %(netsh interface set interface name = "Ethernet" newname = "#{vnic_name}")
         cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter})
-        dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{servers[0]['nameserver']} primary validate=no) unless opts[:dns].nil?
-        dns2 = %(netsh int ipv4 add dns name="#{vnic_name}" #{servers[1]['nameserver']} index=2 validate=no) unless opts[:dns].nil?
-
         uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
         uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
-        uii.info(I18n.t('vagrant_zones.win_applied_dns1')) if zlogin(uii, dns1)
-        uii.info(I18n.t('vagrant_zones.win_applied_dns2')) if zlogin(uii, dns2)
+        unless opts[:dns].nil?
+          ip_addresses = dnsservers(uii, opts).map { |hash| hash["nameserver"] } 
+          dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{ip_addresses[0]} primary validate=no)
+          uii.info(I18n.t('vagrant_zones.win_applied_dns1')) if zlogin(uii, dns1)
+          ip_addresses[1..-1].each_with_index do |dns, index|
+            additional_nameservers = %(netsh int ipv4 add dns name="#{vnic_name}" #{dns} index=#{index + 2}") validate=no)
+            uii.info(I18n.t('vagrant_zones.win_applied_dns2')) if zlogin(uii, additional_nameservers)
+           end
+        end
       end
 
       def zlogin_win_boot(uii)
