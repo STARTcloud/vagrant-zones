@@ -26,6 +26,7 @@ module VagrantPlugins
               b2.use Start
               b2.use WaitTillBoot
               b2.use Setup
+              b2.use NetworkingCleanup
               b2.use WaitTillUp
               b2.use Provision
               b2.use SetHostname
@@ -186,6 +187,7 @@ module VagrantPlugins
       autoload :Network, action_root.join('network')
       autoload :Setup, action_root.join('setup')
       autoload :Start, action_root.join('start')
+      autoload :NetworkingCleanup, action_root.join('network_cleanup')
       autoload :IsCreated, action_root.join('is_created')
       autoload :NotCreated, action_root.join('not_created')
       autoload :CreateSnapshots, action_root.join('create_zfs_snapshots')

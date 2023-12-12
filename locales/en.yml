@@ -256,6 +256,8 @@ en:
       Creating networking interfaces for zone: 
     nat_vnic_setup: |-
       - Setting up NAT VNIC: 
+    vnic_conf_del: |-
+      -  Deleting zonecg for provisional VNIC: 
     forwarding_nat: |-
       - Enabling NAT forwarding:
     configuring_nat: |-

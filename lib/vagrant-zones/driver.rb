@@ -321,6 +321,7 @@ module VagrantPlugins
           when 'public_network'
             zonenicdel(uii, opts) if state == 'delete' && !config.on_demand_vnics
             zonecfgnicconfig(uii, opts) if state == 'config'
+            zonecfgnicconfigdelete(uii, opts) if state == 'delete_provisional' && config.on_demand_vnics
             zoneniccreate(uii, opts) if state == 'create' && !config.on_demand_vnics
             zonenicstpzloginsetup(uii, opts, config) if state == 'setup' && config.setup_method == 'zlogin'
           when 'private_network'
@@ -1075,6 +1076,18 @@ module VagrantPlugins
         end
       end
 
+      ## zonecfg function for for Networking
+      def zonecfgnicconfigdelete(uii, opts)
+        allowed_address = allowedaddress(uii, opts)
+        vnic_name = vname(uii, opts)
+        config = @machine.provider_config
+        uii.info(I18n.t('vagrant_zones.vnic_conf_del'))
+        uii.info("  #{vnic_name}")
+        if opts[:provisional]
+          execute(false, %(#{@pfexec} zonecfg -z #{@machine.name} remove net physical=#{vnic_name}))
+        end
+      end
+
       # This helps us set the zone configurations for the zone
       def zonecfg(uii)
         name = @machine.name
@@ -1343,7 +1356,7 @@ module VagrantPlugins
           dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{ip_addresses[0]} primary validate=no)
           uii.info(I18n.t('vagrant_zones.win_applied_dns1')) if zlogin(uii, dns1)
           ip_addresses[1..-1].each_with_index do |dns, index|
-            additional_nameservers = %(netsh int ipv4 add dns name="#{vnic_name}" #{dns} index=#{index + 2}") validate=no)
+            additional_nameservers = %(netsh int ipv4 add dns name="#{vnic_name}" #{dns} index="#{index + 2}") validate=no)
             uii.info(I18n.t('vagrant_zones.win_applied_dns2')) if zlogin(uii, additional_nameservers)
            end
         end

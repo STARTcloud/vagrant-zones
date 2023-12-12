@@ -20,8 +20,7 @@ module VagrantPlugins
         require_relative 'config'
         Config
       end
-      provider(:zone, parallel: true) do
-      ## provider(:zone, parallel: false) do
+      provider(:zone, parallel: false) do
         require_relative 'provider'
         Provider
       end
