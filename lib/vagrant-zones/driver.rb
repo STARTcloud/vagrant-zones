@@ -1347,6 +1347,7 @@ module VagrantPlugins
         uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
         uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
         return unless opts[:dns].nil?
+
         ip_addresses = dnsservers(uii, opts).map { |hash| hash['nameserver'] }
         dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{ip_addresses[0]} primary validate=no)
         uii.info(I18n.t('vagrant_zones.win_applied_dns1')) if zlogin(uii, dns1)
