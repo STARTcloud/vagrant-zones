@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.87](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.86...v0.1.87) (2023-12-14)
+
+
+### Bug Fixes
+
+* spacing in translation file ([44f80c4](https://github.com/STARTcloud/vagrant-zones/commit/44f80c449b3760bac5c56b3af07884f2c081e95c))
+
 ## [0.1.86](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.85...v0.1.86) (2023-12-14)
 
 
