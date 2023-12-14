@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.86](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.85...v0.1.86) (2023-12-14)
+
+
+### Bug Fixes
+
+* remove provisional vnic after provisioning ([260102c](https://github.com/STARTcloud/vagrant-zones/commit/260102c926d374c81acbc67f561bc655f22573af))
+
 ## [0.1.85](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.84...v0.1.85) (2023-12-14)
 
 
