@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.84](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.83...v0.1.84) (2023-12-14)
+
+
+### Bug Fixes
+
+* adding removal of zonecfg provisional network after startup ([8885044](https://github.com/STARTcloud/vagrant-zones/commit/88850440213a7ffce82463b02dab56c8c9d05d69))
+* disable parallel by default ([98de187](https://github.com/STARTcloud/vagrant-zones/commit/98de187ab53a123a95d489a4bd8f7383d1b788ca))
+* enable parallel builds #dangerwillrobinson ([5bf2cea](https://github.com/STARTcloud/vagrant-zones/commit/5bf2ceaf3adaf42553afe7a38ab9c2a665d7ff21))
+* remove unneccessary lines from zonenicdel ([39fef96](https://github.com/STARTcloud/vagrant-zones/commit/39fef96b85445c472595154ebb59db8f190a30c4))
+* remove unneccessary lines from zonenicdel ([227ab2c](https://github.com/STARTcloud/vagrant-zones/commit/227ab2cdb06eb8a414b2f13e567f6be70ac8613c))
+* renenable parallel ([38c2bf2](https://github.com/STARTcloud/vagrant-zones/commit/38c2bf27e905f8a4099532fa3d193d3825d4ab95))
+* some rubocop warnings ([88b00c4](https://github.com/STARTcloud/vagrant-zones/commit/88b00c465a3926aa0ce4dc8881592fd755dfd5dc))
+* typo  ) ([b385505](https://github.com/STARTcloud/vagrant-zones/commit/b385505757ac5e078522add1e3e44b99c9369417))
+* windows multiple nameservers ([430be2d](https://github.com/STARTcloud/vagrant-zones/commit/430be2d868be34a9724b454ff571006c7632df7a))
+* windows namservers ([b271ae1](https://github.com/STARTcloud/vagrant-zones/commit/b271ae1dbb436750cb4b074f99d10f5922c0ee0c))
+
 ## [0.1.83](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.82...v0.1.83) (2023-12-12)
 
 
