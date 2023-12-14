@@ -1346,14 +1346,13 @@ module VagrantPlugins
         cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter})
         uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
         uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
-        unless opts[:dns].nil?
-          ip_addresses = dnsservers(uii, opts).map { |hash| hash['nameserver'] }
-          dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{ip_addresses[0]} primary validate=no)
-          uii.info(I18n.t('vagrant_zones.win_applied_dns1')) if zlogin(uii, dns1)
-          ip_addresses[1..-1].each_with_index do |dns, index|
-            additional_nameservers = %(netsh int ipv4 add dns name="#{vnic_name}" #{dns} index="#{index + 2}" validate=no)
-            uii.info(I18n.t('vagrant_zones.win_applied_dns2')) if zlogin(uii, additional_nameservers)
-          end
+        return unless opts[:dns].nil?
+        ip_addresses = dnsservers(uii, opts).map { |hash| hash['nameserver'] }
+        dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{ip_addresses[0]} primary validate=no)
+        uii.info(I18n.t('vagrant_zones.win_applied_dns1')) if zlogin(uii, dns1)
+        ip_addresses[1..].each_with_index do |dns, index|
+          additional_nameservers = %(netsh int ipv4 add dns name="#{vnic_name}" #{dns} index="#{index + 2}" validate=no)
+          uii.info(I18n.t('vagrant_zones.win_applied_dns2')) if zlogin(uii, additional_nameservers)
         end
       end
 
