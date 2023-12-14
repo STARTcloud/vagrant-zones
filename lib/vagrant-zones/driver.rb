@@ -1081,9 +1081,7 @@ module VagrantPlugins
         vnic_name = vname(uii, opts)
         uii.info(I18n.t('vagrant_zones.vnic_conf_del'))
         uii.info(" #{vnic_name}")
-        if opts[:provisional]
-          execute(false, "#{@pfexec} zonecfg -z #{@machine.name} remove net physical=#{vnic_name}")
-        end
+        execute(false, "#{@pfexec} zonecfg -z #{@machine.name} remove net physical=#{vnic_name}") if opts[:provisional]
       end
 
       # This helps us set the zone configurations for the zone
@@ -1338,7 +1336,6 @@ module VagrantPlugins
       def zoneniczloginsetup_windows(uii, opts, _mac)
         ip = ipaddress(uii, opts)
         vnic_name = vname(uii, opts)
-        
         defrouter = opts[:gateway].to_s
         uii.info(I18n.t('vagrant_zones.configure_win_interface_using_vnic'))
         sleep(60)
@@ -1350,13 +1347,13 @@ module VagrantPlugins
         uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
         uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
         unless opts[:dns].nil?
-          ip_addresses = dnsservers(uii, opts).map { |hash| hash["nameserver"] } 
+          ip_addresses = dnsservers(uii, opts).map { |hash| hash['nameserver'] }
           dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{ip_addresses[0]} primary validate=no)
           uii.info(I18n.t('vagrant_zones.win_applied_dns1')) if zlogin(uii, dns1)
           ip_addresses[1..-1].each_with_index do |dns, index|
             additional_nameservers = %(netsh int ipv4 add dns name="#{vnic_name}" #{dns} index="#{index + 2}" validate=no)
             uii.info(I18n.t('vagrant_zones.win_applied_dns2')) if zlogin(uii, additional_nameservers)
-           end
+          end
         end
       end
 
