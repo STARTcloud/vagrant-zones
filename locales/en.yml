@@ -257,7 +257,7 @@ en:
     nat_vnic_setup: |-
       - Setting up NAT VNIC: 
     vnic_conf_del: |-
-      -  Removing the provisional vnic from the zones configuration: 
+      - Removing the provisional vnic from the zones configuration: 
     forwarding_nat: |-
       - Enabling NAT forwarding:
     configuring_nat: |-
