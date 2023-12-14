@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.85](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.84...v0.1.85) (2023-12-14)
+
+
+### Bug Fixes
+
+* skip unaffected nics ([b4b4ae3](https://github.com/STARTcloud/vagrant-zones/commit/b4b4ae3ed336ace9f37966717f751288aa90965c))
+
 ## [0.1.84](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.83...v0.1.84) (2023-12-14)
 
 
