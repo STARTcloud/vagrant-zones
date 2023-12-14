@@ -1079,8 +1079,8 @@ module VagrantPlugins
       ## zonecfg function for for Networking
       def zonecfgnicconfigdelete(uii, opts)
         vnic_name = vname(uii, opts)
-        uii.info(I18n.t('vagrant_zones.vnic_conf_del'))
-        uii.info(" #{vnic_name}")
+        uii.info(I18n.t('vagrant_zones.vnic_conf_del')) if opts[:provisional]
+        uii.info("  #{vnic_name}") if opts[:provisional]
         execute(false, "#{@pfexec} zonecfg -z #{@machine.name} remove net physical=#{vnic_name}") if opts[:provisional]
       end
 
