@@ -27,8 +27,8 @@ module VagrantPlugins
               b2.use WaitTillBoot
               b2.use Setup
               b2.use WaitTillUp
-              b2.use NetworkingCleanup
               b2.use Provision
+              b2.use NetworkingCleanup
               b2.use SetHostname
               b2.use SyncedFolders
               b2.use SyncedFolderCleanup
