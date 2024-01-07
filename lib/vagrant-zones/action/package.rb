@@ -99,12 +99,7 @@ module VagrantPlugins
 
         def metadata_content(brand, _kernel, vcc, boxshortname)
           <<-ZONEBOX
-          {
-            "provider": "zone",
-            "format": "zss",
-            "brand": "#{brand}",
-            "url": "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}"
-          }
+{ "provider": "zone", "architecture": "amd64", "url": "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}" }
           ZONEBOX
         end
 
