@@ -49,7 +49,7 @@ module VagrantPlugins
           extra = ''
 
           ## Include User Extra Files
-          @tmp_include = "#{tmp_dir}/_include"
+          @tmp_include = "#{tmp_dir}/../_include"
           if env['package.include']
             extra = './_include'
             Dir.mkdir(@tmp_include)
