@@ -49,13 +49,11 @@ module VagrantPlugins
           extra = ''
 
           ## Include User Extra Files
-          @tmp_include = "#{tmp_dir}/_include"
           if env['package.include']
             extra = '_include'
-            Dir.mkdir(@tmp_include)
             env['package.include'].each do |f|
               env[:ui].info("Including user file: #{f}")
-              FileUtils.cp(f, @tmp_include)
+              FileUtils.cp(f, tmp_dir)
             end
           end
 
