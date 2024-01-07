@@ -97,7 +97,7 @@ module VagrantPlugins
           puts "#{@pfexec} zfs send -r #{datasetpath}/boot@vagrant_box#{datetime} > #{destination}" if result.zero? && config.debug
         end
 
-        def metadata_content(brand, _kernel, vcc, boxshortname)
+        def metadata_content(_brand, _kernel, vcc, boxshortname)
           <<-ZONEBOX
 { "provider": "zone", "architecture": "amd64", "url": "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}" }
           ZONEBOX
