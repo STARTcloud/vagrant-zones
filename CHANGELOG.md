@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.89](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.88...v0.1.89) (2024-01-07)
+
+
+### Bug Fixes
+
+* github action deprecating ruby 2.7 ([c816086](https://github.com/STARTcloud/vagrant-zones/commit/c816086a07b0534e95a2ae60f82fe01b067f8488))
+
 ## [0.1.88](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.87...v0.1.88) (2024-01-07)
 
 
