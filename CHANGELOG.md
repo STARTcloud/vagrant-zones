@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.93](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.92...v0.1.93) (2024-01-07)
+
+
+### Bug Fixes
+
+* metadata ([c6c9845](https://github.com/STARTcloud/vagrant-zones/commit/c6c9845e7746ccd5b959968647a720e98bf15f6f))
+* metadata ([844c435](https://github.com/STARTcloud/vagrant-zones/commit/844c4351c8b66ce651192d0a1265214c53a65164))
+* metadata ([9dc7104](https://github.com/STARTcloud/vagrant-zones/commit/9dc71043a96803b1429144480d59955828c22007))
+
 ## [0.1.92](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.91...v0.1.92) (2024-01-07)
 
 
