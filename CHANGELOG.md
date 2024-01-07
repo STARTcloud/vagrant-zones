@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.90](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.89...v0.1.90) (2024-01-07)
+
+
+### Bug Fixes
+
+* package includes ([7157795](https://github.com/STARTcloud/vagrant-zones/commit/71577953c96eaa578d9b79614596ef086f56ee1c))
+
 ## [0.1.89](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.88...v0.1.89) (2024-01-07)
 
 
