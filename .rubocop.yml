@@ -12,7 +12,6 @@ Metrics/ClassLength:
   Enabled: true
   Exclude:
     - lib/vagrant-zones/driver*
-    - lib/vagrant-zones/action/package*
 
 Naming/MethodName:
   EnforcedStyle: snake_case

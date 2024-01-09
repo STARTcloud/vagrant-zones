@@ -30,20 +30,14 @@ module VagrantPlugins
         def call(env)
           @machine = env[:machine]
           @driver = @machine.provider.driver
-          name = @machine.name
           boxname = env['package.output']
           mpc = @machine.provider_config
-          brand = mpc.brand
-          kernel = mpc.kernel
-          vcc = mpc.vagrant_cloud_creator
-          boot = mpc.boot
-          boxshortname = mpc.boxshortname
           files = {}
           raise "#{boxname}: Already exists" if File.exist?(boxname)
 
           ## Create Snapshot
           FileUtils.mkdir_p("#{Dir.pwd}/_tmp_package")
-          datasetpath = "#{mpc.boot['array']}/#{mpc.boot['dataset']}/#{name}"
+          datasetpath = "#{mpc.boot['array']}/#{mpc.boot['dataset']}/#{@machine.name}"
           datetime = Time.new.strftime('%Y-%m-%d-%H:%M:%S')
           snapshot_create(datasetpath, datetime, env[:ui], mpc)
           snapshot_send(datasetpath, "#{Dir.pwd}/_tmp_package/box.zss", datetime, env[:ui], mpc)
@@ -89,21 +83,21 @@ module VagrantPlugins
           files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
 
           info_content_hash = {
-            'boxname' => "#{boxshortname}",
-            'Author' => "#{vcc}",
-            'Vagrant-Zones' => "This box was built with Vagrant-Zones: https://github.com/STARTcloud/vagrant-zones"
+            'boxname' => boxname,
+            'Author' => mpc.vagrant_cloud_creator,
+            'Vagrant-Zones' => 'This box was built with Vagrant-Zones: https://github.com/STARTcloud/vagrant-zones'
           }
           File.write("#{Dir.pwd}/_tmp_package/info.json", info_content_hash.to_json)
 
           metadata_content_hash = {
             'provider' => 'zone',
             'architecture' => 'amd64',
-            'brand' => brand,
+            'brand' => mpc.brand,
             'format' => 'zss',
-            'url' => "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}"
+            'url' => "https://app.vagrantup.com/#{mpc.vagrant_cloud_creator}/boxes/#{mpc.boxshortname}"
           }
 
-          metadata_content_hash['kernel'] = kernel if !kernel.nil? && kernel != false
+          metadata_content_hash['kernel'] = mpc.kernel if !mpc.kernel.nil? && mpc.kernel != false
           File.write("#{Dir.pwd}/_tmp_package/metadata.json", metadata_content_hash.to_json)
 
           ## Create the Box file
@@ -134,9 +128,9 @@ module VagrantPlugins
         def assemble_box(boxname, tmp_dir)
           is_linux = `bash -c '[[ "$(uname -a)" =~ "Linux" ]]'`
           Dir.chdir(tmp_dir) do
-          files = Dir.glob(File.join('.', '*'))
-          tar_command = is_linux ? "tar -cvzf ../#{boxname}" : "tar -cvzEf ../#{boxname}"
-          `#{tar_command} #{files.join(' ')}`
+            files = Dir.glob(File.join('.', '*'))
+            tar_command = is_linux ? "tar -cvzf" : "tar -cvzEf"
+            `#{tar_command} ../#{boxname} #{files.join(' ')}`
           end
         end
       end
