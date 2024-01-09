@@ -77,7 +77,7 @@ module VagrantPlugins
             include_files = files
           end
 
-          copy_include_files(include_files, tmp_dir, env[:ui])
+          copy_include_files(include_files, tmp_dir)
 
           ## Create the Metadata and Vagrantfile
           Dir.chdir(tmp_dir)
@@ -89,7 +89,7 @@ module VagrantPlugins
             'format' => 'zss',
             'kernel' => kernel,
             'url' => 'https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}'
-           }
+                                  }
 
           File.write('./metadata.json', metadata_content_hash)
 
@@ -100,7 +100,7 @@ module VagrantPlugins
           Vagrant.configure("2") do |config|
             Hosts.configure(config, settings)
           end}
-          vagrantfile_content = File.read(user_vagrantfile ) if File.exist?(user_vagrantfile)
+          vagrantfile_content = File.read(user_vagrantfile) if File.exist?(user_vagrantfile)
           File.write('./Vagrantfile', vagrantfile_content)
 
           ## Create the Box file
@@ -131,7 +131,7 @@ module VagrantPlugins
 
         # This method copies the include files (passed in via command line) to the
         # temporary directory so they are included in a sub-folder within the actual box
-        def copy_include_files(include_files, destination, uii)
+        def copy_include_files(include_files, destination)
           include_files.each do |from, dest|
             include_directory = Pathname.new(destination)
             to = include_directory.join(dest)
