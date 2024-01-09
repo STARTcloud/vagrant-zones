@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
+require 'fileutils'
+require "pathname"
 require 'log4r'
+require 'vagrant/util/safe_chdir'
+require 'vagrant/util/subprocess'
 module VagrantPlugins
   module ProviderZone
     module Action
@@ -33,6 +37,8 @@ module VagrantPlugins
           kernel = @machine.provider_config.kernel
           vcc = @machine.provider_config.vagrant_cloud_creator
           boxshortname = @machine.provider_config.boxshortname
+          include_files = {}
+          files = {}
           raise "#{boxname}: Already exists" if File.exist?(boxname)
 
           ## Create Snapshot
@@ -46,24 +52,43 @@ module VagrantPlugins
           ## snapshot_delete(datasetpath, env[:ui], datetime)
 
           # Package VM
-          extra = ''
-
+          
           ## Include User Extra Files
           if env['package.include']
-            extra = '_include'
-            env['package.include'].each do |f|
-              env[:ui].info("Including user file: #{f}")
-              FileUtils.cp(f, tmp_dir)
+            env["package.include"].each do |file|
+              source = Pathname.new(file)
+              dest   = nil
+  
+              # If the source is relative then we add the file as-is to the include
+              # directory. Otherwise, we copy only the file into the root of the
+              # include directory. Kind of strange, but seems to match what people
+              # expect based on history.
+              if source.relative?
+                dest = source
+              else
+                dest = source.basename
+              end
+  
+              # Assign the mapping
+              files[file] = dest
             end
+  
+            if env["package.vagrantfile"]
+              # Vagrantfiles are treated special and mapped to a specific file
+              files[env["package.vagrantfile"]] = "_Vagrantfile"
+            end
+  
+            # Verify the mapping
+            files.each do |from, _|
+              raise Vagrant::Errors::PackageIncludeMissing,
+                    file: from if !File.exist?(from)
+            end
+  
+            # Save the mapping
+            include_files = files
           end
 
-          ## Include Vagrant file
-          if env['package.vagrantfile']
-            extra = '_include'
-            Dir.mkdir(@tmp_include) unless File.directory?(@tmp_include)
-            env[:ui].info('Including user Vagrantfile')
-            FileUtils.cp(env['package.vagrantfile'], "#{@tmp_include}/Vagrantfile")
-          end
+          copy_include_files(include_files, tmp_dir, env[:ui])
 
           ## Create the Metadata and Vagrantfile
           Dir.chdir(tmp_dir)
@@ -71,8 +96,7 @@ module VagrantPlugins
           File.write('./Vagrantfile', vagrantfile_content(brand, kernel, datasetpath))
 
           ## Create the Box file
-          assemble_box(boxname, extra)
-          FileUtils.mv("#{tmp_dir}/#{boxname}", "../#{boxname}")
+          assemble_box(boxname)
           Dir.chdir('../')
           FileUtils.rm_rf(tmp_dir)
 
@@ -97,29 +121,58 @@ module VagrantPlugins
           puts "#{@pfexec} zfs send -r #{datasetpath}/boot@vagrant_box#{datetime} > #{destination}" if result.zero? && config.debug
         end
 
-        def metadata_content(_brand, _kernel, vcc, boxshortname)
+        def metadata_content(brand, _kernel, vcc, boxshortname)
           <<-ZONEBOX
-  { "provider": "zone", "architecture": "amd64", "url": "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}" }
+  { "provider": "zone", "architecture": "amd64", "brand": "#{brand}", "format": "zss", "url": "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}" }
           ZONEBOX
+        end
+
+
+        # This method copies the include files (passed in via command line)
+        # to the temporary directory so they are included in a sub-folder within
+        # the actual box
+        def copy_include_files(include_files, destination, uii)
+          include_files.each do |from, dest|
+            
+            include_directory = Pathname.new(destination)
+
+            # We place the file in the include directory
+            to = include_directory.join(dest)
+  
+            uii.info I18n.t("vagrant.actions.general.package.packaging", file: from)
+            FileUtils.mkdir_p(to.parent)
+  
+            # Copy directory contents recursively.
+            if File.directory?(from)
+              FileUtils.cp_r(Dir.glob(from), to.parent, preserve: true)
+            else
+              FileUtils.cp(from, to, preserve: true)
+            end
+          end
         end
 
         def vagrantfile_content(brand, _kernel, datasetpath)
           <<-ZONEBOX
-          Vagrant.configure('2') do |config|
-            config.vm.provider :zone do |zone|
-              zone.brand = "#{brand}"
-              zone.datasetpath = "#{datasetpath}"
-            end
-          end
-          user_vagrantfile = File.expand_path('../_include/Vagrantfile', __FILE__)
-          load user_vagrantfile if File.exists?(user_vagrantfile)
+  ## Vagrant File tooling compatabile with Bhyve and Virtualbox
+  require 'yaml'
+  require File.expand_path("#{File.dirname(__FILE__)}/Hosts.rb")
+  
+  settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
+  
+  Vagrant.configure("2") do |config|
+          Hosts.configure(config, settings)
+            config.brand = "#{brand}"
+  end
           ZONEBOX
+          user_vagrantfile = File.expand_path('../Vagrantfile', __FILE__)
+          load user_vagrantfile if File.exists?(user_vagrantfile)
         end
 
-        def assemble_box(boxname, extra)
+        def assemble_box(boxname)
           is_linux = `bash -c '[[ "$(uname -a)" =~ "Linux" ]]'`
-          `tar -cvzf #{boxname} ./metadata.json ./Vagrantfile ./box.zss #{extra}` if is_linux
-          `tar -cvzEf #{boxname} ./metadata.json ./Vagrantfile ./box.zss #{extra}` unless is_linux
+          files = Dir.glob(File.join(".", "*"))
+          `tar -cvzf ../#{boxname} #{files.join(' ')}` if is_linux
+          `tar -cvzEf ../#{boxname} #{files.join(' ')}` unless is_linux
         end
       end
     end
