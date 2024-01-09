@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.1.94](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.93...v0.1.94) (2024-01-09)
+
+
+### Bug Fixes
+
+* linting changes ([6e0ca30](https://github.com/STARTcloud/vagrant-zones/commit/6e0ca305cb708cf3e9b8856c81f232b30d1fbd34))
+* linting changes ([5efd5ae](https://github.com/STARTcloud/vagrant-zones/commit/5efd5ae4df118f0236541dc2f801221732864602))
+* linting changes ([b74c980](https://github.com/STARTcloud/vagrant-zones/commit/b74c9808d1867d5fa05f0193419f777da39fa5de))
+* linting changes ([eeaf8eb](https://github.com/STARTcloud/vagrant-zones/commit/eeaf8eb5da9162123b7fa2be99790deac6121a28))
+* linting changes ([d2e23b4](https://github.com/STARTcloud/vagrant-zones/commit/d2e23b43c20a8037a50a49ca738d8e66a3fedc61))
+* linting changes ([ce961e3](https://github.com/STARTcloud/vagrant-zones/commit/ce961e3c6d96aa24f8140beb6e4f92e4974feb5b))
+* linting changes ([7735b66](https://github.com/STARTcloud/vagrant-zones/commit/7735b66944efcfe62cb86a19f58f42aa7933a994))
+* linting changes ([117af25](https://github.com/STARTcloud/vagrant-zones/commit/117af25973eef16eda3f3d7ec3f83ab7e2ed0f4b))
+* linting changes ([50a32ec](https://github.com/STARTcloud/vagrant-zones/commit/50a32ecd3fa3704d67068c7f50803d639a205c1b))
+* linting changes ([6ae3aa1](https://github.com/STARTcloud/vagrant-zones/commit/6ae3aa10a7bca6cc057091bb0af77a634cb2083d))
+* linting changes ([b936a8b](https://github.com/STARTcloud/vagrant-zones/commit/b936a8b218ac4046a44b1242d98852eaab382847))
+* linting changes ([5c30988](https://github.com/STARTcloud/vagrant-zones/commit/5c30988965bf396fd8744464ea16ca6260f8a406))
+* linting changes ([f96e885](https://github.com/STARTcloud/vagrant-zones/commit/f96e8854a5eea2c499de3ea9b93c4e9f4349be3a))
+* linting changes ([b0cc1c3](https://github.com/STARTcloud/vagrant-zones/commit/b0cc1c3577d50940badf28e60c6bbfc155ff5ffc))
+* linting changes ([547d81d](https://github.com/STARTcloud/vagrant-zones/commit/547d81d564c9a241fba856748a223faf65ce7f4a))
+* linting changes ([bc66f9b](https://github.com/STARTcloud/vagrant-zones/commit/bc66f9bffc7e2d4f0ff475a942c0514c4916c487))
+* linting changes ([a0b7295](https://github.com/STARTcloud/vagrant-zones/commit/a0b7295ca60ecfb6ee85cb178d1d70cb217a3fb3))
+* linting changes ([895fb1f](https://github.com/STARTcloud/vagrant-zones/commit/895fb1f214888128b2512df3e827b6f5fdef90c2))
+* linting changes ([13893a7](https://github.com/STARTcloud/vagrant-zones/commit/13893a70d389eca1a583bd150dae35d85fd7e7db))
+* linting changes ([ed04b7f](https://github.com/STARTcloud/vagrant-zones/commit/ed04b7f94c3f433eaca4ff60ff678755edebb4ef))
+* packaging process ([59bbb0d](https://github.com/STARTcloud/vagrant-zones/commit/59bbb0d5a2b0fcb0f851113718eb2196725c6708))
+
 ## [0.1.93](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.92...v0.1.93) (2024-01-07)
 
 
