@@ -88,8 +88,8 @@ module VagrantPlugins
             'brand' => brand,
             'format' => 'zss',
             'kernel' => kernel,
-            'url' => 'https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}'
-                                  }
+            'url' => "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}"
+          }
 
           File.write('./metadata.json', metadata_content_hash)
 
