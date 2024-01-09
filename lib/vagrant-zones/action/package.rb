@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'fileutils'
-require "pathname"
+require 'pathname'
 require 'log4r'
 require 'vagrant/util/safe_chdir'
 require 'vagrant/util/subprocess'
@@ -49,41 +49,33 @@ module VagrantPlugins
           datetime = %(#{t.year}-#{t.month}-#{t.day}-#{t.hour}:#{t.min}:#{t.sec})
           snapshot_create(datasetpath, datetime, env[:ui], @machine.provider_config)
           snapshot_send(datasetpath, "#{tmp_dir}/box.zss", datetime, env[:ui], @machine.provider_config)
-          ## snapshot_delete(datasetpath, env[:ui], datetime)
 
-          # Package VM
-          
           ## Include User Extra Files
           if env['package.include']
             env["package.include"].each do |file|
               source = Pathname.new(file)
               dest   = nil
-  
-              # If the source is relative then we add the file as-is to the include
-              # directory. Otherwise, we copy only the file into the root of the
-              # include directory. Kind of strange, but seems to match what people
-              # expect based on history.
+
               if source.relative?
                 dest = source
               else
                 dest = source.basename
               end
-  
-              # Assign the mapping
+
               files[file] = dest
             end
-  
+
             if env["package.vagrantfile"]
               # Vagrantfiles are treated special and mapped to a specific file
               files[env["package.vagrantfile"]] = "_Vagrantfile"
             end
-  
+
             # Verify the mapping
             files.each do |from, _|
               raise Vagrant::Errors::PackageIncludeMissing,
                     file: from if !File.exist?(from)
             end
-  
+
             # Save the mapping
             include_files = files
           end
@@ -93,7 +85,7 @@ module VagrantPlugins
           ## Create the Metadata and Vagrantfile
           Dir.chdir(tmp_dir)
           File.write('./metadata.json', metadata_content(brand, kernel, vcc, boxshortname))
-          File.write('./Vagrantfile', vagrantfile_content(brand, kernel, datasetpath))
+          File.write('./Vagrantfile', vagrantfile_content(brand, kernel))
 
           ## Create the Box file
           assemble_box(boxname)
@@ -127,21 +119,18 @@ module VagrantPlugins
           ZONEBOX
         end
 
-
-        # This method copies the include files (passed in via command line)
-        # to the temporary directory so they are included in a sub-folder within
-        # the actual box
+        # This method copies the include files (passed in via command line) to the 
+        # temporary directory so they are included in a sub-folder within the actual box
         def copy_include_files(include_files, destination, uii)
           include_files.each do |from, dest|
-            
             include_directory = Pathname.new(destination)
 
             # We place the file in the include directory
             to = include_directory.join(dest)
-  
-            uii.info I18n.t("vagrant.actions.general.package.packaging", file: from)
+
+            uii.info I18n.t('vagrant.actions.general.package.packaging', file: from)
             FileUtils.mkdir_p(to.parent)
-  
+
             # Copy directory contents recursively.
             if File.directory?(from)
               FileUtils.cp_r(Dir.glob(from), to.parent, preserve: true)
@@ -164,13 +153,13 @@ module VagrantPlugins
             config.brand = "#{brand}"
   end
           ZONEBOX
-          user_vagrantfile = File.expand_path('../Vagrantfile', __FILE__)
-          load user_vagrantfile if File.exists?(user_vagrantfile)
+          user_vagrantfile = File.expand_path('Vagrantfile', __dir__)
+          load user_vagrantfile if File.exist?(user_vagrantfile)
         end
 
         def assemble_box(boxname)
           is_linux = `bash -c '[[ "$(uname -a)" =~ "Linux" ]]'`
-          files = Dir.glob(File.join(".", "*"))
+          files = Dir.glob(File.join('.', '*'))
           `tar -cvzf ../#{boxname} #{files.join(' ')}` if is_linux
           `tar -cvzEf ../#{boxname} #{files.join(' ')}` unless is_linux
         end
