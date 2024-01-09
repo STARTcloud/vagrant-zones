@@ -3,8 +3,6 @@
 require 'fileutils'
 require 'pathname'
 require 'log4r'
-require 'vagrant/util/safe_chdir'
-require 'vagrant/util/subprocess'
 module VagrantPlugins
   module ProviderZone
     module Action
@@ -43,6 +41,7 @@ module VagrantPlugins
           ## Create Snapshot
           tmp_dir = "#{Dir.pwd}/_tmp_package"
           Dir.mkdir(tmp_dir)
+          Dir.chdir(tmp_dir)
           datasetpath = "#{@machine.provider_config.boot['array']}/#{@machine.provider_config.boot['dataset']}/#{name}"
           t = Time.new
           datetime = %(#{t.year}-#{t.month}-#{t.day}-#{t.hour}:#{t.min}:#{t.sec})
@@ -60,20 +59,16 @@ module VagrantPlugins
             files[file] = dest
           end
 
-          if env['package.vagrantfile']
-            # Vagrantfiles are treated special and mapped to a specific file
-            files[env['package.vagrantfile']] = '_Vagrantfile'
-          end
+          ## Create a Vagrantfile or load from Users Defined File
+          vagrantfile_content = %{require 'yaml'
+          require File.expand_path("#{File.dirname(__FILE__)}/Hosts.rb")
+          settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
+          Vagrant.configure("2") do |config|
+            Hosts.configure(config, settings)
+          end}
+          File.write('./Vagrantfile', vagrantfile_content)
 
-          # Verify the mapping
-          files.each_key do |from|
-            raise Vagrant::Errors::PackageIncludeMissing, file: from unless File.exist?(from)
-          end          
-
-          copy_include_files(files, tmp_dir)
-
-          ## Create the Metadata and Vagrantfile
-          Dir.chdir(tmp_dir)
+          files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
 
           metadata_content_hash = {
             'provider' => 'zone',
@@ -83,18 +78,23 @@ module VagrantPlugins
             'kernel' => kernel,
             'url' => "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}"
           }
-
           File.write('./metadata.json', metadata_content_hash)
 
-          user_vagrantfile = File.expand_path('Vagrantfile', __dir__)
-          vagrantfile_content = %{require 'yaml'
-          require File.expand_path("#{File.dirname(__FILE__)}/Hosts.rb")
-          settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
-          Vagrant.configure("2") do |config|
-            Hosts.configure(config, settings)
-          end}
-          vagrantfile_content = File.read(user_vagrantfile) if File.exist?(user_vagrantfile)
-          File.write('./Vagrantfile', vagrantfile_content)
+          # Verify the mapping
+          files.each_key do |from|
+            raise Vagrant::Errors::PackageIncludeMissing, file: from unless File.exist?(from)
+          end
+
+          files.each do |from, dest|
+            include_directory = Pathname.new(destination)
+            to = include_directory.join(dest)
+            FileUtils.mkdir_p(to.parent)
+            if File.directory?(from)
+              FileUtils.cp_r(Dir.glob(from), to.parent, preserve: true)
+            else
+              FileUtils.cp(from, to, preserve: true)
+            end
+          end
 
           ## Create the Box file
           assemble_box(boxname)
@@ -120,21 +120,6 @@ module VagrantPlugins
           uii.info('Sending Snapshot to ZFS Send Stream image.')
           result = execute(true, "#{@pfexec} zfs send #{datasetpath}/boot@vagrant_box#{datetime} > #{destination}")
           puts "#{@pfexec} zfs send -r #{datasetpath}/boot@vagrant_box#{datetime} > #{destination}" if result.zero? && config.debug
-        end
-
-        # This method copies the include files (passed in via command line) to the
-        # temporary directory so they are included in a sub-folder within the actual box
-        def copy_include_files(include_files, destination)
-          include_files.each do |from, dest|
-            include_directory = Pathname.new(destination)
-            to = include_directory.join(dest)
-            FileUtils.mkdir_p(to.parent)
-            if File.directory?(from)
-              FileUtils.cp_r(Dir.glob(from), to.parent, preserve: true)
-            else
-              FileUtils.cp(from, to, preserve: true)
-            end
-          end
         end
 
         def assemble_box(boxname)
