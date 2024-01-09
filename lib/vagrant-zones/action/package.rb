@@ -36,7 +36,7 @@ module VagrantPlugins
           kernel = @machine.provider_config.kernel
           vcc = @machine.provider_config.vagrant_cloud_creator
           boxshortname = @machine.provider_config.boxshortname
-          vagrant_cloud_creator  = @machine.provider_config.vagrant_cloud_creator
+          vagrant_cloud_creator = @machine.provider_config.vagrant_cloud_creator
           files = {}
           raise "#{boxname}: Already exists" if File.exist?(boxname)
 
@@ -89,9 +89,9 @@ module VagrantPlugins
           files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
 
           info_content_hash = {
-            'boxname' => "#{boxshortname}",
-            'Author' => "#{vagrant_cloud_creator}",
-            'Vagrant-Zones' => "This box was built with Vagrant-Zones: https://github.com/STARTcloud/vagrant-zones"
+            'boxname' => boxshortname,
+            'Author' => vagrant_cloud_creator,
+            'Vagrant-Zones' => 'This box was built with Vagrant-Zones: https://github.com/STARTcloud/vagrant-zones'
           }
           File.write("#{Dir.pwd}/_tmp_package/info.json", info_content_hash.to_json)
 
