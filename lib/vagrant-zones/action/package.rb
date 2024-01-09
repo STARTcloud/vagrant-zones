@@ -32,21 +32,21 @@ module VagrantPlugins
           @driver = @machine.provider.driver
           name = @machine.name
           boxname = env['package.output']
-          brand = @machine.provider_config.brand
-          kernel = @machine.provider_config.kernel
-          vcc = @machine.provider_config.vagrant_cloud_creator
-          boxshortname = @machine.provider_config.boxshortname
-          vagrant_cloud_creator = @machine.provider_config.vagrant_cloud_creator
+          mpc = @machine.provider_config
+          brand = mpc.brand
+          kernel = mpc.kernel
+          vcc = mpc.vagrant_cloud_creator
+          boot = mpc.boot
+          boxshortname = mpc.boxshortname
           files = {}
           raise "#{boxname}: Already exists" if File.exist?(boxname)
 
           ## Create Snapshot
-          Dir.mkdir("#{Dir.pwd}/_tmp_package")
-          datasetpath = "#{@machine.provider_config.boot['array']}/#{@machine.provider_config.boot['dataset']}/#{name}"
-          t = Time.new
-          datetime = %(#{t.year}-#{t.month}-#{t.day}-#{t.hour}:#{t.min}:#{t.sec})
-          snapshot_create(datasetpath, datetime, env[:ui], @machine.provider_config)
-          snapshot_send(datasetpath, "#{Dir.pwd}/_tmp_package/box.zss", datetime, env[:ui], @machine.provider_config)
+          FileUtils.mkdir_p("#{Dir.pwd}/_tmp_package")
+          datasetpath = "#{mpc.boot['array']}/#{mpc.boot['dataset']}/#{name}"
+          datetime = Time.new.strftime('%Y-%m-%d-%H:%M:%S')
+          snapshot_create(datasetpath, datetime, env[:ui], mpc)
+          snapshot_send(datasetpath, "#{Dir.pwd}/_tmp_package/box.zss", datetime, env[:ui], mpc)
 
           ## Include User Extra Files
           env['package.include'].each do |file|
@@ -89,9 +89,9 @@ module VagrantPlugins
           files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
 
           info_content_hash = {
-            'boxname' => boxshortname,
-            'Author' => vagrant_cloud_creator,
-            'Vagrant-Zones' => 'This box was built with Vagrant-Zones: https://github.com/STARTcloud/vagrant-zones'
+            'boxname' => "#{boxshortname}",
+            'Author' => "#{vcc}",
+            'Vagrant-Zones' => "This box was built with Vagrant-Zones: https://github.com/STARTcloud/vagrant-zones"
           }
           File.write("#{Dir.pwd}/_tmp_package/info.json", info_content_hash.to_json)
 
@@ -128,15 +128,16 @@ module VagrantPlugins
         def snapshot_send(datasetpath, destination, datetime, uii, config)
           uii.info('Sending Snapshot to ZFS Send Stream image.')
           result = execute(true, "#{@pfexec} zfs send #{datasetpath}/boot@vagrant_box#{datetime} > #{destination}")
-          puts "#{@pfexec} zfs send -r #{datasetpath}/boot@vagrant_box#{datetime} > #{destination}" if result.zero? && config.debug
+          uii.info("#{@pfexec} zfs send -r #{datasetpath}/boot@vagrant_box#{datetime} > #{destination}") if result.zero? && config.debug
         end
 
         def assemble_box(boxname, tmp_dir)
           is_linux = `bash -c '[[ "$(uname -a)" =~ "Linux" ]]'`
-          Dir.chdir(tmp_dir)
+          Dir.chdir(tmp_dir) do
           files = Dir.glob(File.join('.', '*'))
-          `tar -cvzf ../#{boxname} #{files.join(' ')}` if is_linux
-          `tar -cvzEf ../#{boxname} #{files.join(' ')}` unless is_linux
+          tar_command = is_linux ? "tar -cvzf ../#{boxname}" : "tar -cvzEf ../#{boxname}"
+          `#{tar_command} #{files.join(' ')}`
+          end
         end
       end
     end
