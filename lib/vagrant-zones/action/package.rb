@@ -79,7 +79,6 @@ module VagrantPlugins
             end
           CODE
           File.write("#{Dir.pwd}/_tmp_package/Vagrantfile", vagrantfile_content)
-
           files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
 
           info_content_hash = {
@@ -96,7 +95,6 @@ module VagrantPlugins
             'format' => 'zss',
             'url' => "https://app.vagrantup.com/#{mpc.vagrant_cloud_creator}/boxes/#{mpc.boxshortname}"
           }
-
           metadata_content_hash['kernel'] = mpc.kernel if !mpc.kernel.nil? && mpc.kernel != false
           File.write("#{Dir.pwd}/_tmp_package/metadata.json", metadata_content_hash.to_json)
 
@@ -129,7 +127,7 @@ module VagrantPlugins
           is_linux = `bash -c '[[ "$(uname -a)" =~ "Linux" ]]'`
           Dir.chdir(tmp_dir) do
             files = Dir.glob(File.join('.', '*'))
-            tar_command = is_linux ? "tar -cvzf" : "tar -cvzEf"
+            tar_command = is_linux ? 'tar -cvzf' : 'tar -cvzEf'
             `#{tar_command} ../#{boxname} #{files.join(' ')}`
           end
         end
