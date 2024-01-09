@@ -36,10 +36,12 @@ module VagrantPlugins
           kernel = @machine.provider_config.kernel
           vcc = @machine.provider_config.vagrant_cloud_creator
           boxshortname = @machine.provider_config.boxshortname
+          vagrant_cloud_creator  = @machine.provider_config.vagrant_cloud_creator
           files = {}
           raise "#{boxname}: Already exists" if File.exist?(boxname)
 
           ## Create Snapshot
+          Dir.mkdir("#{Dir.pwd}/_tmp_package")
           datasetpath = "#{@machine.provider_config.boot['array']}/#{@machine.provider_config.boot['dataset']}/#{name}"
           t = Time.new
           datetime = %(#{t.year}-#{t.month}-#{t.day}-#{t.hour}:#{t.min}:#{t.sec})
@@ -63,7 +65,7 @@ module VagrantPlugins
           end
 
           files.each do |from, dest|
-            include_directory = Pathname.new("#{Dir.pwd}/_tmp_package")
+            include_directory = Pathname.new("#{Dir.pwd}/_tmp_package/")
             to = include_directory.join(dest)
             FileUtils.mkdir_p(to.parent)
             if File.directory?(from)
@@ -85,6 +87,13 @@ module VagrantPlugins
           File.write("#{Dir.pwd}/_tmp_package/Vagrantfile", vagrantfile_content)
 
           files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
+
+          info_content_hash = {
+            'boxname' => "#{boxshortname}",
+            'Author' => "#{vagrant_cloud_creator}",
+            'Vagrant-Zones' => "This box was built with Vagrant-Zones: https://github.com/STARTcloud/vagrant-zones"
+          }
+          File.write("#{Dir.pwd}/_tmp_package/info.json", info_content_hash.to_json)
 
           metadata_content_hash = {
             'provider' => 'zone',
