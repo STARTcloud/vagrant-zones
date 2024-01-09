@@ -3,6 +3,7 @@
 require 'fileutils'
 require 'pathname'
 require 'log4r'
+require 'json'
 module VagrantPlugins
   module ProviderZone
     module Action
@@ -75,12 +76,14 @@ module VagrantPlugins
           end
 
           ## Create a Vagrantfile or load from Users Defined File
-          vagrantfile_content = %{require 'yaml'
-require File.expand_path("#{File.dirname(__FILE__)}/Hosts.rb")
-settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
-Vagrant.configure("2") do |config|
-  Hosts.configure(config, settings)
-end}
+          vagrantfile_content = <<~'CODE'
+          require 'yaml'
+          require_relative 'Hosts'
+          settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
+          Vagrant.configure("2") do |config|
+            Hosts.configure(config, settings)
+          end
+          CODE
           File.write("#{tmp_dir}/Vagrantfile", vagrantfile_content)
 
           files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
@@ -92,11 +95,9 @@ end}
             'format' => 'zss',
             'url' => "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}"
           }
-          if defined?(kernel)
-            metadata_content_hash['kernel'] = kernel 
-          end
-          
-          File.write("#{tmp_dir}/metadata.json", metadata_content_hash)
+
+          metadata_content_hash['kernel'] = kernel if kernel != nil && kernel != false
+          File.write("#{tmp_dir}/metadata.json", metadata_content_hash.to_json)
 
           ## Create the Box file
           assemble_box(boxname, tmp_dir)
