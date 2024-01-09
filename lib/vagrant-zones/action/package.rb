@@ -54,8 +54,6 @@ module VagrantPlugins
           if env['package.include']
             env['package.include'].each do |file|
               source = Pathname.new(file)
-              dest   = nil
-
               dest = if source.relative?
                        source
                      else
@@ -72,8 +70,7 @@ module VagrantPlugins
 
             # Verify the mapping
             files.each_key do |from|
-              raise Vagrant::Errors::PackageIncludeMissing,
-                    file: from unless File.exist?(from)
+              raise Vagrant::Errors::PackageIncludeMissing, file: from unless File.exist?(from)
             end
 
             # Save the mapping
