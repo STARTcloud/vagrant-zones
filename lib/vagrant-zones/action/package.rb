@@ -82,12 +82,13 @@ module VagrantPlugins
           ## Create the Metadata and Vagrantfile
           Dir.chdir(tmp_dir)
 
-          metadata_content_hash = { 
-            "provider" => "zone", 
-            "architecture" => "amd64", 
-            "brand" => brand, 
-            "format" => "zss", 
-            "url" => "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}" 
+          metadata_content_hash = {
+            'provider' => 'zone',
+            'architecture' => 'amd64',
+            'brand' => brand,
+            'format' => 'zss',
+            'kernel' => kernel,
+            'url' => 'https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}'
            }
 
           File.write('./metadata.json', metadata_content_hash)
