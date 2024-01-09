@@ -40,13 +40,11 @@ module VagrantPlugins
           raise "#{boxname}: Already exists" if File.exist?(boxname)
 
           ## Create Snapshot
-          tmp_dir = "#{Dir.pwd}/_tmp_package"
-          Dir.mkdir(tmp_dir)
           datasetpath = "#{@machine.provider_config.boot['array']}/#{@machine.provider_config.boot['dataset']}/#{name}"
           t = Time.new
           datetime = %(#{t.year}-#{t.month}-#{t.day}-#{t.hour}:#{t.min}:#{t.sec})
           snapshot_create(datasetpath, datetime, env[:ui], @machine.provider_config)
-          snapshot_send(datasetpath, "#{tmp_dir}/box.zss", datetime, env[:ui], @machine.provider_config)
+          snapshot_send(datasetpath, "#{Dir.pwd}/_tmp_package/box.zss", datetime, env[:ui], @machine.provider_config)
 
           ## Include User Extra Files
           env['package.include'].each do |file|
@@ -65,7 +63,7 @@ module VagrantPlugins
           end
 
           files.each do |from, dest|
-            include_directory = Pathname.new(tmp_dir)
+            include_directory = Pathname.new("#{Dir.pwd}/_tmp_package")
             to = include_directory.join(dest)
             FileUtils.mkdir_p(to.parent)
             if File.directory?(from)
@@ -83,8 +81,8 @@ module VagrantPlugins
             Vagrant.configure("2") do |config|
               Hosts.configure(config, settings)
             end
-            CODE
-          File.write("#{tmp_dir}/Vagrantfile", vagrantfile_content)
+          CODE
+          File.write("#{Dir.pwd}/_tmp_package/Vagrantfile", vagrantfile_content)
 
           files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
 
@@ -97,13 +95,13 @@ module VagrantPlugins
           }
 
           metadata_content_hash['kernel'] = kernel if !kernel.nil? && kernel != false
-          File.write("#{tmp_dir}/metadata.json", metadata_content_hash.to_json)
+          File.write("#{Dir.pwd}/_tmp_package/metadata.json", metadata_content_hash.to_json)
 
           ## Create the Box file
-          assemble_box(boxname, tmp_dir)
-          FileUtils.rm_rf(tmp_dir)
+          assemble_box(boxname, "#{Dir.pwd}/_tmp_package")
+          FileUtils.rm_rf("#{Dir.pwd}/_tmp_package")
 
-          env[:ui].info("Box created, You can now add the box: 'vagrant box add #{boxname} --nameofnewbox'")
+          env[:ui].info("Box created, You can now add the box: 'vagrant box add #{boxname} --name newbox'")
           @app.call(env)
         end
 
