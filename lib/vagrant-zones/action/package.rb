@@ -28,16 +28,14 @@ module VagrantPlugins
         end
 
         def call(env)
-          @machine = env[:machine]
-          @driver = @machine.provider.driver
           boxname = env['package.output']
-          mpc = @machine.provider_config
+          mpc = env[:machine].provider_config
           files = {}
           raise "#{boxname}: Already exists" if File.exist?(boxname)
 
           ## Create Snapshot
           FileUtils.mkdir_p("#{Dir.pwd}/_tmp_package")
-          datasetpath = "#{mpc.boot['array']}/#{mpc.boot['dataset']}/#{@machine.name}"
+          datasetpath = "#{mpc.boot['array']}/#{mpc.boot['dataset']}/#{env[:machine].name}"
           datetime = Time.new.strftime('%Y-%m-%d-%H:%M:%S')
           snapshot_create(datasetpath, datetime, env[:ui], mpc)
           snapshot_send(datasetpath, "#{Dir.pwd}/_tmp_package/box.zss", datetime, env[:ui], mpc)
