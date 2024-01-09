@@ -77,13 +77,13 @@ module VagrantPlugins
 
           ## Create a Vagrantfile or load from Users Defined File
           vagrantfile_content = <<~'CODE'
-          require 'yaml'
-          require_relative 'Hosts'
-          settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
-          Vagrant.configure("2") do |config|
-            Hosts.configure(config, settings)
-          end
-          CODE
+            require 'yaml'
+            require_relative 'Hosts'
+            settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
+            Vagrant.configure("2") do |config|
+              Hosts.configure(config, settings)
+            end
+            CODE
           File.write("#{tmp_dir}/Vagrantfile", vagrantfile_content)
 
           files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
@@ -96,7 +96,7 @@ module VagrantPlugins
             'url' => "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}"
           }
 
-          metadata_content_hash['kernel'] = kernel if kernel != nil && kernel != false
+          metadata_content_hash['kernel'] = kernel if !kernel.nil? && kernel != false
           File.write("#{tmp_dir}/metadata.json", metadata_content_hash.to_json)
 
           ## Create the Box file
