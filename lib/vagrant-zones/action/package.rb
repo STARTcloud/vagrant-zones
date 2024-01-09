@@ -128,21 +128,13 @@ module VagrantPlugins
           puts "#{@pfexec} zfs send -r #{datasetpath}/boot@vagrant_box#{datetime} > #{destination}" if result.zero? && config.debug
         end
 
-
-
         # This method copies the include files (passed in via command line) to the
         # temporary directory so they are included in a sub-folder within the actual box
         def copy_include_files(include_files, destination, uii)
           include_files.each do |from, dest|
             include_directory = Pathname.new(destination)
-
-            # We place the file in the include directory
             to = include_directory.join(dest)
-
-            uii.info I18n.t('vagrant.actions.general.package.packaging', file: from)
             FileUtils.mkdir_p(to.parent)
-
-            # Copy directory contents recursively.
             if File.directory?(from)
               FileUtils.cp_r(Dir.glob(from), to.parent, preserve: true)
             else
