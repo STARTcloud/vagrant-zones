@@ -81,8 +81,26 @@ module VagrantPlugins
 
           ## Create the Metadata and Vagrantfile
           Dir.chdir(tmp_dir)
-          File.write('./metadata.json', metadata_content(brand, kernel, vcc, boxshortname))
-          File.write('./Vagrantfile', vagrantfile_content(brand, kernel))
+
+          metadata_content_hash = { 
+            "provider" => "zone", 
+            "architecture" => "amd64", 
+            "brand" => brand, 
+            "format" => "zss", 
+            "url" => "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}" 
+           }
+
+          File.write('./metadata.json', metadata_content_hash)
+
+          user_vagrantfile = File.expand_path('Vagrantfile', __dir__)
+          vagrantfile_content = %{require 'yaml'
+          require File.expand_path("#{File.dirname(__FILE__)}/Hosts.rb")
+          settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
+          Vagrant.configure("2") do |config|
+            Hosts.configure(config, settings)
+          end}
+          vagrantfile_content = File.read(user_vagrantfile ) if File.exist?(user_vagrantfile)
+          File.write('./Vagrantfile', vagrantfile_content)
 
           ## Create the Box file
           assemble_box(boxname)
@@ -110,11 +128,7 @@ module VagrantPlugins
           puts "#{@pfexec} zfs send -r #{datasetpath}/boot@vagrant_box#{datetime} > #{destination}" if result.zero? && config.debug
         end
 
-        def metadata_content(brand, _kernel, vcc, boxshortname)
-          <<-ZONEBOX
-  { "provider": "zone", "architecture": "amd64", "brand": "#{brand}", "format": "zss", "url": "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}" }
-          ZONEBOX
-        end
+
 
         # This method copies the include files (passed in via command line) to the
         # temporary directory so they are included in a sub-folder within the actual box
@@ -135,21 +149,6 @@ module VagrantPlugins
               FileUtils.cp(from, to, preserve: true)
             end
           end
-        end
-
-        def vagrantfile_content(brand, _kernel)
-          <<-ZONEBOX
-  ## Vagrant File tooling compatabile with Bhyve and Virtualbox
-  require 'yaml'
-  require File.expand_path("#{File.dirname(__FILE__)}/Hosts.rb")
-  settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
-  Vagrant.configure("2") do |config|
-    Hosts.configure(config, settings)
-    config.brand = "#{brand}"
-  end
-          ZONEBOX
-          user_vagrantfile = File.expand_path('Vagrantfile', __dir__)
-          load user_vagrantfile if File.exist?(user_vagrantfile)
         end
 
         def assemble_box(boxname)
