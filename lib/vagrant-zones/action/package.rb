@@ -52,28 +52,28 @@ module VagrantPlugins
 
           ## Include User Extra Files
           if env['package.include']
-            env["package.include"].each do |file|
+            env['package.include'].each do |file|
               source = Pathname.new(file)
               dest   = nil
 
-              if source.relative?
-                dest = source
-              else
-                dest = source.basename
-              end
+              dest = if source.relative?
+                       source
+                     else
+                       source.basename
+                     end
 
               files[file] = dest
             end
 
-            if env["package.vagrantfile"]
+            if env['package.vagrantfile']
               # Vagrantfiles are treated special and mapped to a specific file
-              files[env["package.vagrantfile"]] = "_Vagrantfile"
+              files[env['package.vagrantfile']] = '_Vagrantfile'
             end
 
             # Verify the mapping
-            files.each do |from, _|
+            files.each_key do |from|
               raise Vagrant::Errors::PackageIncludeMissing,
-                    file: from if !File.exist?(from)
+                    file: from unless File.exist?(from)
             end
 
             # Save the mapping
@@ -119,7 +119,7 @@ module VagrantPlugins
           ZONEBOX
         end
 
-        # This method copies the include files (passed in via command line) to the 
+        # This method copies the include files (passed in via command line) to the
         # temporary directory so they are included in a sub-folder within the actual box
         def copy_include_files(include_files, destination, uii)
           include_files.each do |from, dest|
@@ -140,17 +140,15 @@ module VagrantPlugins
           end
         end
 
-        def vagrantfile_content(brand, _kernel, datasetpath)
+        def vagrantfile_content(brand, _kernel)
           <<-ZONEBOX
   ## Vagrant File tooling compatabile with Bhyve and Virtualbox
   require 'yaml'
   require File.expand_path("#{File.dirname(__FILE__)}/Hosts.rb")
-  
   settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
-  
   Vagrant.configure("2") do |config|
-          Hosts.configure(config, settings)
-            config.brand = "#{brand}"
+    Hosts.configure(config, settings)
+    config.brand = "#{brand}"
   end
           ZONEBOX
           user_vagrantfile = File.expand_path('Vagrantfile', __dir__)
