@@ -41,7 +41,6 @@ module VagrantPlugins
           ## Create Snapshot
           tmp_dir = "#{Dir.pwd}/_tmp_package"
           Dir.mkdir(tmp_dir)
-          Dir.chdir(tmp_dir)
           datasetpath = "#{@machine.provider_config.boot['array']}/#{@machine.provider_config.boot['dataset']}/#{name}"
           t = Time.new
           datetime = %(#{t.year}-#{t.month}-#{t.day}-#{t.hour}:#{t.min}:#{t.sec})
@@ -59,34 +58,13 @@ module VagrantPlugins
             files[file] = dest
           end
 
-          ## Create a Vagrantfile or load from Users Defined File
-          vagrantfile_content = %{require 'yaml'
-          require File.expand_path("#{File.dirname(__FILE__)}/Hosts.rb")
-          settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
-          Vagrant.configure("2") do |config|
-            Hosts.configure(config, settings)
-          end}
-          File.write('./Vagrantfile', vagrantfile_content)
-
-          files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
-
-          metadata_content_hash = {
-            'provider' => 'zone',
-            'architecture' => 'amd64',
-            'brand' => brand,
-            'format' => 'zss',
-            'kernel' => kernel,
-            'url' => "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}"
-          }
-          File.write('./metadata.json', metadata_content_hash)
-
           # Verify the mapping
           files.each_key do |from|
             raise Vagrant::Errors::PackageIncludeMissing, file: from unless File.exist?(from)
           end
 
           files.each do |from, dest|
-            include_directory = Pathname.new(destination)
+            include_directory = Pathname.new(tmp_dir)
             to = include_directory.join(dest)
             FileUtils.mkdir_p(to.parent)
             if File.directory?(from)
@@ -96,9 +74,32 @@ module VagrantPlugins
             end
           end
 
+          ## Create a Vagrantfile or load from Users Defined File
+          vagrantfile_content = %{require 'yaml'
+require File.expand_path("#{File.dirname(__FILE__)}/Hosts.rb")
+settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
+Vagrant.configure("2") do |config|
+  Hosts.configure(config, settings)
+end}
+          File.write("#{tmp_dir}/Vagrantfile", vagrantfile_content)
+
+          files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
+
+          metadata_content_hash = {
+            'provider' => 'zone',
+            'architecture' => 'amd64',
+            'brand' => brand,
+            'format' => 'zss',
+            'url' => "https://app.vagrantup.com/#{vcc}/boxes/#{boxshortname}"
+          }
+          if defined?(kernel)
+            metadata_content_hash['kernel'] = kernel 
+          end
+          
+          File.write("#{tmp_dir}/metadata.json", metadata_content_hash)
+
           ## Create the Box file
-          assemble_box(boxname)
-          Dir.chdir('../')
+          assemble_box(boxname, tmp_dir)
           FileUtils.rm_rf(tmp_dir)
 
           env[:ui].info("Box created, You can now add the box: 'vagrant box add #{boxname} --nameofnewbox'")
@@ -122,8 +123,9 @@ module VagrantPlugins
           puts "#{@pfexec} zfs send -r #{datasetpath}/boot@vagrant_box#{datetime} > #{destination}" if result.zero? && config.debug
         end
 
-        def assemble_box(boxname)
+        def assemble_box(boxname, tmp_dir)
           is_linux = `bash -c '[[ "$(uname -a)" =~ "Linux" ]]'`
+          Dir.chdir(tmp_dir)
           files = Dir.glob(File.join('.', '*'))
           `tar -cvzf ../#{boxname} #{files.join(' ')}` if is_linux
           `tar -cvzEf ../#{boxname} #{files.join(' ')}` unless is_linux

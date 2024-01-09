@@ -17,7 +17,7 @@ module VagrantPlugins
         @additional_disks = UNSET_VALUE
         @autoboot = true
         @post_provision_boot = false
-        @kernel = UNSET_VALUE
+        @kernel = nil
         @boxshortname = UNSET_VALUE
         @cdroms = nil
         @shared_dir = nil
