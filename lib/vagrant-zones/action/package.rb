@@ -37,7 +37,6 @@ module VagrantPlugins
           kernel = @machine.provider_config.kernel
           vcc = @machine.provider_config.vagrant_cloud_creator
           boxshortname = @machine.provider_config.boxshortname
-          include_files = {}
           files = {}
           raise "#{boxname}: Already exists" if File.exist?(boxname)
 
@@ -51,33 +50,27 @@ module VagrantPlugins
           snapshot_send(datasetpath, "#{tmp_dir}/box.zss", datetime, env[:ui], @machine.provider_config)
 
           ## Include User Extra Files
-          if env['package.include']
-            env['package.include'].each do |file|
-              source = Pathname.new(file)
-              dest = if source.relative?
-                       source
-                     else
-                       source.basename
-                     end
-
-              files[file] = dest
-            end
-
-            if env['package.vagrantfile']
-              # Vagrantfiles are treated special and mapped to a specific file
-              files[env['package.vagrantfile']] = '_Vagrantfile'
-            end
-
-            # Verify the mapping
-            files.each_key do |from|
-              raise Vagrant::Errors::PackageIncludeMissing, file: from unless File.exist?(from)
-            end
-
-            # Save the mapping
-            include_files = files
+          env['package.include'].each do |file|
+            source = Pathname.new(file)
+            dest = if source.relative?
+                     source
+                   else
+                     source.basename
+                   end
+            files[file] = dest
           end
 
-          copy_include_files(include_files, tmp_dir)
+          if env['package.vagrantfile']
+            # Vagrantfiles are treated special and mapped to a specific file
+            files[env['package.vagrantfile']] = '_Vagrantfile'
+          end
+
+          # Verify the mapping
+          files.each_key do |from|
+            raise Vagrant::Errors::PackageIncludeMissing, file: from unless File.exist?(from)
+          end          
+
+          copy_include_files(files, tmp_dir)
 
           ## Create the Metadata and Vagrantfile
           Dir.chdir(tmp_dir)
