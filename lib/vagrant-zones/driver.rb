@@ -1057,10 +1057,10 @@ module VagrantPlugins
           execute(false, %(#{strt}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
         when 'bhyve'
           vlan_option = opts[:vlan].nil? || opts[:vlan].zero? ? '' : "set vlan-id=#{opts[:vlan]}; "
-          if config.on_demand_vnics
-            base_cmd = %(#{strt}"add net; set physical=#{vnic_name}; #{vlan_option}set global-nic=#{opts[:bridge]}; )
+          base_cmd = if config.on_demand_vnics
+            %(#{strt}"add net; set physical=#{vnic_name}; #{vlan_option}set global-nic=#{opts[:bridge]}; )
           else
-            base_cmd = %(#{strt}"add net; set physical=#{vnic_name}; )
+            %(#{strt}"add net; set physical=#{vnic_name}; )
           end
           execute(false, %(#{base_cmd}end;)) unless cie
           execute(false, %(#{base_cmd}set allowed-address=#{allowed_address}; end;)) if cie && aa
