@@ -44,8 +44,6 @@ en:
       Zone failed to shutdown in alloted time ==> 
     graceful_shutdown: |-
       Asking hypervisor to gracefully stop the zone
-    vm_not_created: |-
-      VM not created. Moving on...
     creating_vnic: |-
       - Creating VNIC: 
     configure_interface_using_vnic: |-
