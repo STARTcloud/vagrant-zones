@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.97](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.96...v0.1.97) (2024-08-17)
+
+
+### Bug Fixes
+
+* add destroy confirmation ([f04e30a](https://github.com/STARTcloud/vagrant-zones/commit/f04e30a3d522dd34568fe99ce6199ae771570b4b))
+* it was there all along ([7355e11](https://github.com/STARTcloud/vagrant-zones/commit/7355e11f15d932c92cf6a678dc574414620992de))
+* linting - add destroy confirmation ([35786fc](https://github.com/STARTcloud/vagrant-zones/commit/35786fcd404096362211a2a07b44e901b46cc295))
+* linting - add destroy confirmation ([31d0140](https://github.com/STARTcloud/vagrant-zones/commit/31d0140da06c66100e78fdd9618394d32428130b))
+* linting - add destroy confirmation ([30e0324](https://github.com/STARTcloud/vagrant-zones/commit/30e0324a1b0865574d3adb95f3cffbe6656bdd05))
+
 ## [0.1.96](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.95...v0.1.96) (2024-08-17)
 
 
