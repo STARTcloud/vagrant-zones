@@ -1045,31 +1045,28 @@ module VagrantPlugins
         defrouter = opts[:gateway].to_s
         vnic_name = vname(uii, opts)
         config = @machine.provider_config
+        
         uii.info(I18n.t('vagrant_zones.vnic_setup'))
         uii.info("  #{vnic_name}")
+        
         strt = "#{@pfexec} zonecfg -z #{@machine.name} "
         cie = config.cloud_init_enabled
         aa = config.allowed_address
-      
+        
         case config.brand
         when 'lx'
           shrtstr1 = %(set allowed-address=#{allowed_address}; add property (name=gateway,value="#{defrouter}"); )
           shrtstr2 = %(add property (name=ips,value="#{allowed_address}"); add property (name=primary,value="true"); end;)
           execute(false, %(#{strt}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
         when 'bhyve'
-          vlan_option = opts[:vlan].nil? || (opts[:vlan]).zero? ? '' : "set vlan-id=#{opts[:vlan]}; "
-      
-          if config.on_demand_vnics
-            base_cmd = %(#{strt}"add net; set physical=#{vnic_name}; #{vlan_option}set global-nic=#{opts[:bridge]}; )
-            execute(false, %(#{base_cmd}end;")) unless cie
-            execute(false, %(#{base_cmd}set allowed-address=#{allowed_address}; end;")) if cie && aa
-            execute(false, %(#{base_cmd}end;")) if cie && !aa
-          else
-            base_cmd = %(#{strt}"add net; set physical=#{vnic_name}; )
-            execute(false, %(#{base_cmd}end;")) unless cie
-            execute(false, %(#{base_cmd}set allowed-address=#{allowed_address}; end;")) if cie && aa
-            execute(false, %(#{base_cmd}end;")) if cie && !aa
-          end
+          vlan_option = opts[:vlan].nil? || opts[:vlan].zero? ? '' : "set vlan-id=#{opts[:vlan]}; "
+          base_cmd = config.on_demand_vnics ? \
+            %(#{strt}"add net; set physical=#{vnic_name}; #{vlan_option}set global-nic=#{opts[:bridge]}; ) : \
+            %(#{strt}"add net; set physical=#{vnic_name}; )
+          
+          execute(false, %(#{base_cmd}end;)) unless cie
+          execute(false, %(#{base_cmd}set allowed-address=#{allowed_address}; end;)) if cie && aa
+          execute(false, %(#{base_cmd}end;)) if cie && !aa
         end
       end
 
