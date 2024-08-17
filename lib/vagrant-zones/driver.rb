@@ -724,16 +724,12 @@ module VagrantPlugins
       def zoneniccreate(uii, opts)
         mac = macaddress(uii, opts)
         vnic_name = vname(uii, opts)
-        if opts[:vlan].nil?
-          uii.info(I18n.t('vagrant_zones.creating_vnic'))
-          uii.info("  #{vnic_name}")
-          execute(false, "#{@pfexec} dladm create-vnic -l #{opts[:bridge]} -m #{mac} #{vnic_name}")
-        else
-          vlan = opts[:vlan]
-          uii.info(I18n.t('vagrant_zones.creating_vnic'))
-          uii.info("  #{vnic_name}")
-          execute(false, "#{@pfexec} dladm create-vnic -l #{opts[:bridge]} -m #{mac} -v #{vlan} #{vnic_name}")
-        end
+        uii.info(I18n.t('vagrant_zones.creating_vnic'))
+        uii.info("  #{vnic_name}")
+        command = "#{@pfexec} dladm create-vnic -l #{opts[:bridge]} -m #{mac}"
+        command += " -v #{opts[:vlan]}" unless opts[:vlan].nil? || opts[:vlan] == 0
+        command += " #{vnic_name}"
+        execute(false, command)
       end
 
       # This helps us create all the datasets for the zone
@@ -1054,27 +1050,28 @@ module VagrantPlugins
         strt = "#{@pfexec} zonecfg -z #{@machine.name} "
         cie = config.cloud_init_enabled
         aa = config.allowed_address
+      
         case config.brand
         when 'lx'
           shrtstr1 = %(set allowed-address=#{allowed_address}; add property (name=gateway,value="#{defrouter}"); )
           shrtstr2 = %(add property (name=ips,value="#{allowed_address}"); add property (name=primary,value="true"); end;)
           execute(false, %(#{strt}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
         when 'bhyve'
-          if config.on_demand_vnics && !opts[:vlan].nil?
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set vlan-id=#{opts[:vlan]}; set global-nic=#{opts[:bridge]}; end;")) unless cie
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set vlan-id=#{opts[:vlan]}; set global-nic=#{opts[:bridge]}; set allowed-address=#{allowed_address}; end;")) if cie && aa
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set vlan-id=#{opts[:vlan]}; set global-nic=#{opts[:bridge]}; end;")) if cie && !aa
-          elsif config.on_demand_vnics && opts[:vlan].nil?
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; end;")) unless cie
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; set allowed-address=#{allowed_address}; end;")) if cie && aa
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set global-nic=#{opts[:bridge]}; end;")) if cie && !aa
-          elsif !config.on_demand_vnics
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; end;")) unless cie
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; set allowed-address=#{allowed_address}; end;")) if cie && aa
-            execute(false, %(#{strt}"add net; set physical=#{vnic_name}; end;")) if cie && !aa
+          vlan_option = opts[:vlan].nil? || opts[:vlan] == 0 ? "" : "set vlan-id=#{opts[:vlan]}; "
+      
+          if config.on_demand_vnics
+            base_cmd = %(#{strt}"add net; set physical=#{vnic_name}; #{vlan_option}set global-nic=#{opts[:bridge]}; )
+            execute(false, %(#{base_cmd}end;")) unless cie
+            execute(false, %(#{base_cmd}set allowed-address=#{allowed_address}; end;")) if cie && aa
+            execute(false, %(#{base_cmd}end;")) if cie && !aa
+          else
+            base_cmd = %(#{strt}"add net; set physical=#{vnic_name}; )
+            execute(false, %(#{base_cmd}end;")) unless cie  
+            execute(false, %(#{base_cmd}set allowed-address=#{allowed_address}; end;")) if cie && aa
+            execute(false, %(#{base_cmd}end;")) if cie && !aa
           end
         end
-      end
+      end     
 
       ## zonecfg function for for Networking
       def zonecfgnicconfigdelete(uii, opts)
