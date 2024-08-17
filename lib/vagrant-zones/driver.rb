@@ -625,16 +625,16 @@ module VagrantPlugins
         vnic_name = vname(uii, opts)
         uii.info(I18n.t('vagrant_zones.nat_vnic_setup'))
         uii.info("  #{vnic_name}")
-        zonecfg = "#{@pfexec} zonecfg -z #{@machine.name} "
+        zonecfg_cmd = "#{@pfexec} zonecfg -z #{@machine.name} "
         cie = config.cloud_init_enabled
         case config.brand
         when 'lx'
           shrtstr1 = %(set allowed-address=#{allowed_address}; add property (name=gateway,value="#{defrouter}"); )
           shrtstr2 = %(add property (name=ips,value="#{allowed_address}"); add property (name=primary,value="true"); end;)
-          execute(false, %(#{zonecfg}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
+          execute(false, %(#{zonecfg_cmd}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
         when 'bhyve'
-          execute(false, %(#{zonecfg}"add net; set physical=#{vnic_name}; end;")) unless cie
-          execute(false, %(#{zonecfg}"add net; set physical=#{vnic_name}; set allowed-address=#{allowed_address}; end;")) if cie
+          execute(false, %(#{zonecfg_cmd}"add net; set physical=#{vnic_name}; end;")) unless cie
+          execute(false, %(#{zonecfg_cmd}"add net; set physical=#{vnic_name}; set allowed-address=#{allowed_address}; end;")) if cie
         end
       end
 
@@ -1045,20 +1045,20 @@ module VagrantPlugins
         config = @machine.provider_config
         uii.info(I18n.t('vagrant_zones.vnic_setup'))
         uii.info("  #{vnic_name}")
-        zonecfg = "#{@pfexec} zonecfg -z #{@machine.name} "
+        zonecfg_cmd = "#{@pfexec} zonecfg -z #{@machine.name} "
         cie = config.cloud_init_enabled
         aa = config.allowed_address
         case config.brand
         when 'lx'
           shrtstr1 = %(set allowed-address=#{allowed_address}; add property (name=gateway,value="#{defrouter}"); )
           shrtstr2 = %(add property (name=ips,value="#{allowed_address}"); add property (name=primary,value="true"); end;)
-          execute(false, %(#{zonecfg}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
+          execute(false, %(#{zonecfg_cmd}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
         when 'bhyve'
           vlan_option = opts[:vlan].nil? || opts[:vlan].zero? ? '' : "set vlan-id=#{opts[:vlan]}; "
           base_cmd = if config.on_demand_vnics
-                       %(#{zonecfg}"add net; set physical=#{vnic_name}; #{vlan_option}set global-nic=#{opts[:bridge]}; )
+                       %(#{zonecfg_cmd}"add net; set physical=#{vnic_name}; #{vlan_option}set global-nic=#{opts[:bridge]}; )
                      else
-                       %(#{zonecfg}"add net; set physical=#{vnic_name}; )
+                       %(#{zonecfg_cmd}"add net; set physical=#{vnic_name}; )
                      end
           execute(false, %(#{base_cmd}end;)) unless cie
           execute(false, %(#{base_cmd}set allowed-address=#{allowed_address}; end;)) if cie && aa
