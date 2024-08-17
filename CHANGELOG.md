@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.95](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.94...v0.1.95) (2024-08-17)
+
+
+### Bug Fixes
+
+* linting ([d39015c](https://github.com/STARTcloud/vagrant-zones/commit/d39015c0faba337c8b197e9b35e79f4d1549daba))
+* linting ([14f34e2](https://github.com/STARTcloud/vagrant-zones/commit/14f34e2c4c10e716924de77d2000618ed249b0d0))
+* linting ([e908e4d](https://github.com/STARTcloud/vagrant-zones/commit/e908e4dce96a872890201cb67fadbd1fa7a69a02))
+* linting ([d62952d](https://github.com/STARTcloud/vagrant-zones/commit/d62952de42a07b637a95d6433d0a5d9279b74deb))
+* linting ([1403f3e](https://github.com/STARTcloud/vagrant-zones/commit/1403f3e24ca50c6878de684ec8770c1542c2798f))
+* linting ([43d7ecd](https://github.com/STARTcloud/vagrant-zones/commit/43d7ecd08425149f1c262a4af83cf447b2ebd5be))
+* updating vlans ([1749012](https://github.com/STARTcloud/vagrant-zones/commit/1749012ad76ec05c61ba49e66cf389f09531cfb2))
+
 ## [0.1.94](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.93...v0.1.94) (2024-01-09)
 
 

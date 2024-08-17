@@ -2,7 +2,7 @@
 
 module VagrantPlugins
   module ProviderZone
-    VERSION = '0.1.94'
+    VERSION = '0.1.95'
     NAME = 'vagrant-zones'
   end
 end
