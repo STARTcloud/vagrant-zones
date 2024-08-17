@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'log4r'
+
 module VagrantPlugins
   module ProviderZone
     module Action
