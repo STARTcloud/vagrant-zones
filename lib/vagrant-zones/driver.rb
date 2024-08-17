@@ -315,7 +315,7 @@ module VagrantPlugins
       ## Manage Network Interfaces
       def network(uii, state)
         config = @machine.provider_config
-        uii.info(I18n.t('vagrant_zones.creating_networking_interfaces')) if state == 'create'
+        uii.info(I18n.t('vagrant_zones.creating_networking_interfaces')) if state == 'create' && !config.on_demand_vnics
         @machine.config.vm.networks.each do |adaptertype, opts|
           case adaptertype.to_s
           when 'public_network'
