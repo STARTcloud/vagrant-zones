@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
 require 'log4r'
+require 'securerandom'
+require 'digest/md5'
 
 module VagrantPlugins
   module ProviderZone
     module Action
-      # This can be used with 'Call' built-in to check if the machine
-      # is created and branch in the middleware.
+      # This is use to define the network
       class MessageNotCreated
         def initialize(app, _env)
-          @app = app
           @logger = Log4r::Logger.new('vagrant_zones::action')
+          @app = app
         end
 
         def call(env)

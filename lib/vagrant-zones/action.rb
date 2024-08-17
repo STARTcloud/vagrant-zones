@@ -6,7 +6,7 @@ require 'log4r'
 module VagrantPlugins
   module ProviderZone
     # Run actions against the machine
-    module Action # rubocop:disable Metrics/ClassLength
+    module Action # rubocop:disable Metrics/ModuleLength
       include Vagrant::Action::Builtin
       @logger = Log4r::Logger.new('vagrant_zones::action')
 
