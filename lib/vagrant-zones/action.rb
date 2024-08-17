@@ -117,7 +117,21 @@ module VagrantPlugins
       def self.action_destroy
         Vagrant::Action::Builder.new.tap do |b|
           b.use Call, IsCreated do |_env, b2|
-            b2.use Destroy
+            unless _env[:result]
+              b2.use MessageNotCreated
+              # Try to destroy anyways
+              b2.use Call, DestroyConfirm do |env2, b3|
+                if env2[:result]
+                  b3.use Destroy
+                end
+              end
+              next
+            end
+            b2.use Call, DestroyConfirm do |env2, b3|
+              if env2[:result]
+                b3.use Destroy
+              end
+            end
           end
         end
       end
@@ -187,6 +201,7 @@ module VagrantPlugins
       autoload :Network, action_root.join('network')
       autoload :Setup, action_root.join('setup')
       autoload :Start, action_root.join('start')
+      autoload :MessageNotCreated, action_root.join('message_not_created')
       autoload :NetworkingCleanup, action_root.join('network_cleanup')
       autoload :IsCreated, action_root.join('is_created')
       autoload :NotCreated, action_root.join('not_created')
