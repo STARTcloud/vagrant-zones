@@ -116,21 +116,17 @@ module VagrantPlugins
       # This is the action that is primarily responsible for completely freeing the resources of the underlying virtual machine.
       def self.action_destroy
         Vagrant::Action::Builder.new.tap do |b|
-          b.use Call, IsCreated do |_env, b2|
-            unless _env[:result]
+          b.use Call, IsCreated do |env1, b2|
+            unless env1[:result]
               b2.use MessageNotCreated
               # Try to destroy anyways
               b2.use Call, DestroyConfirm do |env2, b3|
-                if env2[:result]
-                  b3.use Destroy
-                end
+                b3.use Destroy if env2[:result]
               end
               next
             end
             b2.use Call, DestroyConfirm do |env2, b3|
-              if env2[:result]
-                b3.use Destroy
-              end
+              b3.use Destroy if env2[:result]
             end
           end
         end

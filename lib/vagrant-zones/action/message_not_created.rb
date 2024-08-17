@@ -11,13 +11,12 @@ module VagrantPlugins
           @app = app
           @logger = Log4r::Logger.new('vagrant_zones::action')
         end
-    
+
         def call(env)
-          env[:ui].info I18n.t("vagrant_zones.vm_not_created")
+          env[:ui].info I18n.t('vagrant_zones.vm_not_created')
           @app.call(env)
         end
       end
     end
   end
 end
- 
