@@ -1025,10 +1025,8 @@ module VagrantPlugins
         execute(false, %(#{zcfg}"add attr; set name=password; set value=#{ccip}; set type=string; end;")) unless ccip.nil?
 
         cclir = config.dns
-        dservers = []
-        cclir['dns'].each do |ns|
-          dservers.append(ns['nameserver'])
-        end
+        dservers = cclir['dns'].map { |ns| ns['nameserver'] }
+
         uii.info(I18n.t('vagrant_zones.setting_cloud_resolvers')) unless dservers.nil?
         uii.info("  #{dservers}") unless dservers.nil?
         execute(false, %(#{zcfg}"add attr; set name=resolvers; set value=#{dservers}; set type=string; end;")) unless dservers.nil?
@@ -1058,10 +1056,10 @@ module VagrantPlugins
         when 'bhyve'
           vlan_option = opts[:vlan].nil? || opts[:vlan].zero? ? '' : "set vlan-id=#{opts[:vlan]}; "
           base_cmd = if config.on_demand_vnics
-            %(#{strt}"add net; set physical=#{vnic_name}; #{vlan_option}set global-nic=#{opts[:bridge]}; )
-          else
-            %(#{strt}"add net; set physical=#{vnic_name}; )
-          end
+                       %(#{strt}"add net; set physical=#{vnic_name}; #{vlan_option}set global-nic=#{opts[:bridge]}; )
+                     else
+                       %(#{strt}"add net; set physical=#{vnic_name}; )
+                     end
           execute(false, %(#{base_cmd}end;)) unless cie
           execute(false, %(#{base_cmd}set allowed-address=#{allowed_address}; end;)) if cie && aa
           execute(false, %(#{base_cmd}end;)) if cie && !aa
