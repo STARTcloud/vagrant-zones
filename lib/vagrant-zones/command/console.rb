@@ -21,7 +21,7 @@ module VagrantPlugins
             require File.expand_path('webvnc_console', __dir__)
             WebVNCConsole
           end
-          super(argv, env)
+          super
         end
 
         def execute
@@ -48,9 +48,8 @@ module VagrantPlugins
             subopts.separator 'Available subcommands:'
             # Add the available subcommands as separators in order to print them
             # out as well.
-            keys = []
-            @subcommands.each { |(key, _value)| keys << key.to_s }
-            keys.sort.each do |key|
+            keys = @subcommands.map { |(key, _value)| key.to_s }.sort
+            keys.each do |key|
               subopts.separator "     #{key}"
             end
             subopts.separator 'For help on any individual subcommand run `vagrant zone console <subcommand> -h`'

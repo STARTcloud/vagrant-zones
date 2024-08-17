@@ -25,7 +25,7 @@ module VagrantPlugins
             require File.expand_path('configure_snapshots', __dir__)
             ConfigureSnapshots
           end
-          super(argv, env)
+          super
         end
 
         def execute
@@ -51,9 +51,8 @@ module VagrantPlugins
             subopts.separator 'Available subcommands:'
             # Add the available subcommands as separators in order to print them
             # out as well.
-            keys = []
-            @subcommands.each { |(key, _value)| keys << key.to_s }
-            keys.sort.each do |key|
+            keys = @subcommands.map { |(key, _value)| key.to_s }.sort
+            keys.each do |key|
               subopts.separator "     #{key}"
             end
             subopts.separator ''

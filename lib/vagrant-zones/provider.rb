@@ -12,7 +12,7 @@ module VagrantPlugins
       def initialize(machine)
         @logger = Log4r::Logger.new('vagrant::provider::zone')
         @machine = machine
-        super(machine)
+        super
       end
 
       def driver

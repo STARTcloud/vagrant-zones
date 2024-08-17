@@ -727,7 +727,7 @@ module VagrantPlugins
         uii.info(I18n.t('vagrant_zones.creating_vnic'))
         uii.info("  #{vnic_name}")
         command = "#{@pfexec} dladm create-vnic -l #{opts[:bridge]} -m #{mac}"
-        command += " -v #{opts[:vlan]}" unless opts[:vlan].nil? || opts[:vlan] == 0
+        command += " -v #{opts[:vlan]}" unless opts[:vlan].nil? || opts[:vlan]).zero?
         command += " #{vnic_name}"
         execute(false, command)
       end
@@ -1057,7 +1057,7 @@ module VagrantPlugins
           shrtstr2 = %(add property (name=ips,value="#{allowed_address}"); add property (name=primary,value="true"); end;)
           execute(false, %(#{strt}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
         when 'bhyve'
-          vlan_option = opts[:vlan].nil? || opts[:vlan] == 0 ? "" : "set vlan-id=#{opts[:vlan]}; "
+          vlan_option = opts[:vlan].nil? || opts[:vlan]).zero? ? '' : "set vlan-id=#{opts[:vlan]}; "
       
           if config.on_demand_vnics
             base_cmd = %(#{strt}"add net; set physical=#{vnic_name}; #{vlan_option}set global-nic=#{opts[:bridge]}; )
@@ -1066,12 +1066,12 @@ module VagrantPlugins
             execute(false, %(#{base_cmd}end;")) if cie && !aa
           else
             base_cmd = %(#{strt}"add net; set physical=#{vnic_name}; )
-            execute(false, %(#{base_cmd}end;")) unless cie  
+            execute(false, %(#{base_cmd}end;")) unless cie
             execute(false, %(#{base_cmd}set allowed-address=#{allowed_address}; end;")) if cie && aa
             execute(false, %(#{base_cmd}end;")) if cie && !aa
           end
         end
-      end     
+      end
 
       ## zonecfg function for for Networking
       def zonecfgnicconfigdelete(uii, opts)
