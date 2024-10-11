@@ -1219,45 +1219,58 @@ module VagrantPlugins
       def zloginboot(uii)
         name = @machine.name
         config = @machine.provider_config
-        lcheck = config.lcheck
-        lcheck = ':~' if config.lcheck.nil?
-        alcheck = config.alcheck
-        alcheck = 'login:' if config.alcheck.nil?
-        bstring = ' OK ' if config.booted_string.nil?
-        bstring = config.booted_string unless config.booted_string.nil?
-        zunlockboot = 'Importing ZFS root pool'
-        zunlockboot = config.zunlockboot unless config.zunlockboot.nil?
-        zunlockbootkey = config.zunlockbootkey unless config.zunlockbootkey.nil?
+        lcheck = config.lcheck || ':~'
+        alcheck = config.alcheck || 'login:'
+        bstring = config.booted_string || ' OK '
+        zunlockboot = config.zunlockboot || 'Importing ZFS root pool'
+        zunlockbootkey = config.zunlockbootkey
         pcheck = 'Password:'
+
         uii.info(I18n.t('vagrant_zones.automated-zlogin'))
+
         PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
           Timeout.timeout(config.setup_wait) do
             rsp = []
 
             loop do
-              zlogin_read.expect(/\r\n/) { |line| rsp.push line }
-              uii.info(rsp[-1]) if config.debug_boot
-              sleep(2) if rsp[-1].to_s.match(/#{zunlockboot}/)
-              zlogin_write.printf("#{zunlockbootkey}\n") if rsp[-1].to_s.match(/#{zunlockboot}/)
-              zlogin_write.printf("\n") if rsp[-1].to_s.match(/#{zunlockboot}/)
-              uii.info(I18n.t('vagrant_zones.automated-zbootunlock')) if rsp[-1].to_s.match(/#{zunlockboot}/)
-              sleep(15) if rsp[-1].to_s.match(/#{bstring}/)
-              zlogin_write.printf("\n") if rsp[-1].to_s.match(/#{bstring}/)
-              break if rsp[-1].to_s.match(/#{bstring}/)
+              begin
+                zlogin_read.expect(/\r\n/) do |line|
+                  line = line.first if line.is_a?(Array)
+                  encoded_line = line.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
+                  rsp.push encoded_line unless encoded_line.empty?
+                end
+              rescue ArgumentError => e
+                next
+              end
+      
+              uii.info(rsp[-1]) if config.debug_boot && !rsp.empty?
+              
+              if !rsp.empty? && rsp[-1].match(/#{zunlockboot}/)
+                sleep(2)
+                zlogin_write.printf("#{zunlockbootkey}\n") if zunlockbootkey
+                zlogin_write.printf("\n")
+                uii.info(I18n.t('vagrant_zones.automated-zbootunlock'))
+              end
+              
+              if !rsp.empty? && rsp[-1].match(/#{bstring}/)
+                sleep(15)
+                zlogin_write.printf("\n")
+                break
+              end
             end
-
+      
             if zlogin_read.expect(/#{alcheck}/)
               uii.info(I18n.t('vagrant_zones.automated-zlogin-user'))
               zlogin_write.printf("#{user(@machine)}\n")
               sleep(config.login_wait)
             end
-
+      
             if zlogin_read.expect(/#{pcheck}/)
               uii.info(I18n.t('vagrant_zones.automated-zlogin-pass'))
               zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
               sleep(config.login_wait)
             end
-
+      
             zlogin_write.printf("\n")
             if zlogin_read.expect(/#{lcheck}/)
               uii.info(I18n.t('vagrant_zones.automated-zlogin-root'))
