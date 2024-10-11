@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.98](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.97...v0.1.98) (2024-10-11)
+
+
+### Bug Fixes
+
+* handle invalid characters in zlogin for alma9 ([94e9784](https://github.com/STARTcloud/vagrant-zones/commit/94e978497537f9d7edf4958e35d2797e328edda2))
+* handle invalid characters in zlogin for alma9 ([a9d5425](https://github.com/STARTcloud/vagrant-zones/commit/a9d542501288eb819eb33aff0930b853a8e8d41c))
+* handle invalid characters in zlogin for alma9 ([9256d12](https://github.com/STARTcloud/vagrant-zones/commit/9256d1223b04ec890fee9dfdea0433b579e3ae26))
+* handle invalid characters in zlogin for alma9 ([67ca751](https://github.com/STARTcloud/vagrant-zones/commit/67ca7515359977eebb345e6730cee7241d8893c2))
+
 ## [0.1.97](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.96...v0.1.97) (2024-08-17)
 
 
