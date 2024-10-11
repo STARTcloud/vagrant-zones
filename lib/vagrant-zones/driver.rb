@@ -1254,6 +1254,7 @@ module VagrantPlugins
               end
 
               next unless !rsp.empty? && rsp[-1].match(/#{bstring}/)
+
               sleep(15)
               zlogin_write.printf("\n")
               break
