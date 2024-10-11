@@ -1253,11 +1253,10 @@ module VagrantPlugins
                 uii.info(I18n.t('vagrant_zones.automated-zbootunlock'))
               end
 
-              if !rsp.empty? && rsp[-1].match(/#{bstring}/)
-                sleep(15)
-                zlogin_write.printf("\n")
-                break
-              end
+              next unless !rsp.empty? && rsp[-1].match(/#{bstring}/)
+              sleep(15)
+              zlogin_write.printf("\n")
+              break
             end
 
             if zlogin_read.expect(/#{alcheck}/)
@@ -1282,7 +1281,6 @@ module VagrantPlugins
           end
         end
       end
-      
 
       def natloginboot(uii, metrics, interrupted)
         metrics ||= {}
