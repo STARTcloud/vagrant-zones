@@ -1239,38 +1239,39 @@ module VagrantPlugins
                   encoded_line = line.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
                   rsp.push encoded_line unless encoded_line.empty?
                 end
-              rescue ArgumentError => e
+              rescue ArgumentError
+                # Silently ignore encoding errors
                 next
               end
-      
+
               uii.info(rsp[-1]) if config.debug_boot && !rsp.empty?
-              
+
               if !rsp.empty? && rsp[-1].match(/#{zunlockboot}/)
                 sleep(2)
                 zlogin_write.printf("#{zunlockbootkey}\n") if zunlockbootkey
                 zlogin_write.printf("\n")
                 uii.info(I18n.t('vagrant_zones.automated-zbootunlock'))
               end
-              
+
               if !rsp.empty? && rsp[-1].match(/#{bstring}/)
                 sleep(15)
                 zlogin_write.printf("\n")
                 break
               end
             end
-      
+
             if zlogin_read.expect(/#{alcheck}/)
               uii.info(I18n.t('vagrant_zones.automated-zlogin-user'))
               zlogin_write.printf("#{user(@machine)}\n")
               sleep(config.login_wait)
             end
-      
+
             if zlogin_read.expect(/#{pcheck}/)
               uii.info(I18n.t('vagrant_zones.automated-zlogin-pass'))
               zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
               sleep(config.login_wait)
             end
-      
+
             zlogin_write.printf("\n")
             if zlogin_read.expect(/#{lcheck}/)
               uii.info(I18n.t('vagrant_zones.automated-zlogin-root'))
@@ -1281,6 +1282,7 @@ module VagrantPlugins
           end
         end
       end
+      
 
       def natloginboot(uii, metrics, interrupted)
         metrics ||= {}
