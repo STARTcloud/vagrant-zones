@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.99](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.98...v0.1.99) (2025-05-04)
+
+
+### Bug Fixes
+
+* null vlans ([ef22b48](https://github.com/STARTcloud/vagrant-zones/commit/ef22b481a3e8293039b371dd49db00f87c71923f))
+* rubocop linting errors ([48530c4](https://github.com/STARTcloud/vagrant-zones/commit/48530c41be5e46123d8773abdf651ff5ca0c879b))
+* rubocop linting errors ([018b555](https://github.com/STARTcloud/vagrant-zones/commit/018b5551eaf64de5e404e6abee32f9257c214f07))
+
 ## [0.1.98](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.97...v0.1.98) (2024-10-11)
 
 
