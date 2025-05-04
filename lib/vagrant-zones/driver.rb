@@ -727,7 +727,7 @@ module VagrantPlugins
         uii.info(I18n.t('vagrant_zones.creating_vnic'))
         uii.info("  #{vnic_name}")
         command = "#{@pfexec} dladm create-vnic -l #{opts[:bridge]} -m #{mac}"
-        command += " -v #{opts[:vlan]}" unless opts[:vlan].nil? || (opts[:vlan]).zero?
+        command += " -v #{opts[:vlan]}" unless opts[:vlan].nil? || opts[:vlan].zero?
         command += " #{vnic_name}"
         execute(false, command)
       end
@@ -928,9 +928,9 @@ module VagrantPlugins
       ## zonecfg function for CPU Configurations
       def zonecfgcpu(uii, _name, config, zcfg)
         uii.info(I18n.t('vagrant_zones.zonecfgcpu')) if config.debug
-        if config.cpu_configuration == 'simple' && (config.brand == 'bhyve' || config.brand == 'kvm')
+        if config.cpu_configuration == 'simple' && %w[bhyve kvm].include?(config.brand)
           execute(false, %(#{zcfg}"add attr; set name=vcpus; set value=#{config.cpus}; set type=string; end;"))
-        elsif config.cpu_configuration == 'complex' && (config.brand == 'bhyve' || config.brand == 'kvm')
+        elsif config.cpu_configuration == 'complex' && %w[bhyve kvm].include?(config.brand)
           hash = config.complex_cpu_conf[0]
           cstring = %(sockets=#{hash['sockets']},cores=#{hash['cores']},threads=#{hash['threads']})
           execute(false, %(#{zcfg}'add attr; set name=vcpus; set value="#{cstring}"; set type=string; end;'))
@@ -1129,7 +1129,7 @@ module VagrantPlugins
 
       ## This setups the Netplan based OS Networking via Zlogin
       def zoneniczloginsetup_netplan(uii, opts, mac)
-        zlogin(uii, 'rm -rf /etc/netplan/*.yaml') if (opts[:nic_number]).zero?
+        zlogin(uii, 'rm -rf /etc/netplan/*.yaml') if opts[:nic_number].zero?
         ip = ipaddress(uii, opts)
         vnic_name = vname(uii, opts)
         servers = dnsservers(uii, opts).map { |server| server['nameserver'] }.join(', ') unless opts[:dns].nil?
@@ -1644,7 +1644,7 @@ module VagrantPlugins
         uii.info(I18n.t('vagrant_zones.cron_entries'))
         h = { h: 'hourly', d: 'daily', w: 'weekly', m: 'monthly' }
         h.each do |(_k, d)|
-          next unless opts[:list] == d || opts[:list] == 'all'
+          next unless [d, 'all'].include?(opts[:list])
 
           uii.info(cronjobs[d.to_sym]) unless cronjobs[d.to_sym].nil?
         end
@@ -1659,7 +1659,7 @@ module VagrantPlugins
         h = { h: 'hourly', d: 'daily', w: 'weekly', m: 'monthly' }
         uii.info(I18n.t('vagrant_zones.cron_delete'))
         h.each do |(_k, d)|
-          next unless opts[:delete] == d || opts[:delete] == 'all'
+          next unless [d, 'all'].include?(opts[:delete])
 
           cj = cronjobs[d.to_sym].to_s.gsub('*', '\*')
           rc = "#{rmcr}'#{cj}' | #{sc}"
