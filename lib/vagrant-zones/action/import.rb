@@ -66,7 +66,7 @@ module VagrantPlugins
                       ratelimit += 1
                       if ratelimit >= rate
                         uiprogress.clear_line
-                        status = format('%.2f%%', (amount_downloaded.to_f / file_size * 100))
+                        status = format('%.2f%%', amount_downloaded.to_f / file_size * 100)
                         uiprogress.info(I18n.t('vagrant_zones.importing_joyent_image') + "#{image} ==> ", new_line: false)
                         uiprogress.report_progress(status, 100, false)
                         ratelimit = 0
