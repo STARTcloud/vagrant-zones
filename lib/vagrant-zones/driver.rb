@@ -1054,15 +1054,15 @@ module VagrantPlugins
           shrtstr2 = %(add property (name=ips,value="#{allowed_address}"); add property (name=primary,value="true"); end;)
           execute(false, %(#{zonecfg_cmd}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
         when 'bhyve'
-          vlan_option = opts[:vlan].nil? || opts[:vlan].zero? ? '' : "set vlan-id=#{opts[:vlan]}; "
+          vlan_option = opts[:vlan].nil? || opts[:vlan].zero? ? '' : "set vlan-id=#{opts[:vlan]};"
           base_cmd = if config.on_demand_vnics
-                       %(#{zonecfg_cmd}"add net; set physical=#{vnic_name}; #{vlan_option}set global-nic=#{opts[:bridge]}; )
+                       %(add net; set physical=#{vnic_name}; #{vlan_option} set global-nic=#{opts[:bridge]};)
                      else
-                       %(#{zonecfg_cmd}"add net; set physical=#{vnic_name}; )
+                       %(add net; set physical=#{vnic_name};)
                      end
-          execute(false, %(#{base_cmd}end;)) unless cie
-          execute(false, %(#{base_cmd}set allowed-address=#{allowed_address}; end;)) if cie && aa
-          execute(false, %(#{base_cmd}end;)) if cie && !aa
+          execute(false, %(#{zonecfg_cmd} "#{base_cmd} end;")) unless cie
+          execute(false, %(#{zonecfg_cmd} "#{base_cmd} set allowed-address=#{allowed_address}; end;")) if cie && aa
+          execute(false, %(#{zonecfg_cmd} "#{base_cmd} end;")) if cie && !aa
         end
       end
 
