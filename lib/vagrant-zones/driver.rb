@@ -1366,7 +1366,7 @@ module VagrantPlugins
         ## DO NOT ADJUST THE COMMAND, IT IS IMPORTANT THAT WE DO NOT EVER ADJUST THIS COMMAND
         ## DO NOT ADJUST THE COMMAND
         ## DO NOT ADJUST THE COMMAND!!!!!!!!!! SERIOUSLY
-        getmac_cmd = %(bash -c "getmac /v /FO csv /NH | grep \"#{normalized_mac}\" | awk -F, '{print $1}' | sed 's/\"/VZWI/g'")
+        getmac_cmd = %(bash -c "getmac /v /FO csv /NH | grep "#{normalized_mac}" | awk -F, '{print $1}' | sed 's/"/VZWI/g'")
         raw_output = zlogin(uii, getmac_cmd)
 
         uii.info("Raw adapter result: #{raw_output.inspect}")
@@ -1393,7 +1393,7 @@ module VagrantPlugins
         # Find VZWI markers in the sanitized output
         sanitized_output.split(/[\r\n]+/).each do |line|
           next unless line.include?('VZWI')
-          
+
           uii.info("Found line with VZWI markers (sanitized): #{line}")
 
           # Extract the adapter name between VZWI markers using direct match
