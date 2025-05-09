@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.100](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.99...v0.1.100) (2025-05-09)
+
+
+### Bug Fixes
+
+* adding ansi-strings to fix issue with windows output ([bc67454](https://github.com/STARTcloud/vagrant-zones/commit/bc674546d79419496bb781c7aabf2004126c29a5))
+* linting file ([0455ae0](https://github.com/STARTcloud/vagrant-zones/commit/0455ae0677dc593dea0b43f66ac64ba1930b274f))
+* linting file ([9996594](https://github.com/STARTcloud/vagrant-zones/commit/999659499ca65153527ac9222a500b0fefaf0014))
+* linting file ([0e6c345](https://github.com/STARTcloud/vagrant-zones/commit/0e6c34515147617d6f0d233d7400d65515eea2cd))
+
 ## [0.1.99](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.98...v0.1.99) (2025-05-04)
 
 
