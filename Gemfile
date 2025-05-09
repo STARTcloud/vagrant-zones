@@ -20,7 +20,7 @@ group :plugins do
   gem 'rspec-mocks', '~> 3.10', '>= 3.10.0'
   gem 'rubocop', '~> 1.0'
   gem 'rubocop-rake', '~> 0.6', '>= 0.6.0'
-  gem 'rubocop-rspec', '~> 2.4', '>= 2.4.0'
+  gem 'rubocop-rspec', '~> 3.6'
   gem 'ruby-progressbar', '~> 1.11', '>= 1.11.0'
   gem 'strings-ansi', '~> 0.2.0'
 end
