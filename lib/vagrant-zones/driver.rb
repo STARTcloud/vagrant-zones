@@ -1357,49 +1357,35 @@ module VagrantPlugins
 
         # Normalize the MAC address to uppercase with hyphens (Windows format)
         normalized_mac = mac.split(':').map { |segment| segment.rjust(2, '0') }.join('-').upcase
-
-        # Debug output
-        uii.info("Looking for adapter with MAC: #{normalized_mac}")
-
-        # Use the bash command with sed to wrap adapter name with VZWI markers
-        ## DO NOT EVER ADJUST THIS COMMAND, WE MUST USE THIS EXACT COMMAND TO GET THE DATA FROM THE MACHINE
-        ## DO NOT ADJUST THE COMMAND, IT IS IMPORTANT THAT WE DO NOT EVER ADJUST THIS COMMAND
-        ## DO NOT ADJUST THE COMMAND
-        ## DO NOT ADJUST THE COMMAND!!!!!!!!!! SERIOUSLY
-        getmac_cmd = %(bash -c "getmac /v /FO csv /NH | grep "#{normalized_mac}" | awk -F, '{print $1}' | sed 's/"/VZWI/g'")
+        getmac_cmd = %(bash -c "getmac /v /FO csv /NH | grep \\\"#{normalized_mac}\\\" | awk -F, '{print $1}' | sed 's/\\\"/VZWI/g'")
         raw_output = zlogin(uii, getmac_cmd)
-
-        uii.info("Raw adapter result: #{raw_output.inspect}")
-
-        if raw_output.is_a?(String)
-          hex_display = raw_output.bytes.map { |b| format('\\x%02X', b) }.join
-          uii.info("Hex representation: #{hex_display}")
-        elsif raw_output.is_a?(Array)
-          # Handle array case
-          hex_display = raw_output.join.bytes.map { |b| format('\\x%02X', b) }.join
-          uii.info("Hex representation (array joined): #{hex_display}")
-        end
-
-        # Use the strings-ansi gem to sanitize the raw output
         adapter_name = nil
 
         # First sanitize the raw output to remove all ANSI escape sequences
         raw_output_str = raw_output.is_a?(Array) ? raw_output.join : raw_output.to_s
         sanitized_output = Strings::ANSI.sanitize(raw_output_str)
 
-        # Debug the sanitized output
-        uii.info("Sanitized output: #{sanitized_output.inspect}")
-
         # Find VZWI markers in the sanitized output
         sanitized_output.split(/[\r\n]+/).each do |line|
           next unless line.include?('VZWI')
 
-          uii.info("Found line with VZWI markers (sanitized): #{line}")
+          # Find all positions of "VZWI" in the string
+          positions = []
+          pos = -1
+          while (pos = line.index('VZWI', pos + 1))
+            positions << pos
+          end
 
-          # Extract the adapter name between VZWI markers using direct match
-          if line =~ /VZWI(.+?)VZWI/
-            adapter_name = ::Regexp.last_match(1)
-            uii.info("Extracted adapter name from sanitized output: '#{adapter_name}'")
+          # If we have at least 2 occurrences, extract between the last pair
+          if positions.length >= 2
+            # Get the last two VZWI positions
+            last_pair_start = positions[-2]
+            last_pair_end = positions[-1]
+            
+            # Extract between these positions (adding 4 to skip "VZWI")
+            adapter_name = line[(last_pair_start + 4)...last_pair_end]
+          else
+            uii.info("No Adapters found")
           end
           break
         end
@@ -1407,7 +1393,6 @@ module VagrantPlugins
         # Only proceed if we got a valid adapter name
         if adapter_name && !adapter_name.empty?
           # Rename the adapter to the VNIC name
-          uii.info("Using extracted adapter name '#{adapter_name}' for rename")
           rename_adapter = %(netsh interface set interface name="#{adapter_name}" newname="#{vnic_name}")
           uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
 
