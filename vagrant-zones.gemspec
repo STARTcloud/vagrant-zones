@@ -34,4 +34,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency  'log4r', '~> 1.1'
   spec.add_dependency  'netaddr', '~> 2.0', '>= 2.0.4'
   spec.add_dependency  'ruby_expect', '~> 1.7', '>= 1.7.5'
+  spec.add_dependency  'strings-ansi', '~> 0.2.0'
 end

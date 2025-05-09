@@ -22,4 +22,5 @@ group :plugins do
   gem 'rubocop-rake', '~> 0.6', '>= 0.6.0'
   gem 'rubocop-rspec', '~> 2.4', '>= 2.4.0'
   gem 'ruby-progressbar', '~> 1.11', '>= 1.11.0'
+  gem 'strings-ansi', '~> 0.2.0'
 end

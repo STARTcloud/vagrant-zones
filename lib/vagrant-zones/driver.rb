@@ -15,6 +15,7 @@ require 'resolv'
 require 'vagrant-zones/util/timer'
 require 'vagrant-zones/util/subprocess'
 require 'vagrant/util/retryable'
+require 'strings/ansi'
 
 module VagrantPlugins
   module ProviderZone
@@ -1344,20 +1345,95 @@ module VagrantPlugins
         uii.info(I18n.t('vagrant_zones.configure_win_interface_using_vnic'))
         sleep(60)
 
-        ## Insert code to get the list of interfaces by mac address in order
-        ## to set the proper VNIC name if using multiple adapters
-        rename_adapter = %(netsh interface set interface name = "Ethernet" newname = "#{vnic_name}")
-        cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter})
-        uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
-        uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
-        return unless opts[:dns].nil?
+        # Get the MAC address for this VNIC (if set to auto)
+        mac = macaddress(uii, opts)
+        if mac == 'auto'
+          mac = ''
+          cmd = "#{@pfexec} dladm show-vnic #{vnic_name} | tail -n +2 |  awk '{ print $4 }'"
+          vnicmac = execute(false, cmd.to_s)
+          vnicmac.split(':').each { |x| mac += "#{format('%02x', x.to_i(16))}:" }
+          mac = mac[0..-2]
+        end
+        
+        # Normalize the MAC address to uppercase with hyphens (Windows format)
+        normalized_mac = mac.split(':').map { |segment| segment.rjust(2, '0') }.join('-').upcase
+        
+        # Debug output
+        uii.info("Looking for adapter with MAC: #{normalized_mac}")
+        
+        # Use the bash command with sed to wrap adapter name with VZWI markers
+        ## DO NOT EVER ADJUST THIS COMMAND, WE MUST USE THIS EXACT COMMAND TO GET THE DATA FROM THE MACHINE
+        ## DO NOT ADJUST THE COMMAND, IT IS IMPORTANT THAT WE DO NOT EVER ADJUST THIS COMMAND
+        ## DO NOT ADJUST THE COMMAND
+        ## DO NOT ADJUST THE COMMAND!!!!!!!!!! SERIOUSLY
+        getmac_cmd = %(bash -c "getmac /v /FO csv /NH | grep \\\"#{normalized_mac}\\\" | awk -F, '{print $1}' | sed 's/\\\"/VZWI/g'")
+        raw_output = zlogin(uii, getmac_cmd)
 
-        ip_addresses = dnsservers(uii, opts).map { |hash| hash['nameserver'] }
-        dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{ip_addresses[0]} primary validate=no)
-        uii.info(I18n.t('vagrant_zones.win_applied_dns1')) if zlogin(uii, dns1)
-        ip_addresses[1..].each_with_index do |dns, index|
-          additional_nameservers = %(netsh int ipv4 add dns name="#{vnic_name}" #{dns} index="#{index + 2}" validate=no)
-          uii.info(I18n.t('vagrant_zones.win_applied_dns2')) if zlogin(uii, additional_nameservers)
+        ## Windows will return special characters/ansi control sequences that may mess up the shell, it may corrupt it and send charactes that make the text appear in lines before the current position of hte cursor.
+        ## I do not think that this will corrupt JUST the name, I expect it to corrupt a bunch of the lines, not JUST the name
+
+        
+        # Enhanced debug output to show ALL characters including control sequences so that we can debug why we are getting weird output that meses up the console
+        # First show regular string representation
+        uii.info("Raw adapter result: #{raw_output.inspect}")
+        
+        # Now show hexadecimal representation for ALL bytes, we really don't care abotu hexadecimal, we just care about the control characters and sepcial characters returned by the zlogin console in the ruby.pty.
+        if raw_output.is_a?(String)
+          hex_display = raw_output.bytes.map { |b| format('\\x%02X', b) }.join
+          uii.info("Hex representation: #{hex_display}")
+        elsif raw_output.is_a?(Array)
+          # Handle array case
+          hex_display = raw_output.join.bytes.map { |b| format('\\x%02X', b) }.join
+          uii.info("Hex representation (array joined): #{hex_display}")
+        end
+        
+        # Use the strings-ansi gem to sanitize the raw output
+        adapter_name = nil
+        
+        # First sanitize the raw output to remove all ANSI escape sequences
+        raw_output_str = raw_output.is_a?(Array) ? raw_output.join : raw_output.to_s
+        sanitized_output = Strings::ANSI.sanitize(raw_output_str)
+        
+        # Debug the sanitized output
+        uii.info("Sanitized output: #{sanitized_output.inspect}")
+        
+        # Find VZWI markers in the sanitized output
+        sanitized_output.split(/[\r\n]+/).each do |line|
+          if line.include?('VZWI')
+            uii.info("Found line with VZWI markers (sanitized): #{line}")
+            
+            # Extract the adapter name between VZWI markers using direct match
+            if line =~ /VZWI(.+?)VZWI/
+              adapter_name = $1
+              uii.info("Extracted adapter name from sanitized output: '#{adapter_name}'")
+            end
+            break
+          end
+        end
+        
+        # Only proceed if we got a valid adapter name
+        if adapter_name && !adapter_name.empty?
+          # Rename the adapter to the VNIC name
+          uii.info("Using extracted adapter name '#{adapter_name}' for rename")
+          rename_adapter = %(netsh interface set interface name="#{adapter_name}" newname="#{vnic_name}")
+          uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
+          
+          # Configure the interface with IP, mask, and gateway
+          cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter})
+          uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
+          
+          # Configure DNS if provided
+          unless opts[:dns].nil?
+            ip_addresses = dnsservers(uii, opts).map { |hash| hash['nameserver'] }
+            dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{ip_addresses[0]} primary validate=no)
+            uii.info(I18n.t('vagrant_zones.win_applied_dns1')) if zlogin(uii, dns1)
+            ip_addresses[1..].each_with_index do |dns, index|
+              additional_nameservers = %(netsh int ipv4 add dns name="#{vnic_name}" #{dns} index="#{index + 2}" validate=no)
+              uii.info(I18n.t('vagrant_zones.win_applied_dns2')) if zlogin(uii, additional_nameservers)
+            end
+          end
+        else
+          uii.info("Could not extract adapter name from output")
         end
       end
 
