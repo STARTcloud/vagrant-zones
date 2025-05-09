@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.101](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.100...v0.1.101) (2025-05-09)
+
+
+### Bug Fixes
+
+* windows zoneniczloginsetup ([c0eef21](https://github.com/STARTcloud/vagrant-zones/commit/c0eef2157555d668d0a55dddfcbdb2ea419a623d))
+* windows zoneniczloginsetup ([68581e3](https://github.com/STARTcloud/vagrant-zones/commit/68581e37c4c9dd7353ccdfabdc7a5937f5c6a555))
+
 ## [0.1.100](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.99...v0.1.100) (2025-05-09)
 
 
