@@ -1357,7 +1357,10 @@ module VagrantPlugins
 
         # Normalize the MAC address to uppercase with hyphens (Windows format)
         normalized_mac = mac.split(':').map { |segment| segment.rjust(2, '0') }.join('-').upcase
+
+        # rubocop:disable Style/RedundantStringEscape
         getmac_cmd = %(bash -c "getmac /v /FO csv /NH | grep \\\"#{normalized_mac}\\\" | awk -F, '{print $1}' | sed 's/\\\"/VZWI/g'")
+        # rubocop:enable Style/RedundantStringEscape
         raw_output = zlogin(uii, getmac_cmd)
         adapter_name = nil
 
@@ -1381,11 +1384,9 @@ module VagrantPlugins
             # Get the last two VZWI positions
             last_pair_start = positions[-2]
             last_pair_end = positions[-1]
-            
+
             # Extract between these positions (adding 4 to skip "VZWI")
             adapter_name = line[(last_pair_start + 4)...last_pair_end]
-          else
-            uii.info("No Adapters found")
           end
           break
         end
