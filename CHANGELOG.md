@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.102](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.101...v0.1.102) (2025-06-01)
+
+
+### Bug Fixes
+
+* rubocop ([b46dfe4](https://github.com/STARTcloud/vagrant-zones/commit/b46dfe4093191c4868fdfe77d73e454856e4fb85))
+* Vagrantfile addition ([aa59866](https://github.com/STARTcloud/vagrant-zones/commit/aa59866fe98b85cc5655f2a1b6495120e28cdb90))
+* Vagrantfile addition ([f6ca043](https://github.com/STARTcloud/vagrant-zones/commit/f6ca0438c2a94201c75405a6925e8178f7252180))
+
 ## [0.1.101](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.100...v0.1.101) (2025-05-09)
 
 
