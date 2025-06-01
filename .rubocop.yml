@@ -12,6 +12,7 @@ Metrics/ClassLength:
   Enabled: true
   Exclude:
     - lib/vagrant-zones/driver*
+    - lib/vagrant-zones/action/package.rb
 
 Naming/MethodName:
   EnforcedStyle: snake_case
