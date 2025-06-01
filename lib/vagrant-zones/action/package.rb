@@ -68,16 +68,26 @@ module VagrantPlugins
           end
 
           ## Create a Vagrantfile or load from Users Defined File
-          vagrantfile_content = <<~'CODE'
-            require 'yaml'
-            require_relative 'Hosts'
-            settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
-            Vagrant.configure("2") do |config|
-              Hosts.configure(config, settings)
+          if env['package.vagrantfile']
+            # Use the custom Vagrantfile provided by the user
+            custom_vagrantfile = env['package.vagrantfile']
+            if File.exist?(custom_vagrantfile)
+              FileUtils.cp(custom_vagrantfile, "#{Dir.pwd}/_tmp_package/Vagrantfile", preserve: true)
+            else
+              raise Vagrant::Errors::PackageIncludeMissing, file: custom_vagrantfile
             end
-          CODE
-          File.write("#{Dir.pwd}/_tmp_package/Vagrantfile", vagrantfile_content)
-          files[env['package.vagrantfile']] = '_Vagrantfile' if env['package.vagrantfile']
+          else
+            # Use the default Vagrantfile content
+            vagrantfile_content = <<~'CODE'
+              require 'yaml'
+              require File.expand_path("#{File.dirname(__FILE__)}/core/Hosts.rb")
+              settings = YAML::load(File.read("#{File.dirname(__FILE__)}/Hosts.yml"))
+              Vagrant.configure("2") do |config|
+                Hosts.configure(config, settings)
+              end
+            CODE
+            File.write("#{Dir.pwd}/_tmp_package/Vagrantfile", vagrantfile_content)
+          end
 
           info_content_hash = {
             'boxname' => boxname,
