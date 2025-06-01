@@ -16,7 +16,7 @@ en:
         Invalid bhyve configuration detected
       console_failed: |-
         Failed to access console
-      console_failed: |-
+      netplan_failed: |-
         Failed to apply the netplan configuration inside the VM
       console_failed_exit: |-
         Exiting
@@ -184,7 +184,7 @@ en:
       Starting the zone
     joyent_image_uuid_verified: |-
       Joyent image UUID has been verified ==> 
-    lx_zone_dataset: |-
+    lx_zone_dataset_info: |-
       LX zone dataset ==> 
     setting_dns_server: |-
       Setting nameserver ==> 
@@ -327,5 +327,4 @@ en:
     win_applied_dns1: |-
       - Set Primary DNS
     win_applied_dns2: |-
-      - Set Secondary DNS        
-      
+      - Set Secondary DNS

@@ -71,11 +71,9 @@ module VagrantPlugins
           if env['package.vagrantfile']
             # Use the custom Vagrantfile provided by the user
             custom_vagrantfile = env['package.vagrantfile']
-            if File.exist?(custom_vagrantfile)
-              FileUtils.cp(custom_vagrantfile, "#{Dir.pwd}/_tmp_package/Vagrantfile", preserve: true)
-            else
-              raise Vagrant::Errors::PackageIncludeMissing, file: custom_vagrantfile
-            end
+            raise Vagrant::Errors::PackageIncludeMissing, file: custom_vagrantfile unless File.exist?(custom_vagrantfile)
+
+            FileUtils.cp(custom_vagrantfile, "#{Dir.pwd}/_tmp_package/Vagrantfile", preserve: true)
           else
             # Use the default Vagrantfile content
             vagrantfile_content = <<~'CODE'
