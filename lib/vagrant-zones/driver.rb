@@ -1399,13 +1399,11 @@ module VagrantPlugins
           rename_adapter = %(netsh interface set interface name="#{adapter_name}" newname="#{vnic_name}")
           uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
 
-          # Configure the interface with IP, mask, and gateway
-          cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter})
-          # Add metric setting for NAT networks
-          if opts[:nictype] == 'nat' || opts[:provisional]
-            metric_cmd = %(netsh interface ipv4 set interface "#{vnic_name}" metric=#{metric})
-            zlogin(uii, metric_cmd)
-          end
+          # Configure the interface with IP, mask, and gateway and metric
+          cmd_parts = ["netsh interface ipv4 set address name=\"#{vnic_name}\" static #{ip} #{opts[:netmask]} #{defrouter}"]
+          cmd_parts << "metric=#{opts[:metric]}" if opts[:metric]
+          cmd = cmd_parts.join(" ")
+
           uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
 
           # Configure DNS if provided
