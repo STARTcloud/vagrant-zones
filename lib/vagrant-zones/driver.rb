@@ -1342,6 +1342,7 @@ module VagrantPlugins
         ip = ipaddress(uii, opts)
         vnic_name = vname(uii, opts)
         defrouter = opts[:gateway].to_s
+        metric = opts[:metric] || 100
         uii.info(I18n.t('vagrant_zones.configure_win_interface_using_vnic'))
         sleep(60)
 
@@ -1399,6 +1400,11 @@ module VagrantPlugins
 
           # Configure the interface with IP, mask, and gateway
           cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter})
+          # Add metric setting for NAT networks
+          if opts[:nictype] == 'nat' || opts[:provisional] 
+            metric_cmd = %(netsh interface ipv4 set interface "#{vnic_name}" metric=#{metric})
+            zlogin(uii, metric_cmd)
+          end
           uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
 
           # Configure DNS if provided
