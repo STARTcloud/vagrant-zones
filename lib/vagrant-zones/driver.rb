@@ -1343,7 +1343,6 @@ module VagrantPlugins
         ip = ipaddress(uii, opts)
         vnic_name = vname(uii, opts)
         defrouter = opts[:gateway].to_s
-        metric = opts[:metric] || 100
         uii.info(I18n.t('vagrant_zones.configure_win_interface_using_vnic'))
         sleep(60)
 
@@ -1400,9 +1399,9 @@ module VagrantPlugins
           uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
 
           # Configure the interface with IP, mask, and gateway and metric
-          cmd_parts = ["netsh interface ipv4 set address name=\"#{vnic_name}\" static #{ip} #{opts[:netmask]} #{defrouter}"]
-          cmd_parts << "metric=#{opts[:metric]}" if opts[:metric]
-          cmd = cmd_parts.join(" ")
+          metric_param = opts[:metric] ? "metric=#{opts[:metric]}" : ''
+          cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter} #{metric_param}).strip
+          uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
 
           uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
 
