@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.103](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.102...v0.1.103) (2025-09-19)
+
+
+### Bug Fixes
+
+* add metric to windows nat interfaces ([4d37895](https://github.com/STARTcloud/vagrant-zones/commit/4d378953869a4c7983baa58b5a518398207db01d))
+* linting ([03be1ce](https://github.com/STARTcloud/vagrant-zones/commit/03be1cecdb656d30dcf2d998231c68da94f85c5e))
+* linting ([fbda546](https://github.com/STARTcloud/vagrant-zones/commit/fbda546b652248ade68abcc0d4f8a15a330e62e7))
+
 ## [0.1.102](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.101...v0.1.102) (2025-06-01)
 
 
