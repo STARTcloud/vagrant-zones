@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.104](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.103...v0.1.104) (2025-09-19)
+
+
+### Bug Fixes
+
+* linting ([517f05a](https://github.com/STARTcloud/vagrant-zones/commit/517f05a80c7d37abd6448c86b6a8205bcafe5114))
+* linting ([6168b99](https://github.com/STARTcloud/vagrant-zones/commit/6168b99cf2d8bcceae39d536fff253861b0d2b6a))
+
 ## [0.1.103](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.102...v0.1.103) (2025-09-19)
 
 
