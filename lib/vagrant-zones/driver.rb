@@ -1402,7 +1402,7 @@ module VagrantPlugins
           # Configure the interface with IP, mask, and gateway
           cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter})
           # Add metric setting for NAT networks
-          if opts[:nictype] == 'nat' || opts[:provisional] 
+          if opts[:nictype] == 'nat' || opts[:provisional]
             metric_cmd = %(netsh interface ipv4 set interface "#{vnic_name}" metric=#{metric})
             zlogin(uii, metric_cmd)
           end
