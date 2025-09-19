@@ -10,6 +10,7 @@ module VagrantPlugins
       # This is used to restart the zone
       class Restart
         include Vagrant::Util::Retryable
+
         def initialize(app, _env)
           @logger = Log4r::Logger.new('vagrant_zones::action::restart')
           @app = app

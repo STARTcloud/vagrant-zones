@@ -10,6 +10,7 @@ module VagrantPlugins
       # This is used to shutdown the zone
       class Shutdown
         include Vagrant::Util::Retryable
+
         def initialize(app, _env)
           @logger = Log4r::Logger.new('vagrant_zones::action::shutdown')
           @app = app

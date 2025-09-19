@@ -8,6 +8,7 @@ module VagrantPlugins
     # Run actions against the machine
     module Action # rubocop:disable Metrics/ModuleLength
       include Vagrant::Action::Builtin
+
       @logger = Log4r::Logger.new('vagrant_zones::action')
 
       # This action is called to bring the box up from nothing.
