@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.105](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.104...v0.1.105) (2025-09-21)
+
+
+### Bug Fixes
+
+* metric ([f5582c1](https://github.com/STARTcloud/vagrant-zones/commit/f5582c19f14d3191ca051b5bbcf814fef8e65775))
+
 ## [0.1.104](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.103...v0.1.104) (2025-09-19)
 
 
