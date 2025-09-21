@@ -1398,11 +1398,9 @@ module VagrantPlugins
           rename_adapter = %(netsh interface set interface name="#{adapter_name}" newname="#{vnic_name}")
           uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
 
-          # Configure the interface with IP, mask, and gateway and metric
+          # Configure the interface with IP, mask, and gateway
           metric_param = opts[:metric] ? "metric=#{opts[:metric]}" : ''
-          cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter} #{metric_param}).strip
-          uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
-
+          cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter} #{metric_param})
           uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
 
           # Configure DNS if provided
