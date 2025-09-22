@@ -1345,7 +1345,7 @@ module VagrantPlugins
         vnic_name = vname(uii, opts)
         defrouter = opts[:gateway].to_s
         uii.info(I18n.t('vagrant_zones.configure_win_interface_using_vnic'))
-        uii.info(I18n.t('vagrant_zones.windows_profile_wait') + ' ' + config.windows_profile_wait.to_s + ' seconds')
+        uii.info("#{I18n.t('vagrant_zones.windows_profile_wait')} #{config.windows_profile_wait} seconds")
         sleep(config.windows_profile_wait)
 
         # Get the MAC address for this VNIC (if set to auto)
