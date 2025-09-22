@@ -49,7 +49,9 @@ en:
     configure_interface_using_vnic: |-
       - Configuring the interface in the zone for VNIC using netplan: 
     configure_win_interface_using_vnic: |-
-      - Waiting 60 seconds then configuring the Windows network interface in the zone: 
+      - Configuring the Windows network interface in the zone: 
+    windows_profile_wait: |-
+      - Waiting for Windows user profile creation:
     configure_interface_using_vnic_dladm: |-
       - Configuring the interface in the zone for VNIC using dladm: 
     os_detect: |-

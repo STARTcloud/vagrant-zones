@@ -1340,11 +1340,13 @@ module VagrantPlugins
 
       ## This setups the Windows Networking via Zlogin
       def zoneniczloginsetup_windows(uii, opts, _mac)
+        config = @machine.provider_config
         ip = ipaddress(uii, opts)
         vnic_name = vname(uii, opts)
         defrouter = opts[:gateway].to_s
         uii.info(I18n.t('vagrant_zones.configure_win_interface_using_vnic'))
-        sleep(60)
+        uii.info(I18n.t('vagrant_zones.windows_profile_wait') + ' ' + config.windows_profile_wait.to_s + ' seconds')
+        sleep(config.windows_profile_wait)
 
         # Get the MAC address for this VNIC (if set to auto)
         mac = macaddress(uii, opts)
