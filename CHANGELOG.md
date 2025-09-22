@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.106](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.105...v0.1.106) (2025-09-22)
+
+
+### Bug Fixes
+
+* windows profile wait ([0061bdb](https://github.com/STARTcloud/vagrant-zones/commit/0061bdb2310f1b5d5da1b57ca4edc31b2cd5dd56))
+* windows profile wait ([03ea717](https://github.com/STARTcloud/vagrant-zones/commit/03ea7176d6bb9006ec193968c422a14f379e027a))
+
 ## [0.1.105](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.104...v0.1.105) (2025-09-21)
 
 
