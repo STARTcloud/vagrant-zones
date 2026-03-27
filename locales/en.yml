@@ -30,8 +30,10 @@ en:
         Please install the Bhyve compatability tool from: https://omnios.org/info/bhyve
       missing_bhyve: |-    
         Your system appears to be missing bhyve
-      virtual_box_running_conflict_detected: |-    
+      virtual_box_running_conflict_detected: |-
         Virtualbox Box appears to be running virtual machines, to continue, please shut these down!
+      invalid_console_encoding: |-
+        Unknown console_encoding '%{encoding}'. Common values: UTF-8 (default), US-ASCII, ISO-8859-1, EUC-JP, Shift_JIS, GB18030, KOI8-R
     meeting: |-
       Starting the zone creation sequence
     leaving: |-

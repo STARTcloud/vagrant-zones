@@ -69,6 +69,11 @@ module VagrantPlugins
       class ConsoleFailed < VagrantZonesError
         error_key(:console_failed_exit)
       end
+
+      # InvalidConsoleEncoding
+      class InvalidConsoleEncoding < VagrantZonesError
+        error_key(:invalid_console_encoding)
+      end
     end
   end
 end

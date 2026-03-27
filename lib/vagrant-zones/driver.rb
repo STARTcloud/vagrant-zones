@@ -60,6 +60,25 @@ module VagrantPlugins
         @executor.execute(...)
       end
 
+      # Validate and return the configured console encoding
+      def console_encoding
+        config = @machine.provider_config
+        encoding_name = config.console_encoding || 'UTF-8'
+        Encoding.find(encoding_name)
+      rescue ArgumentError
+        raise Errors::InvalidConsoleEncoding, encoding: encoding_name
+      end
+
+      # Scrub a string from the PTY console into valid text using the configured encoding
+      def scrub_console_output(str)
+        str.to_s.force_encoding(console_encoding.to_s).scrub('')
+      end
+
+      # Set up a PTY read stream for safe binary reading from zone consoles
+      def configure_pty_encoding(pty_read)
+        pty_read.set_encoding('ASCII-8BIT')
+      end
+
       ## Begin installation for zone
       def install(uii)
         config = @machine.provider_config
@@ -273,13 +292,14 @@ module VagrantPlugins
           if opts[:dhcp4] && opts[:managed]
             vnic_name = "vnic#{nictype(opts)}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
             PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
+              configure_pty_encoding(zlogin_read)
               Timeout.timeout(config.setup_wait) do
                 rsp = []
                 command = "ip -4 addr show dev #{vnic_name} | grep -Po 'inet \\K[\\d.]+' \r\n"
                 i = 0
                 logged_in = false
                 loop do
-                  zlogin_read.expect(/\r\n/) { |line| rsp.push line }
+                  zlogin_read.expect(/\r\n/) { |line| rsp.push(scrub_console_output(line)) }
                   logged_in = true if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/) || rsp[-1].to_s.match(/(:~)/)
                   zlogin_write.printf("\r\n") if i < 1
                   i += 1
@@ -296,7 +316,7 @@ module VagrantPlugins
                 puts 'Gathering IP' if config.debug_boot
                 zlogin_write.printf(command) if logged_in
                 loop do
-                  zlogin_read.expect(/\r\n/) { |line| rsp.push line }
+                  zlogin_read.expect(/\r\n/) { |line| rsp.push(scrub_console_output(line)) }
                   ip = rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
 
                   break if rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
@@ -1231,19 +1251,15 @@ module VagrantPlugins
         uii.info(I18n.t('vagrant_zones.automated-zlogin'))
 
         PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
+          configure_pty_encoding(zlogin_read)
           Timeout.timeout(config.setup_wait) do
             rsp = []
 
             loop do
-              begin
-                zlogin_read.expect(/\r\n/) do |line|
-                  line = line.first if line.is_a?(Array)
-                  encoded_line = line.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
-                  rsp.push encoded_line unless encoded_line.empty?
-                end
-              rescue ArgumentError
-                # Silently ignore encoding errors
-                next
+              zlogin_read.expect(/\r\n/) do |line|
+                line = line.first if line.is_a?(Array)
+                encoded_line = scrub_console_output(line)
+                rsp.push encoded_line unless encoded_line.empty?
               end
 
               uii.info(rsp[-1]) if config.debug_boot && !rsp.empty?
@@ -1430,6 +1446,7 @@ module VagrantPlugins
         cmd = 'system32>'
         uii.info(I18n.t('vagrant_zones.automated-windows-zlogin'))
         PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
+          configure_pty_encoding(zlogin_read)
           Timeout.timeout(config.setup_wait) do
             uii.info(I18n.t('vagrant_zones.windows_skip_first_boot')) if zlogin_read.expect(/#{event_cmd_available}/)
             sleep(3)
@@ -1473,12 +1490,13 @@ module VagrantPlugins
         rsp = []
         execute_return = ''
         PTY.spawn("pfexec zlogin -C #{name}") do |zread, zwrite, pid|
+          configure_pty_encoding(zread)
           Timeout.timeout(config.setup_wait) do
             error_check = "echo \"Error Code: $?\"\n"
             error_check = "echo Error Code: %%ERRORLEVEL%% \r\n\r\n" if config.os_type.to_s.match(/windows/)
             runonce = true
             loop do
-              zread.expect(/\n/) { |line| rsp.push line }
+              zread.expect(/\n/) { |line| rsp.push(scrub_console_output(line)) }
               puts(rsp[-1]) if config.debug
               zwrite.printf("#{cmd}\r\n") if runonce
               zwrite.printf(error_check.to_s) if runonce
@@ -1493,7 +1511,7 @@ module VagrantPlugins
           end
           Process.kill('HUP', pid)
         end
-        execute_return
+        scrub_console_output(execute_return)
       end
 
       # This checks if the user exists on the VM, usually for LX zones
