@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.107](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.106...v0.1.107) (2026-03-27)
+
+
+### Features
+
+* add console encoding handling and error management ([f2bbcb2](https://github.com/STARTcloud/vagrant-zones/commit/f2bbcb2fccbe0735ab79247c3bee88ac64d770fe))
+
 ## [0.1.106](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.105...v0.1.106) (2025-09-22)
 
 
