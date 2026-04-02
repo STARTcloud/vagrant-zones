@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.108](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.107...v0.1.108) (2026-04-02)
+
+
+### Bug Fixes
+
+* DHCP setup method and NAT networking bug fixes ([3e6c07c](https://github.com/STARTcloud/vagrant-zones/commit/3e6c07c354e4cb51ac5c7a1579ff3d822bdacfdf))
+* etherstub creation ([e64c6e2](https://github.com/STARTcloud/vagrant-zones/commit/e64c6e2cc80fd55df3e81694c04f64c76ecf679b))
+* fixing the AI lies ([44e65b4](https://github.com/STARTcloud/vagrant-zones/commit/44e65b4c746ab6cb91195b7cc8976be4e8fc2aae))
+
 ## [0.1.107](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.106...v0.1.107) (2026-03-27)
 
 
