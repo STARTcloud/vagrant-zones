@@ -503,8 +503,8 @@ module VagrantPlugins
       def host_vnic_name(opts)
         config = @machine.provider_config
         if opts[:etherstub]
-          cmd = "#{@pfexec} dladm show-vnic -o LINK,OVER,ZONE -p | grep #{opts[:etherstub]} | grep ':\\-\\-$' | awk -F: '{ print $1 }' | head -n 1"
-          result = execute(false, "#{cmd} || true")
+          defrouter = opts[:gateway].to_s
+          result = execute(false, "#{@pfexec} ipadm show-addr -o ADDROBJ,ADDR | grep #{defrouter} | awk -F/ '{ print $1 }' | head -n 1 || true")
           return result.strip unless result.strip.empty?
         end
         "h_vnic_#{config.partition_id}_#{opts[:nic_number]}"
