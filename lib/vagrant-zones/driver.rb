@@ -380,13 +380,11 @@ module VagrantPlugins
 
       ## Delete DHCP entries for Zones
       def zonedhcpentriesrem(uii, opts)
-        config = @machine.provider_config
-
         ip = ipaddress(uii, opts)
         name = @machine.name
         defrouter = opts[:gateway].to_s
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
-        hvnic_name = "h_vnic_#{config.partition_id}_#{opts[:nic_number]}"
+        hvnic_name = host_vnic_name(opts)
         mac = macaddress(uii, opts)
 
         ## if mac is auto, then grab NIC from VNIC
@@ -499,6 +497,16 @@ module VagrantPlugins
       def etherstub_name(opts)
         config = @machine.provider_config
         opts[:etherstub] || "stub_#{config.partition_id}_#{opts[:nic_number]}"
+      end
+
+      ## Find the host VNIC name - use per-VM name or find existing one on shared etherstub
+      def host_vnic_name(opts)
+        config = @machine.provider_config
+        if opts[:etherstub]
+          result = execute(false, "#{@pfexec} dladm show-vnic -o LINK,OVER | grep #{opts[:etherstub]} | awk '{ print $1 }' | head -n 1 || true")
+          return result.strip unless result.strip.empty?
+        end
+        "h_vnic_#{config.partition_id}_#{opts[:nic_number]}"
       end
 
       ## Create etherstubs for Zones
@@ -712,8 +720,7 @@ module VagrantPlugins
 
       ## Set NatForwarding on global interface
       def zonenatforward(uii, opts)
-        config = @machine.provider_config
-        hvnic_name = "h_vnic_#{config.partition_id}_#{opts[:nic_number]}"
+        hvnic_name = host_vnic_name(opts)
         bridge_exists = execute(false, "#{@pfexec} ipadm show-if #{opts[:bridge]} 2>/dev/null | grep #{opts[:bridge]} || true")
         if bridge_exists.strip.empty?
           uii.info(I18n.t('vagrant_zones.bridge_not_found'))
@@ -754,13 +761,12 @@ module VagrantPlugins
 
       ## Create dhcp entries for the zone
       def zonedhcpentries(uii, opts)
-        config = @machine.provider_config
         ip = ipaddress(uii, opts)
         name = @machine.name
         vnic_name = vname(uii, opts)
         defrouter = opts[:gateway].to_s
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
-        hvnic_name = "h_vnic_#{config.partition_id}_#{opts[:nic_number]}"
+        hvnic_name = host_vnic_name(opts)
         ## Set Mac address from VNIC
         mac = macaddress(uii, opts)
         if mac == 'auto'
