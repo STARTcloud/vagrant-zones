@@ -465,9 +465,9 @@ module VagrantPlugins
       ## Delete etherstubs vnic
       def etherstubdelhvnic(uii, opts)
         config = @machine.provider_config
-        if config.etherstub
+        if opts[:etherstub]
           uii.info(I18n.t('vagrant_zones.shared_hvnic_skip_delete'))
-          uii.info("  #{config.etherstub}")
+          uii.info("  #{opts[:etherstub]}")
           return
         end
         hvnic_name = "h_vnic_#{config.partition_id}_#{opts[:nic_number]}"
@@ -482,9 +482,9 @@ module VagrantPlugins
       ## Delete etherstubs
       def etherstubdelete(uii, opts)
         config = @machine.provider_config
-        if config.etherstub
+        if opts[:etherstub]
           uii.info(I18n.t('vagrant_zones.shared_etherstub_skip_delete'))
-          uii.info("  #{config.etherstub}")
+          uii.info("  #{opts[:etherstub]}")
           return
         end
         ether_name = "stub_#{config.partition_id}_#{opts[:nic_number]}"
@@ -495,10 +495,10 @@ module VagrantPlugins
         execute(false, "#{@pfexec} dladm delete-etherstub #{ether_name}") if ether_configured == ether_name
       end
 
-      ## Derive the etherstub name from config or generate per-VM name
+      ## Derive the etherstub name from network opts or generate per-VM name
       def etherstub_name(opts)
         config = @machine.provider_config
-        config.etherstub || "stub_#{config.partition_id}_#{opts[:nic_number]}"
+        opts[:etherstub] || "stub_#{config.partition_id}_#{opts[:nic_number]}"
       end
 
       ## Create etherstubs for Zones
@@ -528,7 +528,7 @@ module VagrantPlugins
         hvnic_name = "h_vnic_#{config.partition_id}_#{opts[:nic_number]}"
 
         # Check if gateway IP already exists on this etherstub (shared etherstub)
-        if config.etherstub
+        if opts[:etherstub]
           existing_ip = execute(false, "#{@pfexec} ipadm show-addr -o ADDR | grep #{defrouter}/#{shrtsubnet} || true")
           unless existing_ip.strip.empty?
             uii.info(I18n.t('vagrant_zones.shared_etherstub_reusing'))
