@@ -465,6 +465,11 @@ module VagrantPlugins
       ## Delete etherstubs vnic
       def etherstubdelhvnic(uii, opts)
         config = @machine.provider_config
+        if config.etherstub
+          uii.info(I18n.t('vagrant_zones.shared_hvnic_skip_delete'))
+          uii.info("  #{config.etherstub}")
+          return
+        end
         hvnic_name = "h_vnic_#{config.partition_id}_#{opts[:nic_number]}"
         vnic_configured = execute(false, "#{@pfexec} dladm show-vnic | grep #{hvnic_name} | awk '{ print $1 }' ")
         uii.info(I18n.t('vagrant_zones.removing_host_vnic')) if vnic_configured == hvnic_name.to_s
@@ -477,6 +482,11 @@ module VagrantPlugins
       ## Delete etherstubs
       def etherstubdelete(uii, opts)
         config = @machine.provider_config
+        if config.etherstub
+          uii.info(I18n.t('vagrant_zones.shared_etherstub_skip_delete'))
+          uii.info("  #{config.etherstub}")
+          return
+        end
         ether_name = "stub_#{config.partition_id}_#{opts[:nic_number]}"
         ether_configured = execute(false, "#{@pfexec} dladm show-etherstub | grep #{ether_name} | awk '{ print $1 }' ")
         uii.info(I18n.t('vagrant_zones.delete_ethervnic')) if ether_configured == ether_name
@@ -485,10 +495,15 @@ module VagrantPlugins
         execute(false, "#{@pfexec} dladm delete-etherstub #{ether_name}") if ether_configured == ether_name
       end
 
+      ## Derive the etherstub name from config or generate per-VM name
+      def etherstub_name(opts)
+        config = @machine.provider_config
+        config.etherstub || "stub_#{config.partition_id}_#{opts[:nic_number]}"
+      end
+
       ## Create etherstubs for Zones
       def etherstubcreate(uii, opts)
-        config = @machine.provider_config
-        ether_name = "stub_#{config.partition_id}_#{opts[:nic_number]}"
+        ether_name = etherstub_name(opts)
         ether_configured = execute(false, "#{@pfexec} dladm show-etherstub | grep #{ether_name} | awk '{ print $1 }' ")
         uii.info(I18n.t('vagrant_zones.creating_etherstub')) unless ether_configured == ether_name
         uii.info("  #{ether_name}") unless ether_configured == ether_name
@@ -511,6 +526,17 @@ module VagrantPlugins
         defrouter = opts[:gateway].to_s
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
         hvnic_name = "h_vnic_#{config.partition_id}_#{opts[:nic_number]}"
+
+        # Check if gateway IP already exists on this etherstub (shared etherstub)
+        if config.etherstub
+          existing_ip = execute(false, "#{@pfexec} ipadm show-addr -o ADDR | grep #{defrouter}/#{shrtsubnet} || true")
+          unless existing_ip.strip.empty?
+            uii.info(I18n.t('vagrant_zones.shared_etherstub_reusing'))
+            uii.info("  #{etherstub} #{defrouter}/#{shrtsubnet}")
+            return
+          end
+        end
+
         uii.info(I18n.t('vagrant_zones.creating_etherhostvnic'))
         uii.info("  #{hvnic_name}")
         execute(false, "#{@pfexec} dladm create-vnic -l #{etherstub} #{hvnic_name}")
@@ -673,9 +699,8 @@ module VagrantPlugins
           shrtstr2 = %(add property (name=ips,value="#{allowed_address}"); add property (name=primary,value="true"); end;)
           execute(false, %(#{zonecfg_cmd}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
         when 'bhyve'
-          ether_name = "stub_#{config.partition_id}_#{opts[:nic_number]}"
           if config.on_demand_vnics
-            base_cmd = %(add net; set physical=#{vnic_name}; set global-nic=#{ether_name};)
+            base_cmd = %(add net; set physical=#{vnic_name}; set global-nic=#{etherstub_name(opts)};)
             execute(false, %(#{zonecfg_cmd}"#{base_cmd} end;")) unless cie
             execute(false, %(#{zonecfg_cmd}"#{base_cmd} set allowed-address=#{allowed_address}; end;")) if cie
           else
@@ -689,6 +714,12 @@ module VagrantPlugins
       def zonenatforward(uii, opts)
         config = @machine.provider_config
         hvnic_name = "h_vnic_#{config.partition_id}_#{opts[:nic_number]}"
+        bridge_exists = execute(false, "#{@pfexec} ipadm show-if #{opts[:bridge]} 2>/dev/null | grep #{opts[:bridge]} || true")
+        if bridge_exists.strip.empty?
+          uii.info(I18n.t('vagrant_zones.bridge_not_found'))
+          uii.info("  #{opts[:bridge]}")
+          return
+        end
         uii.info(I18n.t('vagrant_zones.forwarding_nat'))
         uii.info("  #{hvnic_name}")
         execute(false, "#{@pfexec} routeadm -u -e ipv4-forwarding")
@@ -741,7 +772,7 @@ module VagrantPlugins
         end
         uii.info(I18n.t('vagrant_zones.configuring_dhcp'))
         unless File.exist?('/etc/dhcpd.conf')
-          uii.info('  /etc/dhcpd.conf not found, creating')
+          uii.info(I18n.t('vagrant_zones.dhcpd_conf_created'))
           execute(false, "#{@pfexec} sh -c 'echo \"authoritative;\" > /etc/dhcpd.conf'")
         end
         broadcast = IPAddr.new(defrouter).mask(shrtsubnet).to_s

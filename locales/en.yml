@@ -293,9 +293,19 @@ en:
     control: |-
       Running control command on zone:
     delete_ethervnic: |-
-      - Deleting the etherstub: 
+      - Deleting the etherstub:
     no_delete_ethervnic: |-
       - No etherstub to remove
+    shared_etherstub_skip_delete: |-
+      - Shared etherstub, skipping deletion:
+    shared_hvnic_skip_delete: |-
+      - Shared etherstub, skipping host VNIC deletion:
+    shared_etherstub_reusing: |-
+      - Reusing existing host VNIC on shared etherstub:
+    dhcpd_conf_created: |-
+      - /etc/dhcpd.conf not found, creating
+    bridge_not_found: |-
+      - WARNING: Bridge interface not found in ipadm, skipping NAT forwarding:
     automated-zlogin: |-
       Automatic Login
     automated-windows-zlogin: |-
