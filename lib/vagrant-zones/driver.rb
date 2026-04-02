@@ -277,6 +277,19 @@ module VagrantPlugins
         vnic_name
       end
 
+      ## Return the known reserved IP when using DHCP setup method
+      def dhcp_reserved_ip
+        config = @machine.provider_config
+        return nil unless config.setup_method == 'dhcp'
+
+        @machine.config.vm.networks.each do |(_adaptertype, opts)|
+          next unless opts[:dhcp4] && opts[:managed] && !opts[:ip].to_s.empty?
+
+          return opts[:ip].to_s.gsub("\t", '')
+        end
+        nil
+      end
+
       ## If DHCP and Zlogin, get the IP address
       def get_ip_address(_uii)
         config = @machine.provider_config
@@ -389,12 +402,14 @@ module VagrantPlugins
         broadcast = IPAddr.new(defrouter).mask(shrtsubnet).to_s
         subnet = %(subnet #{broadcast} netmask #{opts[:netmask]} { option routers #{defrouter}; })
         subnetopts = %(host #{name} { option host-name "#{name}"; hardware ethernet #{mac}; fixed-address #{ip}; })
-        File.open('/etc/dhcpd.conf-temp', 'w') do |out_file|
-          File.foreach('/etc/dhcpd.conf') do |entry|
-            out_file.puts line unless entry == subnet || subnetopts
+        if File.exist?('/etc/dhcpd.conf')
+          File.open('/etc/dhcpd.conf-temp', 'w') do |out_file|
+            File.foreach('/etc/dhcpd.conf') do |entry|
+              out_file.puts entry unless entry.strip == subnet.strip || entry.strip == subnetopts.strip
+            end
           end
+          FileUtils.mv('/etc/dhcpd.conf-temp', '/etc/dhcpd.conf')
         end
-        FileUtils.mv('/etc/dhcpd.conf-temp', '/etc/dhcpd.conf')
         subawk = '{ $1=""; $2=""; sub(/^[ \\t]+/, ""); print}'
         awk = %(| awk '#{subawk}' | tr ' ' '\\n' | tr -d '"')
         cmd = 'svccfg -s dhcp:ipv4 listprop config/listen_ifnames '
@@ -427,12 +442,14 @@ module VagrantPlugins
         uii.info("  #{vnic_name}")
         line1 = %(map #{opts[:bridge]} #{broadcast}/#{shrtsubnet} -> 0/32  portmap tcp/udp auto)
         line2 = %(map #{opts[:bridge]} #{broadcast}/#{shrtsubnet} -> 0/32)
-        File.open('/etc/ipf/ipnat.conf-temp', 'w') do |out_file|
-          File.foreach('/etc/ipf/ipnat.conf') do |entry|
-            out_file.puts line unless entry == line1 || line2
+        if File.exist?('/etc/ipf/ipnat.conf')
+          File.open('/etc/ipf/ipnat.conf-temp', 'w') do |out_file|
+            File.foreach('/etc/ipf/ipnat.conf') do |entry|
+              out_file.puts entry unless entry.strip == line1.strip || entry.strip == line2.strip
+            end
           end
+          FileUtils.mv('/etc/ipf/ipnat.conf-temp', '/etc/ipf/ipnat.conf')
         end
-        FileUtils.mv('/etc/ipf/ipnat.conf-temp', '/etc/ipf/ipnat.conf')
         execute(false, "#{@pfexec} svcadm refresh network/ipfilter")
       end
 
@@ -505,6 +522,7 @@ module VagrantPlugins
       def zonenicnatsetup(uii, opts)
         config = @machine.provider_config
         return if config.cloud_init_enabled
+        return if config.setup_method == 'dhcp'
 
         vnic_name = vname(uii, opts)
         mac = macaddress(uii, opts)
@@ -655,8 +673,15 @@ module VagrantPlugins
           shrtstr2 = %(add property (name=ips,value="#{allowed_address}"); add property (name=primary,value="true"); end;)
           execute(false, %(#{zonecfg_cmd}set global-nic=auto; #{shrtstr1} #{shrtstr2}"))
         when 'bhyve'
-          execute(false, %(#{zonecfg_cmd}"add net; set physical=#{vnic_name}; end;")) unless cie
-          execute(false, %(#{zonecfg_cmd}"add net; set physical=#{vnic_name}; set allowed-address=#{allowed_address}; end;")) if cie
+          ether_name = "stub_#{config.partition_id}_#{opts[:nic_number]}"
+          if config.on_demand_vnics
+            base_cmd = %(add net; set physical=#{vnic_name}; set global-nic=#{ether_name};)
+            execute(false, %(#{zonecfg_cmd}"#{base_cmd} end;")) unless cie
+            execute(false, %(#{zonecfg_cmd}"#{base_cmd} set allowed-address=#{allowed_address}; end;")) if cie
+          else
+            execute(false, %(#{zonecfg_cmd}"add net; set physical=#{vnic_name}; end;")) unless cie
+            execute(false, %(#{zonecfg_cmd}"add net; set physical=#{vnic_name}; set allowed-address=#{allowed_address}; end;")) if cie
+          end
         end
       end
 
@@ -715,6 +740,10 @@ module VagrantPlugins
           mac = mac[0..-2]
         end
         uii.info(I18n.t('vagrant_zones.configuring_dhcp'))
+        unless File.exist?('/etc/dhcpd.conf')
+          uii.info('  /etc/dhcpd.conf not found, creating')
+          execute(false, "#{@pfexec} sh -c 'echo \"authoritative;\" > /etc/dhcpd.conf'")
+        end
         broadcast = IPAddr.new(defrouter).mask(shrtsubnet).to_s
         dhcpentries = execute(false, "#{@pfexec} cat /etc/dhcpd.conf").split("\n")
         subnet = %(subnet #{broadcast} netmask #{opts[:netmask]} { option routers #{defrouter}; })
@@ -727,7 +756,15 @@ module VagrantPlugins
         end
         execute(false, "#{@pfexec} echo '#{subnet}' | #{@pfexec} tee -a /etc/dhcpd.conf") unless subnetexists
         execute(false, "#{@pfexec} echo '#{subnetopts}' | #{@pfexec} tee -a /etc/dhcpd.conf") unless subnetoptsexists
-        execute(false, "#{@pfexec} svccfg -s dhcp:ipv4 setprop config/listen_ifnames = #{hvnic_name}")
+        subawk = '{ $1=""; $2=""; sub(/^[ \\t]+/, ""); print}'
+        awk = %(| awk '#{subawk}' | tr ' ' '\\n' | tr -d '"')
+        cmd = 'svccfg -s dhcp:ipv4 listprop config/listen_ifnames '
+        nicsused = execute(false, cmd + awk.to_s).split("\n")
+        nicsused << hvnic_name unless nicsused.include?(hvnic_name)
+        dhcpcmdstr = '\('
+        nicsused.each { |nic| dhcpcmdstr += %(\\"#{nic}\\") unless nic.strip.empty? }
+        dhcpcmdstr += '\)'
+        execute(false, "#{@pfexec} svccfg -s dhcp:ipv4 setprop config/listen_ifnames = #{dhcpcmdstr}")
         execute(false, "#{@pfexec} svcadm refresh dhcp:ipv4")
         execute(false, "#{@pfexec} svcadm disable dhcp:ipv4")
         execute(false, "#{@pfexec} svcadm enable dhcp:ipv4")
