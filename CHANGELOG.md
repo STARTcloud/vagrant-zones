@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.109](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.108...v0.1.109) (2026-04-02)
+
+
+### Bug Fixes
+
+* fixing the AI lies ([c8a75bf](https://github.com/STARTcloud/vagrant-zones/commit/c8a75bf85c816a9e5235aa3d160476bb15cb1015))
+
 ## [0.1.108](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.107...v0.1.108) (2026-04-02)
 
 
