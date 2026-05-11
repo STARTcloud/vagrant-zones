@@ -34,6 +34,28 @@ en:
         Virtualbox Box appears to be running virtual machines, to continue, please shut these down!
       invalid_console_encoding: |-
         Unknown console_encoding '%{encoding}'. Common values: UTF-8 (default), US-ASCII, ISO-8859-1, EUC-JP, Shift_JIS, GB18030, KOI8-R
+      qga_error: |-
+        QEMU Guest Agent error: %{message}
+      qga_timeout: |-
+        QEMU Guest Agent timeout: %{message}.
+
+        Possible causes:
+          - qemu-guest-agent is not installed or not running in the guest
+          - the guest virtio-console driver did not load (check virtio-win on Windows)
+          - the PCI slot configured for virtio-console collides with another device
+
+        Alternatives:
+          - Switch setup_method to 'zlogin' (PTY+expect) or 'dhcp' (host-side reservation)
+      qga_not_available: |-
+        setup_method='qga' requires brand='bhyve' (got brand=%{brand}). QGA depends on virtio-console which is bhyve-only.
+      qga_backend_not_implemented: |-
+        QGA backend '%{backend}' is detected but not yet implemented in vagrant-zones.
+        %{details}
+      qga_all_backends_failed: |-
+        All applicable QGA network backends failed to configure the guest.
+        Attempted: %{attempted}
+        Either install a supported network backend in the guest, set qga_network_script
+        to a host-side script, or switch setup_method to zlogin or dhcp.
     meeting: |-
       Starting the zone creation sequence
     leaving: |-
@@ -342,3 +364,25 @@ en:
       - Set Primary DNS
     win_applied_dns2: |-
       - Set Secondary DNS
+    qga_wait_socket: |-
+      - Waiting for qga.sock to appear:
+    qga_wait_ping: |-
+      - Waiting for guest-ping response
+    qga_ready: |-
+      - QEMU Guest Agent ready
+    qga_osinfo_detected: |-
+      - Detected guest OS via qga:
+    qga_backend_selected: |-
+      - Selected qga network backend:
+    qga_backend_apply: |-
+      - Applying qga network backend:
+    qga_backend_applied: |-
+      - qga network backend applied:
+    qga_backend_verify_failed: |-
+      - qga network backend verification failed:
+    qga_backend_cleanup: |-
+      - Cleaning up qga network backend:
+    qga_user_script_run: |-
+      - Running user-supplied qga network script for:
+    qga_shutdown: |-
+      - Sending guest-shutdown via qga

@@ -24,6 +24,7 @@ module VagrantPlugins
       include Vagrant::Util::Retryable
 
       attr_accessor :executor
+      attr_reader :machine, :pfexec
 
       def initialize(machine)
         @logger = Log4r::Logger.new('vagrant_zones::driver')
@@ -36,6 +37,41 @@ module VagrantPlugins
                   else
                     'pfexec'
                   end
+      end
+
+      # Returns the setup strategy (zlogin, dhcp, qga) for this machine, cached.
+      def strategy
+        return @strategy if @strategy
+
+        klass = case @machine.provider_config.setup_method
+                when 'qga'  then SetupStrategies::QGA
+                when 'dhcp' then SetupStrategies::DHCP
+                else             SetupStrategies::Zlogin
+                end
+        @strategy = klass.new(self)
+      end
+
+      # Pad each octet to 2 hex digits, lowercase. Matches qga's hardware-address output.
+      def normalize_mac(str)
+        str.to_s.split(':').map { |x| format('%02x', x.to_i(16)) }.join(':').downcase
+      end
+
+      # Read a VNIC's actual MAC by querying dladm. Returns a normalized hex string
+      # (each octet padded to two digits, lowercase) or nil when dladm produces no output.
+      def read_vnic_mac(vnic_name)
+        out = execute(false, "#{@pfexec} dladm show-vnic #{vnic_name} | tail -n +2 | awk '{ print $4 }'")
+        return nil if out.nil? || out.strip.empty?
+
+        normalize_mac(out.strip)
+      end
+
+      # Resolve a NIC's effective MAC: when configured 'auto' read the actual
+      # value off the created VNIC via dladm; otherwise normalize the configured MAC.
+      def vnic_mac_for(uii, opts)
+        mac = macaddress(uii, opts)
+        return normalize_mac(mac) unless mac == 'auto'
+
+        read_vnic_mac(vname(uii, opts))
       end
 
       def state(machine)
@@ -99,21 +135,10 @@ module VagrantPlugins
       end
 
       ## Control the zone from inside the zone OS
-      def control(uii, control)
+      def control(uii, action)
         config = @machine.provider_config
         uii.info(I18n.t('vagrant_zones.control')) if config.debug
-        case control
-        when 'rmatch(/estart'
-          command = 'sudo shutdown -r'
-          command = config.safe_restart unless config.safe_restart.nil?
-          ssh_run_command(uii, command)
-        when 'shutdown'
-          command = 'sudo init 0 || true'
-          command = config.safe_shutdown unless config.safe_shutdown.nil?
-          ssh_run_command(uii, command)
-        else
-          uii.info(I18n.t('vagrant_zones.control_no_cmd'))
-        end
+        strategy.control(uii, action)
       end
 
       ## Run commands over SSH instead of ZLogin
@@ -290,66 +315,22 @@ module VagrantPlugins
         nil
       end
 
-      ## If DHCP and Zlogin, get the IP address
-      def get_ip_address(_uii)
-        config = @machine.provider_config
-        name = @machine.name
-        lcheck = config.lcheck
-        lcheck = ':~' if config.lcheck.nil?
-        alcheck = config.alcheck
-        alcheck = 'login:' if config.alcheck.nil?
-        pcheck = 'Password:'
-
-        @machine.config.vm.networks.each do |(_adaptertype, opts)|
-          ip = nil
-          if opts[:dhcp4] && opts[:managed]
-            vnic_name = "vnic#{nictype(opts)}#{vtype(config)}_#{config.partition_id}_#{opts[:nic_number]}"
-            PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
-              configure_pty_encoding(zlogin_read)
-              Timeout.timeout(config.setup_wait) do
-                rsp = []
-                command = "ip -4 addr show dev #{vnic_name} | grep -Po 'inet \\K[\\d.]+' \r\n"
-                i = 0
-                logged_in = false
-                loop do
-                  zlogin_read.expect(/\r\n/) { |line| rsp.push(scrub_console_output(line)) }
-                  logged_in = true if rsp[-1].to_s.match(/(#{Regexp.quote(lcheck)})/) || rsp[-1].to_s.match(/(:~)/)
-                  zlogin_write.printf("\r\n") if i < 1
-                  i += 1
-
-                  break if logged_in || rsp[-1].to_s.match(/(#{Regexp.quote(alcheck)})/)
-                end
-
-                unless logged_in
-                  zlogin_write.printf("#{user(@machine)}\n") if zlogin_read.expect(/#{Regexp.quote(alcheck)}/)
-                  zlogin_write.printf("#{vagrantuserpass(@machine)}\n") if zlogin_read.expect(/#{Regexp.quote(pcheck)}/)
-                  logged_in = true if zlogin_read.expect(/#{Regexp.quote(lcheck)}/)
-                end
-
-                puts 'Gathering IP' if config.debug_boot
-                zlogin_write.printf(command) if logged_in
-                loop do
-                  zlogin_read.expect(/\r\n/) { |line| rsp.push(scrub_console_output(line)) }
-                  ip = rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
-
-                  break if rsp[-1].to_s.match(/((?:[0-9]{1,3}\.){3}[0-9]{1,3})/)
-                end
-                Process.kill('HUP', pid)
-              end
-            end
-            return ip[0] unless ip[0].empty? || ip[0].nil?
-          elsif (opts[:dhcp4] == false || opts[:dhcp4].nil?) && opts[:managed]
-            ip = opts[:ip].to_s
-            return nil if ip.empty?
-
-            return ip.gsub("\t", '')
-          end
-        end
+      ## Get the guest's primary IPv4 address via the configured setup strategy.
+      def get_ip_address(uii)
+        strategy.get_ip_address(uii)
       end
 
       ## Manage Network Interfaces
       def network(uii, state)
         config = @machine.provider_config
+        if state == 'setup'
+          strategy.setup_network(uii)
+          @machine.config.vm.networks.each do |(adaptertype, opts)|
+            zonedhcpcheckaddr(uii, opts) if adaptertype.to_s == 'private_network'
+          end
+          return
+        end
+
         uii.info(I18n.t('vagrant_zones.creating_networking_interfaces')) if state == 'create' && !config.on_demand_vnics
         @machine.config.vm.networks.each do |adaptertype, opts|
           case adaptertype.to_s
@@ -358,7 +339,6 @@ module VagrantPlugins
             zonecfgnicconfig(uii, opts) if state == 'config'
             zonecfgnicconfigdelete(uii, opts) if state == 'delete_provisional' && config.on_demand_vnics
             zoneniccreate(uii, opts) if state == 'create' && !config.on_demand_vnics
-            zonenicstpzloginsetup(uii, opts, config) if state == 'setup' && config.setup_method == 'zlogin'
           when 'private_network'
             zonenicdel(uii, opts) if state == 'delete' && !config.on_demand_vnics
             zonedhcpentriesrem(uii, opts) if state == 'delete'
@@ -372,8 +352,6 @@ module VagrantPlugins
             zonenatforward(uii, opts) if state == 'create'
             zonenatentries(uii, opts) if state == 'create'
             zonedhcpentries(uii, opts) if state == 'create'
-            zonedhcpcheckaddr(uii, opts) if state == 'setup'
-            zonenicnatsetup(uii, opts) if state == 'setup'
           end
         end
       end
@@ -386,15 +364,7 @@ module VagrantPlugins
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
         hvnic_name = host_vnic_name(opts)
         mac = macaddress(uii, opts)
-
-        ## if mac is auto, then grab NIC from VNIC
-        if mac == 'auto'
-          mac = ''
-          cmd = "#{@pfexec} dladm show-vnic #{hvnic_name} | tail -n +2 |  awk '{ print $4 }'"
-          vnicmac = execute(false, cmd.to_s)
-          vnicmac.split(':').each { |x| mac += "#{format('%02x', x.to_i(16))}:" }
-          mac = mac[0..-2]
-        end
+        mac = read_vnic_mac(hvnic_name) if mac == 'auto'
         uii.info(I18n.t('vagrant_zones.deconfiguring_dhcp'))
         uii.info("  #{hvnic_name}")
         broadcast = IPAddr.new(defrouter).mask(shrtsubnet).to_s
@@ -553,145 +523,6 @@ module VagrantPlugins
         execute(false, "#{@pfexec} ipadm create-addr -T static -a local=#{defrouter}/#{shrtsubnet} #{hvnic_name}/v4")
       end
 
-      ## Setup vnics for Zones using nat/dhcp
-      def zonenicnatsetup(uii, opts)
-        config = @machine.provider_config
-        return if config.cloud_init_enabled
-        return if config.setup_method == 'dhcp'
-
-        vnic_name = vname(uii, opts)
-        mac = macaddress(uii, opts)
-        ## if mac is auto, then grab NIC from VNIC
-        if mac == 'auto'
-          mac = ''
-          cmd = "#{@pfexec} dladm show-vnic #{vnic_name} | tail -n +2 |  awk '{ print $4 }'"
-          vnicmac = execute(false, cmd.to_s)
-          vnicmac.split(':').each { |x| mac += "#{format('%02x', x.to_i(16))}:" }
-          mac = mac[0..-2]
-        end
-
-        ## Code Block to Detect OS
-        uii.info(I18n.t('vagrant_zones.os_detect'))
-        cmd = 'uname -a'
-        os_type = config.os_type
-        uii.info("Zone OS configured as: #{os_type}")
-        os_detected = ssh_run_command(uii, cmd.to_s)
-        uii.info("Zone OS detected as: #{os_detected}")
-
-        ## Check if Ansible is Installed to enable easier configuration
-        uii.info(I18n.t('vagrant_zones.ansible_detect'))
-        cmd = 'which ansible > /dev/null 2>&1 ; echo $?'
-        ansible_detected = ssh_run_command(uii, cmd.to_s)
-        uii.info('Ansible detected') if ansible_detected == '0'
-
-        # Run Network Configuration
-        zonenicnatsetup_netplan(uii, opts, mac) unless os_detected.to_s.match(/SunOS/)
-        zonenicnatsetup_dladm(uii, opts, mac) if os_detected.to_s.match(/SunOS/)
-      end
-
-      ## Setup vnics for Zones using nat/dhcp using netplan
-      def zonenicnatsetup_netplan(uii, opts, mac)
-        ssh_run_command(uii, 'sudo rm -rf /etc/netplan/*.yaml')
-        ip = ipaddress(uii, opts)
-        defrouter = opts[:gateway].to_s
-        vnic_name = vname(uii, opts)
-        shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
-        servers = dnsservers(uii, opts).map { |server| server['nameserver'] }.join(', ') unless opts[:dns].nil?
-        ## Begin of code block to move to Netplan function
-        uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic'))
-        uii.info("  #{vnic_name}")
-        netplan1 = %(network:\n  version: 2\n  ethernets:\n    #{vnic_name}:\n      match:\n        macaddress: #{mac}\n)
-        netplan2 = %(      dhcp-identifier: mac\n      dhcp4: #{opts[:dhcp4]}\n      dhcp6: #{opts[:dhcp6]}\n)
-        netplan3 = %(      set-name: #{vnic_name}\n      addresses: [#{ip}/#{shrtsubnet}]\n      routes:\n        - to: #{opts[:route]}\n          via: #{defrouter}\n)
-        netplan4 = %(      nameservers:\n        addresses: [#{servers}]) unless opts[:dns].nil?
-        netplan = netplan1 + netplan2 + netplan3 + netplan4
-        cmd = "echo -e '#{netplan}' | sudo tee /etc/netplan/#{vnic_name}.yaml && chmod 400 /etc/netplan/#{vnic_name}.yaml"
-        uii.info(I18n.t('vagrant_zones.netplan_applied_static') + "/etc/netplan/#{vnic_name}.yaml") if ssh_run_command(uii, cmd)
-
-        ## Apply the Configuration
-        uii.info(I18n.t('vagrant_zones.netplan_applied')) if ssh_run_command(uii, 'sudo netplan apply')
-        ## End of code block to move to Netplan function
-      end
-
-      ## Setup vnics for Zones using nat/dhcp over dladm
-      def zonenicnatsetup_dladm(uii, opts, mac)
-        ip = ipaddress(uii, opts)
-        defrouter = opts[:gateway].to_s
-        vnic_name = vname(uii, opts)
-        shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
-        servers = dnsservers(uii, opts).map { |server| "nameserver #{server['nameserver']}" }.join("\n") unless opts[:dns].nil?
-        uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic_dladm'))
-        uii.info("  #{vnic_name}")
-
-        # loop through each phys if and run code if physif matches #{mac}
-        phys_if = 'pfexec dladm show-phys -m -o LINK,ADDRESS,CLIENT | tail -n +2'
-        phys_if_results = ssh_run_command(uii, phys_if).split("\n")
-        device = ''
-        interface = ''
-        phys_if_results.each do |entry|
-          e_mac = ''
-          entries = entry.strip.split("\r")[1].split
-          entries[1].split(':').each { |x| e_mac += "#{format('%02x', x.to_i(16))}:" }
-          e_mac = e_mac[0..-2]
-          device = entries[0] if e_mac.match(/#{mac}/)
-          interface = entries[2] if e_mac.match(/#{mac}/)
-        end
-
-        delete_if = interface.match(/--/) ? '' : "pfexec ipadm delete-if #{device} && "
-        rename_link = "pfexec dladm rename-link #{device} #{vnic_name} && "
-        if_create = "pfexec ipadm create-if #{vnic_name}"
-        static_addr = "pfexec ipadm create-addr -T static -a #{ip}/#{shrtsubnet} #{vnic_name}/v4vagrant"
-        net_cmd = "#{delete_if} #{rename_link} #{if_create} && #{static_addr}"
-        uii.info(I18n.t('vagrant_zones.dladm_applied')) if ssh_run_command(uii, net_cmd)
-        route_add = ''
-        route_add = "pfexec route -p add default #{defrouter}" unless defrouter.nil?
-        uii.info(I18n.t('vagrant_zones.dladm_route_applied')) if ssh_run_command(uii, route_add)
-
-        dns_set = "pfexec echo '#{servers}' | pfexec tee /etc/resolv.conf" unless opts[:dns].nil?
-        uii.info(I18n.t('vagrant_zones.dladm_dns_applied')) if ssh_run_command(uii, dns_set.to_s)
-      end
-
-      ## Setup vnics for Zones using zlogin for solaris like OSes -- ie dladm
-      def zoneniczloginsetup_dladm(uii, opts, mac)
-        ip = ipaddress(uii, opts)
-        defrouter = opts[:gateway].to_s
-        vnic_name = vname(uii, opts)
-        shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
-        servers = dnsservers(uii, opts).map { |server| "nameserver #{server['nameserver']}" }.join("\n") unless opts[:dns].nil?
-        uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic_dladm'))
-        uii.info("  #{vnic_name}")
-
-        # loop through each phys if and run code if physif matches #{mac}
-        segments = mac.split(':')
-        new_segments = segments.map { |segment| segment.to_i(16).to_s(16) }
-        sanitized_mac = new_segments.join(':')
-        phys_if = "pfexec dladm show-phys -m -o LINK,ADDRESS,CLIENT | tail -n +2 | grep #{sanitized_mac}"
-        phys_if_results = zlogin(uii, phys_if)
-        device = ''
-        interface = ''
-        phys_if_results.each do |entry|
-          e_mac = ''
-          entries = entry.strip.split("\r")[1].split
-          entries[1].split(':').each { |x| e_mac += "#{format('%02x', x.to_i(16))}:" }
-          e_mac = e_mac[0..-2]
-          device = entries[0] if e_mac.match(/#{mac}/)
-          interface = entries[2] if e_mac.match(/#{mac}/)
-        end
-
-        delete_if = interface.match(/--/) ? '' : "pfexec ipadm delete-if #{device} && "
-        rename_link = "pfexec dladm rename-link #{device} #{vnic_name} && "
-        if_create = "pfexec ipadm create-if #{vnic_name}"
-        static_addr = "pfexec ipadm create-addr -T static -a #{ip}/#{shrtsubnet} #{vnic_name}/v4vagrant"
-        net_cmd = "#{delete_if} #{rename_link} #{if_create} && #{static_addr}"
-        uii.info(I18n.t('vagrant_zones.dladm_applied')) if zlogin(uii, net_cmd)
-        route_add = "pfexec route -p add default #{defrouter}"
-        route_add = 'echo True' if opts[:gateway].nil?
-        uii.info(I18n.t('vagrant_zones.dladm_route_applied')) if zlogin(uii, route_add)
-
-        dns_set = "pfexec echo '#{servers}' | pfexec tee /etc/resolv.conf" unless opts[:dns].nil?
-        uii.info(I18n.t('vagrant_zones.dladm_dns_applied')) if zlogin(uii, dns_set.to_s)
-      end
-
       ## zonecfg function for for nat Networking
       def natnicconfig(uii, opts)
         config = @machine.provider_config
@@ -768,15 +599,8 @@ module VagrantPlugins
         defrouter = opts[:gateway].to_s
         shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
         hvnic_name = host_vnic_name(opts)
-        ## Set Mac address from VNIC
         mac = macaddress(uii, opts)
-        if mac == 'auto'
-          mac = ''
-          cmd = "#{@pfexec} dladm show-vnic #{vnic_name} | tail -n +2 |  awk '{ print $4 }'"
-          vnicmac = execute(false, cmd.to_s)
-          vnicmac.split(':').each { |x| mac += "#{format('%02x', x.to_i(16))}:" }
-          mac = mac[0..-2]
-        end
+        mac = read_vnic_mac(vnic_name) if mac == 'auto'
         uii.info(I18n.t('vagrant_zones.configuring_dhcp'))
         unless File.exist?('/etc/dhcpd.conf')
           uii.info(I18n.t('vagrant_zones.dhcpd_conf_created'))
@@ -974,6 +798,11 @@ module VagrantPlugins
         execute(false, %(#{zcfg}"add attr; set name=type; set value=#{config.os_type}; set type=string; end;"))
         execute(false, %(#{zcfg}"add attr; set name=xhci; set value=#{config.xhci_enabled}; set type=string; end;"))
         execute(false, %(#{zcfg}"add device; set match=/dev/zvol/rdsk/#{datasetroot}; end;"))
+        if config.setup_method == 'qga'
+          slot = config.qga_slot || 9
+          extra = %(-s #{slot},virtio-console,org.qemu.guest_agent.0=/tmp/qga.sock)
+          execute(false, %(#{zcfg}'add attr; set name=extra; set value="#{extra}"; set type=string; end;'))
+        end
         uii.info(I18n.t('vagrant_zones.bhyve_zone_config_gen'))
       end
 
@@ -1175,6 +1004,8 @@ module VagrantPlugins
       def zonecfg(uii)
         name = @machine.name
         config = @machine.provider_config
+        raise Errors::QGANotAvailable, brand: config.brand.to_s if config.setup_method == 'qga' && config.brand != 'bhyve'
+
         zcfg = "#{@pfexec} zonecfg -z #{name} "
         ## Create LX zonecfg
         zonecfglx(uii, name, config, zcfg)
@@ -1198,55 +1029,6 @@ module VagrantPlugins
         zonecfgcloudinit(uii, name, config, zcfg)
         ## Nic Configurations
         network(uii, 'config')
-      end
-
-      ## Setup vnics for Zones using Zlogin
-      def zonenicstpzloginsetup(uii, opts, config)
-        vnic_name = vname(uii, opts)
-        mac = macaddress(uii, opts)
-        ## if mac is auto, then grab NIC from VNIC
-        if mac == 'auto'
-          mac = ''
-          cmd = "#{@pfexec} dladm show-vnic #{vnic_name} | tail -n +2 |  awk '{ print $4 }'"
-          vnicmac = execute(false, cmd.to_s)
-          vnicmac.split(':').each { |x| mac += "#{format('%02x', x.to_i(16))}:" }
-          mac = mac[0..-2]
-        end
-
-        ## Code Block to Detect OS
-        cmd = 'uname -a'
-        uii.info(I18n.t('vagrant_zones.os_detect'))
-        os_detected = zlogin(uii, cmd)
-        uii.info('Zone OS detected as: OmniOS') if os_detected.to_s.match(/SunOS/)
-
-        zoneniczloginsetup_windows(uii, opts, mac) if config.os_type.to_s.match(/windows/)
-        zoneniczloginsetup_dladm(uii, opts, mac) if os_detected.to_s.match(/SunOS/)
-        zoneniczloginsetup_netplan(uii, opts, mac) if !config.os_type.to_s.match(/windows/) && !os_detected.to_s.match(/SunOS/)
-      end
-
-      ## This setups the Netplan based OS Networking via Zlogin
-      def zoneniczloginsetup_netplan(uii, opts, mac)
-        zlogin(uii, 'rm -rf /etc/netplan/*.yaml') if opts[:nic_number].zero?
-        ip = ipaddress(uii, opts)
-        vnic_name = vname(uii, opts)
-        servers = dnsservers(uii, opts).map { |server| server['nameserver'] }.join(', ') unless opts[:dns].nil?
-        shrtsubnet = IPAddr.new(opts[:netmask].to_s).to_i.to_s(2).count('1').to_s
-        defrouter = opts[:gateway].to_s
-        uii.info(I18n.t('vagrant_zones.configure_interface_using_vnic'))
-        uii.info("  #{vnic_name}")
-        netplan1 = %(network:\n  version: 2\n  ethernets:\n    #{vnic_name}:\n      match:\n        macaddress: #{mac}\n)
-        netplan2 = ''
-        netplan2 = %(      dhcp-identifier: mac\n      dhcp4: #{opts[:dhcp4]}\n      dhcp6: #{opts[:dhcp6]}\n) if opts[:dhcp4]
-        netplan3 = %(      set-name: #{vnic_name}\n      addresses: [#{ip}/#{shrtsubnet}]\n)
-        netplan3 = %(      set-name: #{vnic_name}\n) if opts[:dhcp4]
-        netplan4 = %(      routes:\n        - to: #{opts[:route]}\n          via: #{defrouter}\n)
-        netplan5 = %(      nameservers:\n        addresses: [#{servers}]) unless opts[:dns].nil?
-        netplan = netplan1 + netplan2 + netplan3 + netplan5 if opts[:gateway].nil?
-        netplan = netplan1 + netplan2 + netplan3 + netplan4 + netplan5 unless opts[:gateway].nil?
-        cmd = "echo '#{netplan}' > /etc/netplan/#{vnic_name}.yaml && chmod 400 /etc/netplan/#{vnic_name}.yaml"
-        infomessage = I18n.t('vagrant_zones.netplan_applied_static') + "/etc/netplan/#{vnic_name}.yaml"
-        uii.info(infomessage) if zlogin(uii, cmd)
-        uii.info(I18n.t('vagrant_zones.netplan_applied')) if zlogin(uii, 'netplan apply')
       end
 
       # This ensures the zone is safe to boot
@@ -1312,101 +1094,16 @@ module VagrantPlugins
         network(uii, 'setup') if config.brand == 'bhyve' && !config.cloud_init_enabled
       end
 
-      ## this allows us a terminal to pass commands and manipulate the VM OS via serial/tty, I want to redo this at some point
-      def zloginboot(uii)
-        name = @machine.name
-        config = @machine.provider_config
-        lcheck = config.lcheck || ':~'
-        alcheck = config.alcheck || 'login:'
-        bstring = config.booted_string || ' OK '
-        zunlockboot = config.zunlockboot || 'Importing ZFS root pool'
-        zunlockbootkey = config.zunlockbootkey
-        pcheck = 'Password:'
-
-        uii.info(I18n.t('vagrant_zones.automated-zlogin'))
-
-        PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
-          configure_pty_encoding(zlogin_read)
-          Timeout.timeout(config.setup_wait) do
-            rsp = []
-
-            loop do
-              zlogin_read.expect(/\r\n/) do |line|
-                line = line.first if line.is_a?(Array)
-                encoded_line = scrub_console_output(line)
-                rsp.push encoded_line unless encoded_line.empty?
-              end
-
-              uii.info(rsp[-1]) if config.debug_boot && !rsp.empty?
-
-              if !rsp.empty? && rsp[-1].match(/#{zunlockboot}/)
-                sleep(2)
-                zlogin_write.printf("#{zunlockbootkey}\n") if zunlockbootkey
-                zlogin_write.printf("\n")
-                uii.info(I18n.t('vagrant_zones.automated-zbootunlock'))
-              end
-
-              next unless !rsp.empty? && rsp[-1].match(/#{bstring}/)
-
-              sleep(15)
-              zlogin_write.printf("\n")
-              break
-            end
-
-            if zlogin_read.expect(/#{alcheck}/)
-              uii.info(I18n.t('vagrant_zones.automated-zlogin-user'))
-              zlogin_write.printf("#{user(@machine)}\n")
-              sleep(config.login_wait)
-            end
-
-            if zlogin_read.expect(/#{pcheck}/)
-              uii.info(I18n.t('vagrant_zones.automated-zlogin-pass'))
-              zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
-              sleep(config.login_wait)
-            end
-
-            zlogin_write.printf("\n")
-            if zlogin_read.expect(/#{lcheck}/)
-              uii.info(I18n.t('vagrant_zones.automated-zlogin-root'))
-              zlogin_write.printf("sudo su -\n")
-              sleep(config.login_wait)
-              Process.kill('HUP', pid)
-            end
-          end
-        end
-      end
-
-      def natloginboot(uii, metrics, interrupted)
-        metrics ||= {}
-        metrics['instance_dhcp_ssh_time'] = Util::Timer.time do
-          retryable(on: Errors::TimeoutError, tries: 60) do
-            # If we're interrupted don't worry about waiting
-            next if interrupted
-
-            loop do
-              break if interrupted
-              break if @machine.communicate.ready?
-            end
-          end
-        end
-        uii.info(I18n.t('vagrant_zones.dhcp_boot_ready') + " in #{metrics['instance_dhcp_ssh_time']} Seconds")
-      end
-
-      # This helps up wait for the boot of the vm by using zlogin
+      # Wait for the zone to be reachable via the configured setup strategy.
+      # The LX brand bootstraps a vagrant user via zlogin one-shots and is independent of strategy.
       def waitforboot(uii, metrics, interrupted)
         config = @machine.provider_config
         uii.info(I18n.t('vagrant_zones.wait_for_boot'))
         case config.brand
         when 'bhyve'
-          return if config.cloud_init_enabled
-
-          zloginboot(uii) if config.setup_method == 'zlogin' && !config.os_type.to_s.match(/windows/)
-          zlogin_win_boot(uii) if config.setup_method == 'zlogin' && config.os_type.to_s.match(/windows/)
-          natloginboot(uii, metrics, interrupted) if config.setup_method == 'dhcp'
+          strategy.wait_for_boot(uii, metrics, interrupted)
         when 'lx'
           unless user_exists?(uii, config.vagrant_user)
-            # zlogincommand(uii, %('echo nameserver 1.1.1.1 >> /etc/resolv.conf'))
-            # zlogincommand(uii, %('echo nameserver 1.0.0.1 >> /etc/resolv.conf'))
             zlogincommand(uii, 'useradd -m -s /bin/bash -U vagrant')
             zlogincommand(uii, 'echo "vagrant ALL=(ALL:ALL) NOPASSWD:ALL" \\> /etc/sudoers.d/vagrant')
             zlogincommand(uii, 'mkdir -p /home/vagrant/.ssh')
@@ -1425,135 +1122,6 @@ module VagrantPlugins
             uii.clear_line
             zlogincommand(uii, 'chown -R vagrant:vagrant /home/vagrant/.ssh')
             zlogincommand(uii, 'chmod 600 /home/vagrant/.ssh/authorized_keys')
-          end
-        end
-      end
-
-      ## This setups the Windows Networking via Zlogin
-      def zoneniczloginsetup_windows(uii, opts, _mac)
-        config = @machine.provider_config
-        ip = ipaddress(uii, opts)
-        vnic_name = vname(uii, opts)
-        defrouter = opts[:gateway].to_s
-        uii.info(I18n.t('vagrant_zones.configure_win_interface_using_vnic'))
-        uii.info("#{I18n.t('vagrant_zones.windows_profile_wait')} #{config.windows_profile_wait} seconds")
-        sleep(config.windows_profile_wait)
-
-        # Get the MAC address for this VNIC (if set to auto)
-        mac = macaddress(uii, opts)
-        if mac == 'auto'
-          mac = ''
-          cmd = "#{@pfexec} dladm show-vnic #{vnic_name} | tail -n +2 |  awk '{ print $4 }'"
-          vnicmac = execute(false, cmd.to_s)
-          vnicmac.split(':').each { |x| mac += "#{format('%02x', x.to_i(16))}:" }
-          mac = mac[0..-2]
-        end
-
-        # Normalize the MAC address to uppercase with hyphens (Windows format)
-        normalized_mac = mac.split(':').map { |segment| segment.rjust(2, '0') }.join('-').upcase
-
-        # rubocop:disable Style/RedundantStringEscape
-        getmac_cmd = %(bash -c "getmac /v /FO csv /NH | grep \\\"#{normalized_mac}\\\" | awk -F, '{print $1}' | sed 's/\\\"/VZWI/g'")
-        # rubocop:enable Style/RedundantStringEscape
-        raw_output = zlogin(uii, getmac_cmd)
-        adapter_name = nil
-
-        # First sanitize the raw output to remove all ANSI escape sequences
-        raw_output_str = raw_output.is_a?(Array) ? raw_output.join : raw_output.to_s
-        sanitized_output = Strings::ANSI.sanitize(raw_output_str)
-
-        # Find VZWI markers in the sanitized output
-        sanitized_output.split(/[\r\n]+/).each do |line|
-          next unless line.include?('VZWI')
-
-          # Find all positions of "VZWI" in the string
-          positions = []
-          pos = -1
-          while (pos = line.index('VZWI', pos + 1))
-            positions << pos
-          end
-
-          # If we have at least 2 occurrences, extract between the last pair
-          if positions.length >= 2
-            # Get the last two VZWI positions
-            last_pair_start = positions[-2]
-            last_pair_end = positions[-1]
-
-            # Extract between these positions (adding 4 to skip "VZWI")
-            adapter_name = line[(last_pair_start + 4)...last_pair_end]
-          end
-          break
-        end
-
-        # Only proceed if we got a valid adapter name
-        if adapter_name && !adapter_name.empty?
-          # Rename the adapter to the VNIC name
-          rename_adapter = %(netsh interface set interface name="#{adapter_name}" newname="#{vnic_name}")
-          uii.info(I18n.t('vagrant_zones.win_applied_rename_adapter')) if zlogin(uii, rename_adapter)
-
-          # Configure the interface with IP, mask, and gateway
-          metric_param = opts[:metric] ? "metric=#{opts[:metric]}" : ''
-          cmd = %(netsh interface ipv4 set address name="#{vnic_name}" static #{ip} #{opts[:netmask]} #{defrouter} #{metric_param})
-          uii.info(I18n.t('vagrant_zones.win_applied_static')) if zlogin(uii, cmd)
-
-          # Configure DNS if provided
-          unless opts[:dns].nil?
-            ip_addresses = dnsservers(uii, opts).map { |hash| hash['nameserver'] }
-            dns1 = %(netsh int ipv4 set dns name="#{vnic_name}" static #{ip_addresses[0]} primary validate=no)
-            uii.info(I18n.t('vagrant_zones.win_applied_dns1')) if zlogin(uii, dns1)
-            ip_addresses[1..].each_with_index do |dns, index|
-              additional_nameservers = %(netsh int ipv4 add dns name="#{vnic_name}" #{dns} index="#{index + 2}" validate=no)
-              uii.info(I18n.t('vagrant_zones.win_applied_dns2')) if zlogin(uii, additional_nameservers)
-            end
-          end
-        else
-          uii.info('Could not extract adapter name from output')
-        end
-      end
-
-      def zlogin_win_boot(uii)
-        ## use Windows SAC to setup networking
-        name = @machine.name
-        config = @machine.provider_config
-        event_cmd_available = 'EVENT: The CMD command is now available'
-        event_channel_created = 'EVENT:   A new channel has been created'
-        channel_access_prompt = 'Use any other key to view this channel'
-        cmd = 'system32>'
-        uii.info(I18n.t('vagrant_zones.automated-windows-zlogin'))
-        PTY.spawn("pfexec zlogin -C #{name}") do |zlogin_read, zlogin_write, pid|
-          configure_pty_encoding(zlogin_read)
-          Timeout.timeout(config.setup_wait) do
-            uii.info(I18n.t('vagrant_zones.windows_skip_first_boot')) if zlogin_read.expect(/#{event_cmd_available}/)
-            sleep(3)
-            if zlogin_read.expect(/#{event_cmd_available}/)
-              uii.info(I18n.t('vagrant_zones.windows_start_cmd'))
-              zlogin_write.printf("cmd\n")
-            end
-            if zlogin_read.expect(/#{event_channel_created}/)
-              uii.info(I18n.t('vagrant_zones.windows_access_session'))
-              zlogin_write.printf("\e\t")
-            end
-            if zlogin_read.expect(/#{channel_access_prompt}/)
-              uii.info(I18n.t('vagrant_zones.windows_access_session_presskey'))
-              zlogin_write.printf('o')
-            end
-            if zlogin_read.expect(/Username:/)
-              uii.info(I18n.t('vagrant_zones.windows_enter_username'))
-              zlogin_write.printf("#{user(@machine)}\n")
-            end
-            if zlogin_read.expect(/Domain/)
-              uii.info(I18n.t('vagrant_zones.windows_enter_domain'))
-              zlogin_write.printf("\n")
-            end
-            if zlogin_read.expect(/Password/)
-              uii.info(I18n.t('vagrant_zones.windows_enter_password'))
-              zlogin_write.printf("#{vagrantuserpass(@machine)}\n")
-            end
-            if zlogin_read.expect(/#{cmd}/)
-              uii.info(I18n.t('vagrant_zones.windows_cmd_accessible'))
-              sleep(5)
-              Process.kill('HUP', pid)
-            end
           end
         end
       end

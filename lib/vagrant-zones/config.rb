@@ -7,7 +7,7 @@ module VagrantPlugins
     # This is used define the variables for the project
     class Config < Vagrant.plugin('2', :config)
       # rubocop:disable Layout/LineLength
-      attr_accessor :brand, :autoboot, :setup_method, :safe_restart, :allowed_address, :post_provision_boot, :safe_shutdown, :boxshortname, :kernel, :debug, :debug_boot, :private_network, :winalcheck, :winlcheck, :lcheck, :alcheck, :snapshot_script, :diskif, :netif, :cdroms, :disk1path, :disk1size, :cpus, :cpu_configuration, :boot, :complex_cpu_conf, :memory, :vagrant_user, :vagrant_user_private_key_path, :setup_wait, :on_demand_vnics, :clean_shutdown_time, :dhcp4, :vagrant_user_pass, :firmware_type, :vm_type, :partition_id, :shared_disk_enabled, :shared_dir, :acpi, :os_type, :console, :consolehost, :consoleport, :console_onboot, :console_encoding, :hostbridge, :sshport, :rdpport, :override, :additional_disks, :cloud_init_resolvers, :cloud_init_enabled, :cloud_init_dnsdomain, :cloud_init_password, :cloud_init_sshkey, :cloud_init_conf, :dns, :box, :vagrant_cloud_creator, :winbooted_string, :booted_string, :zunlockbootkey, :zunlockboot, :xhci_enabled, :login_wait, :windows_profile_wait
+      attr_accessor :brand, :autoboot, :setup_method, :safe_restart, :allowed_address, :post_provision_boot, :safe_shutdown, :boxshortname, :kernel, :debug, :debug_boot, :private_network, :winalcheck, :winlcheck, :lcheck, :alcheck, :snapshot_script, :diskif, :netif, :cdroms, :disk1path, :disk1size, :cpus, :cpu_configuration, :boot, :complex_cpu_conf, :memory, :vagrant_user, :vagrant_user_private_key_path, :setup_wait, :on_demand_vnics, :clean_shutdown_time, :dhcp4, :vagrant_user_pass, :firmware_type, :vm_type, :partition_id, :shared_disk_enabled, :shared_dir, :acpi, :os_type, :console, :consolehost, :consoleport, :console_onboot, :console_encoding, :hostbridge, :sshport, :rdpport, :override, :additional_disks, :cloud_init_resolvers, :cloud_init_enabled, :cloud_init_dnsdomain, :cloud_init_password, :cloud_init_sshkey, :cloud_init_conf, :dns, :box, :vagrant_cloud_creator, :winbooted_string, :booted_string, :zunlockbootkey, :zunlockboot, :xhci_enabled, :login_wait, :windows_profile_wait, :qga_slot, :qga_network_script
 
       # rubocop:enable Layout/LineLength
 
@@ -76,6 +76,20 @@ module VagrantPlugins
         @vm_type = 'production'
         @setup_method = nil
         @snapshot_script = '/opt/vagrant/bin/Snapshooter.sh'
+        @qga_slot = 9
+        @qga_network_script = nil
+      end
+
+      def validate(_machine)
+        errors = _detected_errors
+        valid_setup_methods = [nil, 'zlogin', 'dhcp', 'qga']
+        errors << "setup_method must be one of #{valid_setup_methods.compact.inspect} (got #{@setup_method.inspect})" unless valid_setup_methods.include?(@setup_method)
+        if @setup_method == 'qga'
+          errors << "setup_method='qga' requires brand='bhyve' (got #{@brand.inspect})" unless @brand == 'bhyve'
+          errors << "qga_slot must be an Integer in 0..31 (got #{@qga_slot.inspect})" unless @qga_slot.is_a?(Integer) && (0..31).cover?(@qga_slot)
+          errors << "qga_network_script not found on host: #{@qga_network_script}" if @qga_network_script && !File.exist?(@qga_network_script)
+        end
+        { 'Zone Provider' => errors }
       end
     end
   end

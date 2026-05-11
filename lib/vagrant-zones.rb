@@ -10,6 +10,8 @@ module VagrantPlugins
     autoload :Executor, lib_path.join('executor')
     autoload :Driver, lib_path.join('driver')
     autoload :Errors, lib_path.join('errors')
+    autoload :QGA, lib_path.join('qga')
+    autoload :SetupStrategies, lib_path.join('setup_strategies')
     # This function returns the path to the source of this plugin
     # @return [Pathname]
     def self.source_root

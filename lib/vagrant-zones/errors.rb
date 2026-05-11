@@ -74,6 +74,31 @@ module VagrantPlugins
       class InvalidConsoleEncoding < VagrantZonesError
         error_key(:invalid_console_encoding)
       end
+
+      # QGAError
+      class QGAError < VagrantZonesError
+        error_key(:qga_error)
+      end
+
+      # QGATimeout
+      class QGATimeout < VagrantZonesError
+        error_key(:qga_timeout)
+      end
+
+      # QGANotAvailable
+      class QGANotAvailable < VagrantZonesError
+        error_key(:qga_not_available)
+      end
+
+      # QGABackendNotImplemented
+      class QGABackendNotImplemented < VagrantZonesError
+        error_key(:qga_backend_not_implemented)
+      end
+
+      # QGAAllBackendsFailed
+      class QGAAllBackendsFailed < VagrantZonesError
+        error_key(:qga_all_backends_failed)
+      end
     end
   end
 end
