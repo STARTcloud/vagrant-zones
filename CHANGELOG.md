@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.111](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.110...v0.1.111) (2026-05-11)
+
+
+### Features
+
+* Introducing QGA setup Method ([ff181f1](https://github.com/STARTcloud/vagrant-zones/commit/ff181f147afbcdf45f6720cc82d57d7876346346))
+
 ## [0.1.110](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.109...v0.1.110) (2026-04-02)
 
 
