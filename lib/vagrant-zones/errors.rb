@@ -99,6 +99,11 @@ module VagrantPlugins
       class QGAAllBackendsFailed < VagrantZonesError
         error_key(:qga_all_backends_failed)
       end
+
+      # QGABhyveTooOld
+      class QGABhyveTooOld < VagrantZonesError
+        error_key(:qga_bhyve_too_old)
+      end
     end
   end
 end

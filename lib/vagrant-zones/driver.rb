@@ -1070,21 +1070,35 @@ module VagrantPlugins
             raise Errors::MissingCompatCheckTool if result.zero?
           end
 
-          # Check whether OmniOS version is lower than r30
+          # Check whether OmniOS version is below the minimum supported release.
           cutoff_release = '1510380'
           cutoff_release = cutoff_release[0..-2].to_i
-          uii.info(I18n.t('vagrant_zones.bhyve_check'))
-          uii.info("  #{cutoff_release}")
           release = File.open('/etc/release', &:readline)
           release = release.scan(/\w+/).values_at(-1)
           release = release[0][1..-2].to_i
+          uii.info(I18n.t('vagrant_zones.bhyve_check'))
+          uii.info("  minimum: #{cutoff_release}  detected: #{release}")
           raise Errors::SystemVersionIsTooLow if release < cutoff_release
 
           # Check Bhyve compatability
           uii.info(I18n.t('vagrant_zones.bhyve_compat_check'))
           result = execute(false, "#{@pfexec} bhhwcompat -s")
           raise Errors::MissingBhyve if result.length == 1
+
+          check_bhyve_qga_support if config.setup_method == 'qga'
         end
+      end
+
+      # Verify that the bhyve binary in the running boot environment carries the
+      # illumos 18082 fix (virtio-console PORT_NAME format + chardev socket leak).
+      # Raises QGABhyveTooOld when the build timestamp is older than the fix.
+      def check_bhyve_qga_support(required: '20260427')
+        version = execute(false, "#{@pfexec} pkg list -H -v system/bhyve").to_s
+        match = version.match(/:(\d{8})T/)
+        return if match && match[1] >= required
+
+        raise Errors::QGABhyveTooOld, found: (match ? match[1] : version.strip),
+                                      required: "#{required} (illumos 18082 / OmniOS r151054az)"
       end
 
       # This helps us set up the networking of the VM

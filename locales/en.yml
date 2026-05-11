@@ -56,6 +56,20 @@ en:
         Attempted: %{attempted}
         Either install a supported network backend in the guest, set qga_network_script
         to a host-side script, or switch setup_method to zlogin or dhcp.
+      qga_bhyve_too_old: |-
+        bhyve in the running boot environment is too old for setup_method='qga'.
+        Detected build: %{found}
+        Required build: %{required}
+
+        The fix for illumos 18082 (virtio-console PORT_NAME format and chardev
+        socket leak) landed in this build. Without it, the host-side qga.sock
+        is not created reliably and Windows guests cannot enumerate the channel.
+
+        Resolutions:
+          - Update OmniOS to r151054az or newer, then reboot to activate the new
+            boot environment so the patched bhyve is loaded
+          - Or switch setup_method to 'zlogin' (PTY+expect) or 'dhcp' (host-side
+            reservation) until the host can be rebooted
     meeting: |-
       Starting the zone creation sequence
     leaving: |-
