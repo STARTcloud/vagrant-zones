@@ -35,7 +35,7 @@ module VagrantPlugins
           sleep(3)
           windows_open_cmd_channel(uii, zread, zwrite)
           windows_credentials(uii, zread, zwrite)
-          return unless zread.expect(/#{SAC_MARKERS[:prompt]}/)
+          return unless zread.expect(/#{SAC_MARKERS[:prompt]}/i)
 
           uii.info(I18n.t('vagrant_zones.windows_cmd_accessible'))
           sleep(5)
