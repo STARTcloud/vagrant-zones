@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.112](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.111...v0.1.112) (2026-06-29)
+
+
+### Bug Fixes
+
+* gate qga ([8462679](https://github.com/STARTcloud/vagrant-zones/commit/8462679a747ea9547552917c2cb8b19583f2fbfb))
+* make windows sac zlogin case insensitive ([2b6a06d](https://github.com/STARTcloud/vagrant-zones/commit/2b6a06dc89a76df559551e42c52164f71eeb79bf))
+
 ## [0.1.111](https://github.com/STARTcloud/vagrant-zones/compare/v0.1.110...v0.1.111) (2026-05-11)
 
 
